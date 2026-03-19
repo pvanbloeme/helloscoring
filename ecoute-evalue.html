@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Écoute & Évalue</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#080a0f; --surface:#0f1219; --surface2:#161b26; --border:#1e2535;
+    --accent:#4fc3f7; --accent2:#ff6b6b; --gold:#ffd166;
+    --text:#e8eaf0; --muted:#5a6278; --muted2:#8892a4;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem 1rem;position:relative;overflow-x:hidden;}
+  body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 80% 10%,rgba(79,195,247,0.07) 0%,transparent 60%),radial-gradient(ellipse 50% 50% at 10% 90%,rgba(255,107,107,0.06) 0%,transparent 60%);pointer-events:none;}
+  .container{width:100%;max-width:560px;position:relative;z-index:1;}
+
+  .screen{display:none;animation:fadeUp 0.45s ease both;}
+  .screen.active{display:flex;flex-direction:column;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+  /* SETUP */
+  .eyebrow{font-family:'Bebas Neue',sans-serif;font-size:0.82rem;letter-spacing:0.22em;color:var(--accent);margin-bottom:0.8rem;}
+  .big-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,9vw,4.5rem);line-height:0.92;margin-bottom:1rem;}
+  .big-title span{color:var(--accent);}
+  .sub{color:var(--muted2);font-size:0.88rem;font-weight:300;line-height:1.6;margin-bottom:2rem;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.8rem;margin-bottom:1rem;}
+  .field-label{font-size:0.72rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted2);margin-bottom:0.5rem;display:block;}
+  input[type="text"],textarea,select{width:100%;font-family:'DM Sans',sans-serif;font-size:0.92rem;font-weight:300;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.7rem 1rem;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+  input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,195,247,0.1);}
+  select option{background:var(--surface2);}
+  .field-group{margin-bottom:1.2rem;}
+  .field-group:last-child{margin-bottom:0;}
+  .hint{font-size:0.74rem;color:var(--muted);margin-top:0.4rem;line-height:1.4;}
+
+  .upload-zone{border:2px dashed var(--border);border-radius:10px;padding:1.5rem;text-align:center;cursor:pointer;transition:border-color 0.2s,background 0.2s;position:relative;}
+  .upload-zone:hover{border-color:var(--accent);background:rgba(79,195,247,0.03);}
+  .upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+  .upload-icon{font-size:1.8rem;margin-bottom:0.5rem;}
+  .upload-text{font-size:0.85rem;color:var(--muted2);font-weight:300;}
+  .upload-text strong{color:var(--accent);}
+  .upload-success{color:var(--accent);font-size:0.85rem;font-weight:500;margin-top:0.5rem;display:none;}
+
+  .btn-primary{width:100%;padding:1rem;font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:0.1em;color:var(--bg);background:var(--accent);border:none;border-radius:10px;cursor:pointer;transition:all 0.2s;margin-top:0.5rem;}
+  .btn-primary:hover{background:#81d4fa;transform:translateY(-1px);}
+  .btn-primary:disabled{background:var(--border);color:var(--muted);cursor:not-allowed;transform:none;}
+
+  /* INTRO / LISTEN */
+  .intro-center{text-align:center;padding:2rem 0;}
+  .artist-name{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,8vw,3.5rem);line-height:1;color:var(--text);margin-bottom:0.3rem;}
+  .track-name{font-family:'DM Sans',sans-serif;font-size:1.1rem;font-style:italic;color:var(--muted2);font-weight:300;margin-bottom:2rem;}
+  .genre-tag{display:inline-block;background:rgba(79,195,247,0.1);color:var(--accent);font-size:0.72rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;padding:0.3rem 0.8rem;border-radius:99px;border:1px solid rgba(79,195,247,0.2);margin-bottom:2rem;}
+
+  /* Audio player */
+  .audio-player{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.5rem;}
+  .player-label{font-size:0.7rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;}
+  .player-controls{display:flex;align-items:center;gap:1rem;}
+  .play-btn{width:44px;height:44px;border-radius:50%;background:var(--accent);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;}
+  .play-btn:hover{background:#81d4fa;transform:scale(1.05);}
+  .play-btn svg{width:18px;height:18px;color:var(--bg);}
+  .player-track{flex:1;}
+  .player-progress{height:4px;background:var(--border);border-radius:99px;cursor:pointer;position:relative;margin-bottom:0.5rem;}
+  .player-fill{height:100%;background:var(--accent);border-radius:99px;width:0%;transition:width 0.1s linear;}
+  .player-times{display:flex;justify-content:space-between;font-size:0.72rem;color:var(--muted);font-family:monospace;}
+  .listen-note{font-size:0.8rem;color:var(--muted);text-align:center;font-style:italic;margin-bottom:1.5rem;}
+
+  .btn-cta{display:block;width:100%;padding:1rem;font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:0.1em;color:var(--bg);background:var(--gold);border:none;border-radius:10px;cursor:pointer;transition:all 0.2s;text-align:center;}
+  .btn-cta:hover{background:#ffe082;transform:translateY(-1px);}
+
+  /* RATING */
+  .rating-center{text-align:center;padding:1rem 0;}
+  .rating-q{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.4rem);line-height:1.1;margin-bottom:0.5rem;}
+  .rating-sub{color:var(--muted2);font-size:0.85rem;font-weight:300;margin-bottom:2rem;}
+  .stars-row{display:flex;justify-content:center;gap:0.5rem;margin-bottom:2rem;flex-wrap:wrap;}
+  .star-btn{width:52px;height:52px;border-radius:10px;background:var(--surface);border:1.5px solid var(--border);font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--muted2);cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;}
+  .star-btn:hover,.star-btn.selected{background:rgba(255,209,102,0.15);border-color:var(--gold);color:var(--gold);}
+  .rating-display{font-family:'Bebas Neue',sans-serif;font-size:4rem;color:var(--gold);min-height:5rem;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;}
+  .rating-display span{opacity:0.3;}
+
+  /* EMOTIONS */
+  .emotions-grid{display:flex;flex-wrap:wrap;gap:0.6rem;margin-bottom:1.5rem;}
+  .emotion-btn{padding:0.6rem 1.1rem;border-radius:99px;background:var(--surface);border:1.5px solid var(--border);font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:400;color:var(--muted2);cursor:pointer;transition:all 0.15s;}
+  .emotion-btn:hover{border-color:var(--accent2);color:var(--accent2);}
+  .emotion-btn.selected{background:rgba(255,107,107,0.12);border-color:var(--accent2);color:var(--accent2);}
+  .section-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;margin-bottom:0.4rem;}
+  .section-sub{color:var(--muted2);font-size:0.85rem;font-weight:300;margin-bottom:1.5rem;}
+
+  /* INTERVIEW */
+  .interview-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.8rem;padding-bottom:1rem;border-bottom:1px solid var(--border);}
+  .progress-wrap{flex:1;}
+  .progress-label{font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.4rem;}
+  .progress-bg{height:2px;background:var(--border);border-radius:99px;width:180px;}
+  .progress-fill{height:100%;background:var(--accent);border-radius:99px;transition:width 0.5s ease;width:0%;}
+  .timer-badge{font-size:0.72rem;color:var(--muted);font-family:monospace;}
+
+  .question-area{min-height:100px;margin-bottom:1.5rem;}
+  .q-label{font-size:0.7rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;}
+  .q-label::after{content:'';flex:1;height:1px;background:rgba(79,195,247,0.2);}
+  .q-text{font-size:clamp(1.05rem,3vw,1.25rem);line-height:1.5;font-weight:300;min-height:50px;}
+  .q-text.typing::after{content:'▋';animation:blink 0.7s step-end infinite;color:var(--accent);}
+  @keyframes blink{50%{opacity:0}}
+
+  .answer-area{margin-bottom:1rem;}
+  .answer-area textarea{min-height:100px;resize:vertical;}
+
+  /* Choice buttons for interview */
+  .choices-grid{display:flex;flex-wrap:wrap;gap:0.6rem;margin-bottom:1rem;}
+  .choice-btn{padding:0.55rem 1rem;border-radius:8px;background:var(--surface);border:1.5px solid var(--border);font-family:'DM Sans',sans-serif;font-size:0.83rem;color:var(--muted2);cursor:pointer;transition:all 0.15s;}
+  .choice-btn:hover{border-color:var(--accent);color:var(--accent);}
+  .choice-btn.selected{background:rgba(79,195,247,0.1);border-color:var(--accent);color:var(--accent);}
+
+  .thinking{display:flex;align-items:center;gap:0.5rem;color:var(--muted2);font-size:0.82rem;font-style:italic;min-height:22px;margin-bottom:0.5rem;}
+  .dot-pulse{display:flex;gap:3px;}
+  .dot-pulse span{width:4px;height:4px;border-radius:50%;background:var(--accent);animation:pulse 1.2s ease-in-out infinite;}
+  .dot-pulse span:nth-child(2){animation-delay:0.2s}.dot-pulse span:nth-child(3){animation-delay:0.4s}
+  @keyframes pulse{0%,80%,100%{transform:scale(0.6);opacity:0.3}40%{transform:scale(1);opacity:1}}
+
+  .send-row{display:flex;justify-content:flex-end;gap:0.8rem;align-items:center;}
+  .btn-send{display:flex;align-items:center;gap:0.5rem;padding:0.8rem 1.5rem;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.08em;color:var(--bg);background:var(--accent);border:none;border-radius:8px;cursor:pointer;transition:all 0.2s;}
+  .btn-send:hover{background:#81d4fa;}
+  .btn-send:disabled{background:var(--border);color:var(--muted);cursor:not-allowed;}
+
+  /* POTENTIAL RATING */
+  .potential-context{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;margin-bottom:1.5rem;font-size:0.85rem;color:var(--muted2);font-weight:300;line-height:1.5;}
+  .potential-context strong{color:var(--text);}
+
+  /* SIGNALETICS */
+  .sig-skip{text-align:center;margin-top:1rem;}
+  .btn-skip{background:none;border:none;color:var(--muted);font-size:0.82rem;cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif;}
+  .btn-skip:hover{color:var(--muted2);}
+  .radio-group{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.5rem;}
+  .radio-btn{padding:0.5rem 1rem;border-radius:8px;background:var(--surface2);border:1.5px solid var(--border);font-size:0.82rem;color:var(--muted2);cursor:pointer;transition:all 0.15s;}
+  .radio-btn:hover{border-color:var(--accent);color:var(--accent);}
+  .radio-btn.selected{background:rgba(79,195,247,0.1);border-color:var(--accent);color:var(--accent);}
+
+  /* END */
+  .end-center{text-align:center;padding:2rem 0 1rem;}
+  .end-icon{font-size:3rem;margin-bottom:1rem;}
+  .end-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,6vw,3rem);margin-bottom:0.8rem;}
+  .end-sub{color:var(--muted2);font-size:0.88rem;font-weight:300;line-height:1.6;max-width:400px;margin:0 auto;}
+  .save-status{font-size:0.78rem;color:var(--muted);margin-top:1.5rem;text-align:center;font-style:italic;}
+
+  /* CLOSED */
+  .closed-wrap{text-align:center;padding:4rem 0;}
+  .closed-wrap h2{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--accent2);margin-bottom:1rem;}
+  .closed-wrap p{color:var(--muted2);font-weight:300;line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ══ SETUP (artiste) ══ -->
+  <div id="screen-setup" class="screen active">
+    <div class="eyebrow">Outil de feedback musical</div>
+    <div class="big-title">ÉCOUTE<br>&amp; <span>ÉVALUE</span></div>
+    <p class="sub">Configure ton titre ci-dessous. Tu obtiendras un lien à partager avec tes auditeurs — la clé API reste invisible.</p>
+
+    <div class="card">
+      <div class="field-group">
+        <label class="field-label">Clé API Anthropic</label>
+        <input type="text" id="setup-apikey" placeholder="sk-ant-..." autocomplete="off">
+        <div class="hint">Reste cachée dans le lien — jamais visible par les auditeurs.</div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Nom de l'artiste</label>
+        <input type="text" id="setup-artist" placeholder="ex. Clara V.">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Titre du morceau</label>
+        <input type="text" id="setup-track" placeholder="ex. La mer en hiver">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Genre musical</label>
+        <input type="text" id="setup-genre" placeholder="ex. Pop urbaine / Électro / Rap">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Fichier audio (MP3)</label>
+        <div class="upload-zone" id="upload-zone">
+          <input type="file" id="audio-file" accept=".mp3,audio/*" onchange="handleAudioUpload(this)">
+          <div class="upload-icon">🎵</div>
+          <div class="upload-text">Glisse ton MP3 ici ou <strong>clique pour choisir</strong></div>
+          <div class="upload-success" id="upload-success"></div>
+        </div>
+        <div class="hint">Fichier stocké localement — non publié en ligne.</div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Contexte optionnel pour l'IA</label>
+        <textarea id="setup-context" rows="2" placeholder="ex. Premier single, cible 25-35 ans, sortie prévue en mars..."></textarea>
+      </div>
+      <button class="btn-primary" onclick="generateLink()">Générer le lien →</button>
+    </div>
+
+    <div id="link-output" style="display:none;" class="card">
+      <label class="field-label">Lien à envoyer à tes auditeurs</label>
+      <div style="display:flex;gap:0.6rem;align-items:center;">
+        <input type="text" id="generated-link" readonly style="font-size:0.78rem;">
+        <button class="btn-send" id="btn-copy-link" onclick="copyLink()" style="white-space:nowrap;flex-shrink:0;">Copier</button>
+      </div>
+      <p style="color:var(--muted);font-size:0.78rem;margin-top:0.8rem;font-weight:300;">⚠️ Ce lien encode ta clé API. Ne le poste pas publiquement.</p>
+    </div>
+  </div>
+
+  <!-- ══ CLOSED ══ -->
+  <div id="screen-closed" class="screen">
+    <div class="closed-wrap">
+      <h2>Étude fermée</h2>
+      <p>Le nombre maximum de répondants (300) a été atteint.<br>Merci pour ta participation !</p>
+    </div>
+  </div>
+
+  <!-- ══ INTRO / LISTEN ══ -->
+  <div id="screen-listen" class="screen">
+    <div class="intro-center">
+      <div class="eyebrow">Feedback musical</div>
+      <div class="artist-name" id="display-artist">—</div>
+      <div class="track-name" id="display-track">—</div>
+      <div class="genre-tag" id="display-genre">—</div>
+    </div>
+
+    <div class="audio-player">
+      <div class="player-label">🎧 Écoute le titre</div>
+      <div class="player-controls">
+        <button class="play-btn" id="play-btn" onclick="togglePlay()">
+          <svg id="play-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        </button>
+        <div class="player-track">
+          <div class="player-progress" id="progress-bar" onclick="seekAudio(event)">
+            <div class="player-fill" id="player-fill"></div>
+          </div>
+          <div class="player-times">
+            <span id="time-current">0:00</span>
+            <span id="time-total">0:00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="listen-note">Écoute le titre en entier avant de donner ton avis 🎶</p>
+    <button class="btn-cta" onclick="goToRating()">J'ai écouté, je donne mon avis →</button>
+  </div>
+
+  <!-- ══ RATING ══ -->
+  <div id="screen-rating" class="screen">
+    <div class="rating-center">
+      <div class="rating-q">Quelle note donnes-tu<br>à ce titre ?</div>
+      <div class="rating-sub">1 = ça accroche pas du tout · 10 = j'adore</div>
+      <div class="rating-display" id="rating-display"><span>—</span></div>
+      <div class="stars-row" id="stars-row"></div>
+      <button class="btn-cta" id="btn-rating-next" onclick="goToEmotions()" disabled style="opacity:0.4;transition:opacity 0.2s;">Continuer →</button>
+    </div>
+  </div>
+
+  <!-- ══ EMOTIONS ══ -->
+  <div id="screen-emotions" class="screen">
+    <div class="section-title">Ce titre t'a fait ressentir…</div>
+    <div class="section-sub">Sélectionne une ou plusieurs émotions</div>
+    <div class="emotions-grid" id="emotions-grid"></div>
+    <button class="btn-cta" onclick="goToInterview()">Continuer →</button>
+  </div>
+
+  <!-- ══ INTERVIEW ══ -->
+  <div id="screen-interview" class="screen">
+    <div class="interview-header">
+      <div class="progress-wrap">
+        <div class="progress-label">Progression</div>
+        <div class="progress-bg"><div class="progress-fill" id="iv-progress"></div></div>
+      </div>
+      <div class="timer-badge" id="timer-badge">~5 min</div>
+    </div>
+    <div class="question-area">
+      <div class="q-label">Question <span id="q-num">1</span></div>
+      <div class="q-text" id="q-text"></div>
+    </div>
+    <div class="thinking" id="thinking" style="display:none;">
+      <div class="dot-pulse"><span></span><span></span><span></span></div>
+      L'agent réfléchit…
+    </div>
+    <div id="answer-zone"></div>
+    <div class="send-row">
+      <button class="btn-send" id="btn-send" onclick="sendAnswer()">
+        Envoyer
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ POTENTIAL ══ -->
+  <div id="screen-potential" class="screen">
+    <div class="rating-center">
+      <div class="rating-q">Potentiel commercial</div>
+      <div class="rating-sub">Selon toi, quel est le potentiel de ce titre à toucher un large public ?</div>
+      <div class="potential-context">
+        Ta note perso était <strong id="personal-score-display">—</strong>/10.
+        Indépendamment de tes goûts, ce titre peut-il plaire largement ?
+      </div>
+      <div class="rating-display" id="potential-display"><span>—</span></div>
+      <div class="stars-row" id="potential-stars"></div>
+      <button class="btn-cta" id="btn-potential-next" onclick="goToSignaletics()" disabled style="opacity:0.4;transition:opacity 0.2s;">Continuer →</button>
+    </div>
+  </div>
+
+  <!-- ══ SIGNALETICS ══ -->
+  <div id="screen-sig" class="screen">
+    <div class="section-title">Quelques infos sur toi</div>
+    <div class="section-sub">Optionnel — aide l'artiste à mieux comprendre son audience</div>
+
+    <div class="card">
+      <div class="field-group">
+        <label class="field-label">Tranche d'âge</label>
+        <div class="radio-group" id="sig-age"></div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Genre</label>
+        <div class="radio-group" id="sig-gender"></div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Localisation</label>
+        <input type="text" id="sig-location" placeholder="Ville ou région">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Habitudes d'écoute musicale</label>
+        <div class="radio-group" id="sig-habits"></div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Tu connais cet artiste ?</label>
+        <div class="radio-group" id="sig-relation"></div>
+      </div>
+    </div>
+
+    <button class="btn-cta" onclick="submitAll()">Envoyer mon avis →</button>
+    <div class="sig-skip"><button class="btn-skip" onclick="submitAll()">Passer cette étape</button></div>
+  </div>
+
+  <!-- ══ END ══ -->
+  <div id="screen-end" class="screen">
+    <div class="end-center">
+      <div class="end-icon">🎶</div>
+      <div class="end-title">Merci !</div>
+      <p class="end-sub">Ton avis a bien été transmis à l'artiste. Ce genre de feedback honnête est précieux pour créer de la musique qui touche vraiment.</p>
+      <div class="save-status" id="save-status"></div>
+    </div>
+  </div>
+
+</div>
+
+<audio id="audio-el" preload="auto"></audio>
+
+<script>
+// ═══ CONFIG (artiste remplit le setup) ═══
+// La clé API est encodée dans l'URL par le setup — jamais en dur ici.
+
+let cfg = { apiKey:'', artist:'', track:'', genre:'', context:'', audioB64:'' };
+let personalScore = 0, potentialScore = 0;
+let selectedEmotions = [];
+let conversation = [], transcript = [], qCount = 0;
+const MAX_QUESTIONS = 6;
+const MAX_RESPONDENTS = 300;
+let audioEl, audioLoaded = false;
+let sigData = {};
+let studyId = '';
+
+// ═══ SETUP ═══
+let audioB64 = '';
+function handleAudioUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    audioB64 = e.target.result; // full data URL
+    document.getElementById('upload-success').textContent = '✓ ' + file.name;
+    document.getElementById('upload-success').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function generateLink() {
+  const apiKey = document.getElementById('setup-apikey').value.trim();
+  const artist = document.getElementById('setup-artist').value.trim();
+  const track  = document.getElementById('setup-track').value.trim();
+  const genre  = document.getElementById('setup-genre').value.trim();
+  const ctx    = document.getElementById('setup-context').value.trim();
+  if (!apiKey || !artist || !track) { alert('Clé API, artiste et titre sont requis.'); return; }
+  if (!audioB64) { alert('Merci d\'uploader le fichier MP3.'); return; }
+  // Store audio in shared storage, not in URL
+  const sid = 'track-' + artist.toLowerCase().replace(/\s+/g,'-') + '-' + Date.now();
+  // Save audio to storage then generate link
+  (async () => {
+    try {
+      await window.storage.set('audio:' + sid, audioB64, true);
+    } catch(e) { console.warn('Storage not available, audio in URL fallback'); }
+    const params = new URLSearchParams({
+      k: btoa(apiKey), a: encodeURIComponent(artist), t: encodeURIComponent(track),
+      g: encodeURIComponent(genre), c: encodeURIComponent(ctx), s: sid
+    });
+    const url = window.location.href.split('?')[0] + '?' + params.toString();
+    document.getElementById('generated-link').value = url;
+    document.getElementById('link-output').style.display = 'block';
+  })();
+}
+
+function copyLink() {
+  navigator.clipboard.writeText(document.getElementById('generated-link').value).then(() => {
+    const btn = document.getElementById('btn-copy-link');
+    btn.textContent = '✓ Copié !';
+    setTimeout(()=>btn.textContent='Copier',2000);
+  });
+}
+
+// ═══ INIT ═══
+window.addEventListener('DOMContentLoaded', async () => {
+  const p = new URLSearchParams(window.location.search);
+  if (!p.has('k')) return; // stay on setup
+
+  cfg.apiKey  = atob(p.get('k'));
+  cfg.artist  = decodeURIComponent(p.get('a') || '');
+  cfg.track   = decodeURIComponent(p.get('t') || '');
+  cfg.genre   = decodeURIComponent(p.get('g') || '');
+  cfg.context = decodeURIComponent(p.get('c') || '');
+  studyId     = p.get('s') || 'track';
+
+  // Check respondent cap
+  try {
+    const countData = await window.storage.get('count:' + studyId, true);
+    const count = countData ? parseInt(countData.value) : 0;
+    if (count >= MAX_RESPONDENTS) { showScreen('screen-closed'); return; }
+  } catch(e) {}
+
+  // Load audio
+  try {
+    const audioData = await window.storage.get('audio:' + studyId, true);
+    if (audioData) {
+      cfg.audioB64 = audioData.value;
+      setupAudioPlayer(cfg.audioB64);
+    }
+  } catch(e) {}
+
+  // Fill UI
+  document.getElementById('display-artist').textContent = cfg.artist;
+  document.getElementById('display-track').textContent  = '"' + cfg.track + '"';
+  document.getElementById('display-genre').textContent  = cfg.genre;
+
+  buildRatingStars();
+  buildPotentialStars();
+  buildEmotions();
+  buildSignaletics();
+
+  showScreen('screen-listen');
+});
+
+function setupAudioPlayer(src) {
+  audioEl = document.getElementById('audio-el');
+  audioEl.src = src;
+  audioEl.addEventListener('loadedmetadata', () => {
+    document.getElementById('time-total').textContent = fmtTime(audioEl.duration);
+    audioLoaded = true;
+  });
+  audioEl.addEventListener('timeupdate', () => {
+    if (!audioEl.duration) return;
+    const pct = (audioEl.currentTime / audioEl.duration) * 100;
+    document.getElementById('player-fill').style.width = pct + '%';
+    document.getElementById('time-current').textContent = fmtTime(audioEl.currentTime);
+  });
+  audioEl.addEventListener('ended', () => {
+    document.getElementById('play-icon').innerHTML = '<polygon points="5,3 19,12 5,21"/>';
+  });
+}
+
+function togglePlay() {
+  if (!audioEl) return;
+  if (audioEl.paused) {
+    audioEl.play();
+    document.getElementById('play-icon').innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+  } else {
+    audioEl.pause();
+    document.getElementById('play-icon').innerHTML = '<polygon points="5,3 19,12 5,21"/>';
+  }
+}
+
+function seekAudio(e) {
+  if (!audioEl || !audioEl.duration) return;
+  const bar = document.getElementById('progress-bar');
+  const rect = bar.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  audioEl.currentTime = pct * audioEl.duration;
+}
+
+function fmtTime(s) {
+  const m = Math.floor(s/60), sec = Math.floor(s%60);
+  return m + ':' + (sec<10?'0':'') + sec;
+}
+
+// ═══ SCREENS ═══
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  el.classList.add('active'); el.style.animation='none'; el.offsetHeight; el.style.animation='';
+  window.scrollTo(0,0);
+}
+
+function goToRating()     { if(audioEl) audioEl.pause(); showScreen('screen-rating'); }
+function goToEmotions()   { showScreen('screen-emotions'); }
+function goToInterview()  { showScreen('screen-interview'); startInterview(); }
+function goToSignaletics(){ showScreen('screen-sig'); }
+
+// ═══ RATING STARS ═══
+function buildRatingStars() {
+  const c = document.getElementById('stars-row');
+  for (let i=1; i<=10; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'star-btn'; btn.textContent = i;
+    btn.onclick = () => selectScore(i, 'rating');
+    c.appendChild(btn);
+  }
+}
+function buildPotentialStars() {
+  const c = document.getElementById('potential-stars');
+  for (let i=1; i<=10; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'star-btn'; btn.textContent = i;
+    btn.onclick = () => selectScore(i, 'potential');
+    c.appendChild(btn);
+  }
+}
+function selectScore(val, type) {
+  if (type === 'rating') {
+    personalScore = val;
+    document.getElementById('rating-display').innerHTML = val + '<span>/10</span>';
+    document.querySelectorAll('#stars-row .star-btn').forEach((b,i) => b.classList.toggle('selected', i+1===val));
+    const btn = document.getElementById('btn-rating-next');
+    btn.disabled = false; btn.style.opacity = '1';
+  } else {
+    potentialScore = val;
+    document.getElementById('potential-display').innerHTML = val + '<span>/10</span>';
+    document.querySelectorAll('#potential-stars .star-btn').forEach((b,i) => b.classList.toggle('selected', i+1===val));
+    const btn = document.getElementById('btn-potential-next');
+    btn.disabled = false; btn.style.opacity = '1';
+  }
+}
+
+// ═══ EMOTIONS ═══
+const EMOTIONS = ['😊 Joie','🌊 Nostalgie','⚡ Énergie','🌧 Mélancolie','😢 Tristesse','😐 Indifférence','🔥 Excitation','🤔 Curiosité','💙 Sérénité'];
+function buildEmotions() {
+  const c = document.getElementById('emotions-grid');
+  EMOTIONS.forEach(e => {
+    const btn = document.createElement('button');
+    btn.className = 'emotion-btn'; btn.textContent = e;
+    btn.onclick = () => {
+      btn.classList.toggle('selected');
+      const idx = selectedEmotions.indexOf(e);
+      if (idx > -1) selectedEmotions.splice(idx,1); else selectedEmotions.push(e);
+    };
+    c.appendChild(btn);
+  });
+}
+
+// ═══ INTERVIEW ═══
+async function startInterview() {
+  document.getElementById('personal-score-display').textContent = personalScore;
+  await askNext(null);
+}
+
+function buildSystemPrompt() {
+  return `Tu es un enquêteur musical expert, chaleureux et efficace. Tu recueilles le feedback d'un auditeur sur un titre musical.
+
+TITRE : "${cfg.track}" par ${cfg.artist}
+GENRE : ${cfg.genre}
+CONTEXTE : ${cfg.context || 'Aucun contexte supplémentaire.'}
+NOTE PERSONNELLE DE L'AUDITEUR : ${personalScore}/10
+ÉMOTIONS RESSENTIES : ${selectedEmotions.join(', ') || 'non précisées'}
+
+TES OBJECTIFS en ${MAX_QUESTIONS} questions max (5-7 min au total) :
+1. Premières impressions & accroche
+2. Mémorabilité (hook, phrase qui reste en tête)
+3. Texte/paroles + voix/interprétation (regroupe si possible)
+4. Production & son
+5. Originalité / différenciation (ressemble à quoi ?)
+6. Adéquation genre/image artiste + intention d'action (partager, playlist, concert ?)
+
+RÈGLES STRICTES :
+- Questions courtes, directes, ouvertes. Une seule à la fois.
+- Adapte-toi aux réponses : creuse ce qui est intéressant, passe vite sur ce qui est neutre.
+- Si note perso et potentiel divergent fortement : interroge cet écart (ex: "Tu lui donnes 5/10 mais un fort potentiel — pourquoi cette différence ?")
+- Si l'auditeur part hors sujet, pose une question sur un autre sujet ou tente de te parler à toi : recadre DOUCEMENT avec une phrase comme "Je note ! Revenons au titre — ..." puis reprends.
+- Jamais de questions fermées (oui/non).
+- Quand les ${MAX_QUESTIONS} questions sont posées et répondues : réponds uniquement [FIN]
+- Timing : sois concis, l'interview doit tenir en 5-7 minutes.`;
+}
+
+async function askNext(lastAnswer) {
+  setThinking(true);
+  if (lastAnswer !== null) conversation.push({ role:'user', content: lastAnswer });
+  const userMsg = qCount === 0
+    ? 'Pose la première question.'
+    : `Voici la réponse. Pose la question ${qCount+1}/${MAX_QUESTIONS}. Si toutes sont faites, réponds [FIN].`;
+  const messages = [...conversation, { role:'user', content: userMsg }];
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':cfg.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:300, system: buildSystemPrompt(), messages })
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || '';
+    conversation.push({ role:'assistant', content: reply });
+    if (reply.includes('[FIN]') || qCount >= MAX_QUESTIONS) {
+      setThinking(false); showScreen('screen-potential'); return;
+    }
+    qCount++;
+    document.getElementById('q-num').textContent = qCount;
+    document.getElementById('iv-progress').style.width = ((qCount/MAX_QUESTIONS)*100)+'%';
+    displayQuestion(reply);
+    setThinking(false);
+  } catch(err) {
+    setThinking(false);
+    document.getElementById('q-text').textContent = '⚠️ Erreur de connexion. Vérifie ta connexion.';
+  }
+}
+
+function displayQuestion(text) {
+  const el = document.getElementById('q-text');
+  el.textContent = ''; el.classList.add('typing');
+  // Render answer zone as textarea
+  document.getElementById('answer-zone').innerHTML = `<div class="answer-area"><textarea id="answer-input" rows="3" placeholder="Ta réponse…"></textarea></div>`;
+  document.getElementById('btn-send').disabled = false;
+  let i = 0;
+  const iv = setInterval(() => {
+    if (i < text.length) { el.textContent += text[i]; i++; }
+    else { el.classList.remove('typing'); clearInterval(iv); }
+  }, 16);
+}
+
+function setThinking(show) {
+  document.getElementById('thinking').style.display = show ? 'flex' : 'none';
+  if (document.getElementById('btn-send')) document.getElementById('btn-send').disabled = show;
+}
+
+async function sendAnswer() {
+  const input = document.getElementById('answer-input');
+  if (!input) return;
+  const answer = input.value.trim();
+  if (!answer) return;
+  const lastQ = conversation.filter(m=>m.role==='assistant').slice(-1)[0]?.content || '';
+  transcript.push({ q: lastQ, a: answer });
+  document.getElementById('btn-send').disabled = true;
+  document.getElementById('q-text').textContent = '';
+  await askNext(answer);
+}
+
+// ═══ SIGNALETICS ═══
+function buildSignaletics() {
+  buildRadio('sig-age',   ['< 18','18–24','25–34','35–44','45–54','55+']);
+  buildRadio('sig-gender',['Homme','Femme','Non-binaire','Autre']);
+  buildRadio('sig-habits',['Casual (quelques h/semaine)','Régulier (tous les jours)','Passionné (plusieurs h/jour)']);
+  buildRadio('sig-relation',['Fan','Je connais bien','Je connais un peu','Presque pas']);
+}
+function buildRadio(containerId, options) {
+  const c = document.getElementById(containerId);
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'radio-btn'; btn.textContent = opt;
+    btn.onclick = () => {
+      c.querySelectorAll('.radio-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      sigData[containerId] = opt;
+    };
+    c.appendChild(btn);
+  });
+}
+
+// ═══ SUBMIT ═══
+async function submitAll() {
+  showScreen('screen-end');
+  const record = {
+    id: 'R' + Date.now(),
+    studyId,
+    artist: cfg.artist,
+    track: cfg.track,
+    date: new Date().toISOString(),
+    personalScore,
+    potentialScore,
+    emotions: selectedEmotions,
+    transcript,
+    sig: {
+      age: sigData['sig-age'] || null,
+      gender: sigData['sig-gender'] || null,
+      location: document.getElementById('sig-location')?.value || null,
+      habits: sigData['sig-habits'] || null,
+      relation: sigData['sig-relation'] || null
+    }
+  };
+  const statusEl = document.getElementById('save-status');
+  statusEl.textContent = 'Sauvegarde…';
+  try {
+    // Increment counter
+    let count = 0;
+    try { const cd = await window.storage.get('count:'+studyId, true); count = cd ? parseInt(cd.value) : 0; } catch(e){}
+    await window.storage.set('count:'+studyId, String(count+1), true);
+    // Save responses
+    let responses = [];
+    try { const rd = await window.storage.get('responses:'+studyId, true); if(rd) responses = JSON.parse(rd.value); } catch(e){}
+    responses.push(record);
+    await window.storage.set('responses:'+studyId, JSON.stringify(responses), true);
+    statusEl.textContent = `✓ Avis #${count+1} enregistré. Merci !`;
+  } catch(err) {
+    statusEl.textContent = 'Avis envoyé. Merci pour ton temps !';
+  }
+}
+</script>
+</body>
+</html>
