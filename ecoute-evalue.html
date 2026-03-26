@@ -175,16 +175,6 @@
         <input type="text" id="setup-genre" placeholder="ex. Pop urbaine / Électro / Rap">
       </div>
       <div class="field-group">
-        <label class="field-label">Fichier audio (MP3)</label>
-        <div class="upload-zone" id="upload-zone">
-          <input type="file" id="audio-file" accept=".mp3,audio/*" onchange="handleAudioUpload(this)">
-          <div class="upload-icon">🎵</div>
-          <div class="upload-text">Glisse ton MP3 ici ou <strong>clique pour choisir</strong></div>
-          <div class="upload-success" id="upload-success"></div>
-        </div>
-        <div class="hint">Fichier stocké localement — non publié en ligne.</div>
-      </div>
-      <div class="field-group">
         <label class="field-label">Contexte optionnel pour l'IA</label>
         <textarea id="setup-context" rows="2" placeholder="ex. Premier single, cible 25-35 ans, sortie prévue en mars..."></textarea>
       </div>
@@ -209,7 +199,7 @@
     </div>
   </div>
 
-  <!-- ══ INTRO / LISTEN ══ -->
+  <!-- ══ INTRO ══ -->
   <div id="screen-listen" class="screen">
     <div class="intro-center">
       <div class="eyebrow">Feedback musical</div>
@@ -217,26 +207,11 @@
       <div class="track-name" id="display-track">—</div>
       <div class="genre-tag" id="display-genre">—</div>
     </div>
-
-    <div class="audio-player">
-      <div class="player-label">🎧 Écoute le titre</div>
-      <div class="player-controls">
-        <button class="play-btn" id="play-btn" onclick="togglePlay()">
-          <svg id="play-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
-        </button>
-        <div class="player-track">
-          <div class="player-progress" id="progress-bar" onclick="seekAudio(event)">
-            <div class="player-fill" id="player-fill"></div>
-          </div>
-          <div class="player-times">
-            <span id="time-current">0:00</span>
-            <span id="time-total">0:00</span>
-          </div>
-        </div>
-      </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.6rem;margin-bottom:1.5rem;text-align:center;">
+      <div style="font-size:2rem;margin-bottom:0.8rem;">🎧</div>
+      <p style="font-size:0.95rem;color:var(--muted2);font-weight:300;line-height:1.6;">Écoute le titre <strong style="color:var(--text);" id="display-track2">—</strong> avant de continuer, puis reviens ici pour donner ton avis.</p>
     </div>
-
-    <p class="listen-note">Écoute le titre en entier avant de donner ton avis 🎶</p>
+    <p class="listen-note">Prends le temps d'écouter en entier — ton avis compte vraiment pour l'artiste 🎶</p>
     <button class="btn-cta" onclick="goToRating()">J'ai écouté, je donne mon avis →</button>
   </div>
 
@@ -328,16 +303,54 @@
       </div>
     </div>
 
-    <button class="btn-cta" onclick="submitAll()">Envoyer mon avis →</button>
-    <div class="sig-skip"><button class="btn-skip" onclick="submitAll()">Passer cette étape</button></div>
+    <button class="btn-cta" onclick="showSynthesis()">Envoyer mon avis →</button>
+    <div class="sig-skip"><button class="btn-skip" onclick="showSynthesis()">Passer cette étape</button></div>
+  </div>
+
+  <!-- ══ SYNTHESIS ══ -->
+  <div id="screen-synthesis" class="screen">
+    <div class="end-center" style="text-align:left;padding:0;">
+      <div class="end-icon" style="text-align:center;">🎶</div>
+      <div class="end-title" style="text-align:center;font-size:2rem;margin-bottom:0.5rem;">Voilà ce qu'on a retenu</div>
+      <p class="end-sub" style="text-align:center;margin-bottom:1.5rem;">Vérifie que ça correspond bien à ce que tu voulais dire.</p>
+    </div>
+
+    <div style="display:flex;gap:0.8rem;margin-bottom:1.2rem;">
+      <div style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--accent);line-height:1;" id="syn-score">—</div>
+        <div style="font-size:0.7rem;color:var(--muted2);text-transform:uppercase;letter-spacing:0.08em;">Note perso</div>
+      </div>
+      <div style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--gold);line-height:1;" id="syn-pot">—</div>
+        <div style="font-size:0.7rem;color:var(--muted2);text-transform:uppercase;letter-spacing:0.08em;">Potentiel</div>
+      </div>
+    </div>
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.6rem;margin-bottom:1.2rem;">
+      <div style="font-size:0.7rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;">En quelques mots <span style="flex:1;height:1px;background:var(--border);display:block;"></span></div>
+      <p id="syn-narrative" style="font-size:0.97rem;line-height:1.8;font-weight:300;color:#c8cdd8;"></p>
+    </div>
+
+    <div style="margin-bottom:1.4rem;">
+      <button class="btn-send" style="width:100%;justify-content:center;background:var(--surface);color:var(--muted2);border:1.5px solid var(--border);" onclick="toggleCorrection()">
+        ✏️ &nbsp;Corriger ou ajouter quelque chose
+      </button>
+      <div id="correction-field" style="display:none;margin-top:0.8rem;">
+        <textarea id="correction-input" placeholder="Quelque chose à préciser, corriger ou ajouter…" style="min-height:90px;"></textarea>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:0.8rem;">
+      <button class="btn-cta" onclick="confirmSend()">Confirmer et envoyer →</button>
+    </div>
   </div>
 
   <!-- ══ END ══ -->
   <div id="screen-end" class="screen">
     <div class="end-center">
-      <div class="end-icon">🎶</div>
-      <div class="end-title">Merci !</div>
-      <p class="end-sub">Ton avis a bien été transmis à l'artiste. Ce genre de feedback honnête est précieux pour créer de la musique qui touche vraiment.</p>
+      <div class="end-icon">✅</div>
+      <div class="end-title">C'est envoyé !</div>
+      <p class="end-sub">Ton feedback complet a bien été transmis à l'artiste. Ce genre d'avis honnête est précieux pour créer de la musique qui touche vraiment.</p>
       <div class="save-status" id="save-status"></div>
     </div>
   </div>
@@ -361,19 +374,6 @@ let sigData = {};
 let studyId = '';
 
 // ═══ SETUP ═══
-let audioB64 = '';
-function handleAudioUpload(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    audioB64 = e.target.result; // full data URL
-    document.getElementById('upload-success').textContent = '✓ ' + file.name;
-    document.getElementById('upload-success').style.display = 'block';
-  };
-  reader.readAsDataURL(file);
-}
-
 function generateLink() {
   const apiKey = document.getElementById('setup-apikey').value.trim();
   const artist = document.getElementById('setup-artist').value.trim();
@@ -381,22 +381,14 @@ function generateLink() {
   const genre  = document.getElementById('setup-genre').value.trim();
   const ctx    = document.getElementById('setup-context').value.trim();
   if (!apiKey || !artist || !track) { alert('Clé API, artiste et titre sont requis.'); return; }
-  if (!audioB64) { alert('Merci d\'uploader le fichier MP3.'); return; }
-  // Store audio in shared storage, not in URL
   const sid = 'track-' + artist.toLowerCase().replace(/\s+/g,'-') + '-' + Date.now();
-  // Save audio to storage then generate link
-  (async () => {
-    try {
-      await window.storage.set('audio:' + sid, audioB64, true);
-    } catch(e) { console.warn('Storage not available, audio in URL fallback'); }
-    const params = new URLSearchParams({
-      k: btoa(apiKey), a: encodeURIComponent(artist), t: encodeURIComponent(track),
-      g: encodeURIComponent(genre), c: encodeURIComponent(ctx), s: sid
-    });
-    const url = window.location.href.split('?')[0] + '?' + params.toString();
-    document.getElementById('generated-link').value = url;
-    document.getElementById('link-output').style.display = 'block';
-  })();
+  const params = new URLSearchParams({
+    k: btoa(apiKey), a: encodeURIComponent(artist), t: encodeURIComponent(track),
+    g: encodeURIComponent(genre), c: encodeURIComponent(ctx), s: sid
+  });
+  const url = window.location.href.split('?')[0] + '?' + params.toString();
+  document.getElementById('generated-link').value = url;
+  document.getElementById('link-output').style.display = 'block';
 }
 
 function copyLink() {
@@ -410,7 +402,7 @@ function copyLink() {
 // ═══ INIT ═══
 window.addEventListener('DOMContentLoaded', async () => {
   const p = new URLSearchParams(window.location.search);
-  if (!p.has('k')) return; // stay on setup
+  if (!p.has('k')) return;
 
   cfg.apiKey  = atob(p.get('k'));
   cfg.artist  = decodeURIComponent(p.get('a') || '');
@@ -426,18 +418,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (count >= MAX_RESPONDENTS) { showScreen('screen-closed'); return; }
   } catch(e) {}
 
-  // Load audio
-  try {
-    const audioData = await window.storage.get('audio:' + studyId, true);
-    if (audioData) {
-      cfg.audioB64 = audioData.value;
-      setupAudioPlayer(cfg.audioB64);
-    }
-  } catch(e) {}
-
   // Fill UI
   document.getElementById('display-artist').textContent = cfg.artist;
   document.getElementById('display-track').textContent  = '"' + cfg.track + '"';
+  document.getElementById('display-track2').textContent = '"' + cfg.track + '"';
   document.getElementById('display-genre').textContent  = cfg.genre;
 
   buildRatingStars();
@@ -448,48 +432,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   showScreen('screen-listen');
 });
 
-function setupAudioPlayer(src) {
-  audioEl = document.getElementById('audio-el');
-  audioEl.src = src;
-  audioEl.addEventListener('loadedmetadata', () => {
-    document.getElementById('time-total').textContent = fmtTime(audioEl.duration);
-    audioLoaded = true;
-  });
-  audioEl.addEventListener('timeupdate', () => {
-    if (!audioEl.duration) return;
-    const pct = (audioEl.currentTime / audioEl.duration) * 100;
-    document.getElementById('player-fill').style.width = pct + '%';
-    document.getElementById('time-current').textContent = fmtTime(audioEl.currentTime);
-  });
-  audioEl.addEventListener('ended', () => {
-    document.getElementById('play-icon').innerHTML = '<polygon points="5,3 19,12 5,21"/>';
-  });
-}
-
-function togglePlay() {
-  if (!audioEl) return;
-  if (audioEl.paused) {
-    audioEl.play();
-    document.getElementById('play-icon').innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
-  } else {
-    audioEl.pause();
-    document.getElementById('play-icon').innerHTML = '<polygon points="5,3 19,12 5,21"/>';
-  }
-}
-
-function seekAudio(e) {
-  if (!audioEl || !audioEl.duration) return;
-  const bar = document.getElementById('progress-bar');
-  const rect = bar.getBoundingClientRect();
-  const pct = (e.clientX - rect.left) / rect.width;
-  audioEl.currentTime = pct * audioEl.duration;
-}
-
-function fmtTime(s) {
-  const m = Math.floor(s/60), sec = Math.floor(s%60);
-  return m + ':' + (sec<10?'0':'') + sec;
-}
-
 // ═══ SCREENS ═══
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -498,7 +440,7 @@ function showScreen(id) {
   window.scrollTo(0,0);
 }
 
-function goToRating()     { if(audioEl) audioEl.pause(); showScreen('screen-rating'); }
+function goToRating()     { showScreen('screen-rating'); }
 function goToEmotions()   { showScreen('screen-emotions'); }
 function goToInterview()  { showScreen('screen-interview'); startInterview(); }
 function goToSignaletics(){ showScreen('screen-sig'); }
@@ -697,9 +639,72 @@ function buildRadio(containerId, options) {
   });
 }
 
-// ═══ SUBMIT ═══
-async function submitAll() {
+// ═══ SYNTHESIS & SUBMIT ═══
+function buildNarrative() {
+  const emotions = selectedEmotions.map(e => e.replace(/^[\S]+\s/, ''));
+  const actions  = [];
+  transcript.forEach(t => {
+    const a = t.a.toLowerCase();
+    if (a.includes('partag')) actions.push('le partager');
+    if (a.includes('playlist') || a.includes('liste')) actions.push('l\'ajouter en playlist');
+    if (a.includes('concert') || a.includes('scène') || a.includes('voir')) actions.push('aller le voir en concert');
+  });
+
+  const scoreWord = personalScore >= 8 ? 'un vrai coup de cœur' : personalScore >= 6 ? 'une bonne impression' : personalScore >= 4 ? 'un avis mitigé' : 'peu d\'adhésion';
+  const potWord   = potentialScore >= 8 ? 'fort' : potentialScore >= 6 ? 'réel' : 'limité';
+
+  let parts = [];
+  parts.push(`Tu gardes ${scoreWord} de ce titre — ${personalScore}/10 — avec un potentiel commercial que tu juges ${potWord} (${potentialScore}/10).`);
+
+  if (emotions.length) {
+    const last = emotions[emotions.length - 1];
+    const rest = emotions.slice(0, -1);
+    const emStr = rest.length ? rest.join(', ') + ' et ' + last : last;
+    parts.push(`À l'écoute, ce morceau t'a principalement évoqué ${emStr}.`);
+  }
+
+  transcript.forEach((t, i) => {
+    if (t.a && t.a.trim().length > 4) {
+      const a = t.a.trim();
+      const lower = a.charAt(0).toLowerCase() + a.slice(1);
+      const dot = a.endsWith('.') ? '' : '.';
+      if (i === 0) parts.push(`Ce qui t'a d'abord frappé : ${lower}${dot}`);
+      else if (i === 1) parts.push(`Sur la mémorabilité et les paroles : ${lower}${dot}`);
+      else if (i === 2) parts.push(`Concernant la production et la voix : ${lower}${dot}`);
+      else if (i === 3) parts.push(`En termes de références et style perçu : ${lower}${dot}`);
+    }
+  });
+
+  if (actions.length) {
+    const unique = [...new Set(actions)];
+    parts.push(`Ce titre t'inciterait à : ${unique.join(', ')}.`);
+  }
+
+  return parts.join(' ');
+}
+
+function showSynthesis() {
+  document.getElementById('syn-score').textContent = personalScore + '/10';
+  document.getElementById('syn-pot').textContent   = potentialScore + '/10';
+  document.getElementById('syn-narrative').textContent = buildNarrative();
+  document.getElementById('correction-field').style.display = 'none';
+  if (document.getElementById('correction-input')) document.getElementById('correction-input').value = '';
+  showScreen('screen-synthesis');
+}
+
+function toggleCorrection() {
+  const field = document.getElementById('correction-field');
+  field.style.display = field.style.display === 'none' ? 'block' : 'none';
+  if (field.style.display === 'block') document.getElementById('correction-input').focus();
+}
+
+async function confirmSend() {
   showScreen('screen-end');
+  const correction = document.getElementById('correction-input')?.value.trim() || '';
+  await submitAll(correction);
+}
+
+async function submitAll(correction = '') {
   const record = {
     id: 'R' + Date.now(),
     studyId,
@@ -710,6 +715,8 @@ async function submitAll() {
     potentialScore,
     emotions: selectedEmotions,
     transcript,
+    narrative: document.getElementById('syn-narrative')?.textContent || '',
+    correction,
     sig: {
       age: sigData['sig-age'] || null,
       gender: sigData['sig-gender'] || null,
@@ -721,18 +728,16 @@ async function submitAll() {
   const statusEl = document.getElementById('save-status');
   statusEl.textContent = 'Sauvegarde…';
   try {
-    // Increment counter
     let count = 0;
     try { const cd = await window.storage.get('count:'+studyId, true); count = cd ? parseInt(cd.value) : 0; } catch(e){}
     await window.storage.set('count:'+studyId, String(count+1), true);
-    // Save responses
     let responses = [];
     try { const rd = await window.storage.get('responses:'+studyId, true); if(rd) responses = JSON.parse(rd.value); } catch(e){}
     responses.push(record);
     await window.storage.set('responses:'+studyId, JSON.stringify(responses), true);
     statusEl.textContent = `✓ Avis #${count+1} enregistré. Merci !`;
   } catch(err) {
-    statusEl.textContent = 'Avis envoyé. Merci pour ton temps !';
+    statusEl.textContent = 'Merci pour ton temps !';
   }
 }
 </script>
