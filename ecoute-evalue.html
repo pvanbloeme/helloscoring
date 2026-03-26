@@ -539,7 +539,7 @@ function selectScore(val, type) {
 }
 
 // ═══ EMOTIONS ═══
-const EMOTIONS = ['😊 Joie','🌊 Nostalgie','⚡ Énergie','🌧 Mélancolie','😢 Tristesse','😐 Indifférence','🔥 Excitation','🤔 Curiosité','💙 Sérénité'];
+const EMOTIONS = ['⚡ Énergie','🌟 Euphorie','🎵 Groove','✨ Frisson','☁️ Légèreté','🌊 Nostalgie','🌧 Mélancolie','🕯 Intimité','😶 Détachement'];
 function buildEmotions() {
   const c = document.getElementById('emotions-grid');
   EMOTIONS.forEach(e => {
@@ -574,17 +574,22 @@ TES OBJECTIFS en ${MAX_QUESTIONS} questions max (5-7 min au total) :
 2. Mémorabilité (hook, phrase qui reste en tête)
 3. Texte/paroles + voix/interprétation (regroupe si possible)
 4. Production & son
-5. Originalité / différenciation (ressemble à quoi ?)
+5. Style perçu, références et univers évoqués (artistes, époques, comparaisons)
 6. Adéquation genre/image artiste + intention d'action (partager, playlist, concert ?)
 
 RÈGLES STRICTES :
 - Questions courtes, directes, ouvertes. Une seule à la fois.
 - Adapte-toi aux réponses : creuse ce qui est intéressant, passe vite sur ce qui est neutre.
-- Si note perso et potentiel divergent fortement : interroge cet écart (ex: "Tu lui donnes 5/10 mais un fort potentiel — pourquoi cette différence ?")
-- Si l'auditeur part hors sujet, pose une question sur un autre sujet ou tente de te parler à toi : recadre DOUCEMENT avec une phrase comme "Je note ! Revenons au titre — ..." puis reprends.
+- Si note perso et potentiel divergent fortement : interroge cet écart.
+- Si l'auditeur part hors sujet ou te pose des questions : recadre DOUCEMENT ("Je note ! Revenons au titre — ...").
+
+RELANCES INTELLIGENTES :
+- Si une réponse est trop courte (moins de 5 mots), vague ou ne dit rien d'utile pour l'artiste : relance avec une question plus précise AVANT de passer à la suivante. Ex: "Tu peux développer un peu ? Qu'est-ce qui te fait dire ça ?"
+- Si une réponse est monosyllabique ou évasive une deuxième fois : accepte-la et passe à la suite sans insister.
+- DÉTECTE la frustration ou l'impatience (réponses très courtes répétées, "j'sais pas", "peu importe", "next", "..." etc.) : dans ce cas, raccourcis l'interview, regroupe les questions restantes en une seule, et conclus rapidement.
+- Ne relance JAMAIS deux fois sur la même question.
 - Jamais de questions fermées (oui/non).
-- Quand les ${MAX_QUESTIONS} questions sont posées et répondues : réponds uniquement [FIN]
-- Timing : sois concis, l'interview doit tenir en 5-7 minutes.`;
+- Quand les ${MAX_QUESTIONS} questions sont posées et répondues : réponds uniquement [FIN].`;
 }
 
 async function askNext(lastAnswer) {
@@ -597,12 +602,35 @@ async function askNext(lastAnswer) {
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':cfg.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:300, system: buildSystemPrompt(), messages })
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':cfg.apiKey,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:400, system: buildSystemPrompt(), messages })
     });
     const data = await res.json();
-    const reply = data.content?.[0]?.text || '';
+
+    // Detect API-level errors (invalid key, quota, etc.)
+    if (data.error) {
+      setThinking(false);
+      document.getElementById('q-text').textContent = '⚠️ Erreur API : ' + (data.error.message || JSON.stringify(data.error));
+      document.getElementById('answer-zone').innerHTML = '';
+      return;
+    }
+
+    const reply = (data.content?.[0]?.text || '').trim();
+
+    if (!reply) {
+      setThinking(false);
+      document.getElementById('q-text').textContent = '⚠️ Réponse vide de l\'API. Réessaie.';
+      document.getElementById('btn-send').disabled = false;
+      return;
+    }
+
     conversation.push({ role:'assistant', content: reply });
+
     if (reply.includes('[FIN]') || qCount >= MAX_QUESTIONS) {
       setThinking(false); showScreen('screen-potential'); return;
     }
@@ -613,7 +641,8 @@ async function askNext(lastAnswer) {
     setThinking(false);
   } catch(err) {
     setThinking(false);
-    document.getElementById('q-text').textContent = '⚠️ Erreur de connexion. Vérifie ta connexion.';
+    document.getElementById('q-text').textContent = '⚠️ Erreur : ' + err.message + ' — Vérifie ta clé API et recharge la page.';
+    document.getElementById('answer-zone').innerHTML = '';
   }
 }
 
