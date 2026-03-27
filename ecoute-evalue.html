@@ -29,12 +29,21 @@
   .hint{font-size:0.74rem;color:var(--muted);margin-top:0.4rem;}
   .btn-primary{width:100%;padding:1rem;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:0.1em;color:var(--bg);background:var(--accent);border:none;border-radius:10px;cursor:pointer;transition:all 0.2s;margin-top:0.5rem;}
   .btn-primary:hover{background:#81d4fa;transform:translateY(-1px);}
-  .btn-primary:disabled{background:var(--border);color:var(--muted);cursor:not-allowed;transform:none;opacity:0.4;}
+  .btn-primary:disabled{background:var(--border);color:var(--muted);cursor:not-allowed;transform:none;opacity:0.5;}
+
+  /* ECHO BUBBLE */
+  .echo-wrap{display:flex;align-items:flex-start;gap:0.9rem;margin-bottom:1.6rem;}
+  .echo-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#4fc3f7,#0288d1);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:0.9rem;color:white;flex-shrink:0;margin-top:2px;}
+  .echo-bubble{background:var(--surface);border:1px solid var(--border);border-radius:0 12px 12px 12px;padding:1rem 1.2rem;flex:1;}
+  .echo-name{font-size:0.7rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:0.5rem;}
+  .echo-text{font-size:0.95rem;line-height:1.65;font-weight:300;color:var(--text);}
+  .echo-text.typing::after{content:'▋';animation:blink 0.7s step-end infinite;color:var(--accent);}
+  @keyframes blink{50%{opacity:0}}
 
   /* STEP HEADER */
   .step-eyebrow{font-size:0.7rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:0.6rem;}
   .step-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.4rem);line-height:1.05;margin-bottom:0.5rem;}
-  .step-sub{font-size:0.88rem;color:var(--muted2);font-weight:300;line-height:1.5;margin-bottom:1.6rem;}
+  .step-sub{font-size:0.88rem;color:var(--muted2);font-weight:300;line-height:1.6;margin-bottom:1.6rem;}
 
   /* PILLS */
   .pill-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.4rem;}
@@ -48,36 +57,32 @@
   .score-val{font-family:'Bebas Neue',sans-serif;font-size:5rem;line-height:1;color:var(--accent);transition:all 0.2s;}
   .score-val.empty{color:var(--border);}
   .score-label{font-size:0.78rem;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-top:0.3rem;}
-  .score-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-bottom:1.6rem;}
+  .score-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-bottom:1.4rem;}
   .score-btn{aspect-ratio:1;border-radius:9px;background:var(--surface);border:1.5px solid var(--border);font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--muted);cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;}
   .score-btn:hover{border-color:var(--accent);color:var(--accent);}
   .score-btn.selected{background:var(--accent)!important;border-color:var(--accent)!important;color:var(--bg)!important;box-shadow:0 4px 16px rgba(79,195,247,0.3);}
   .score-btn.selected-gold{background:var(--gold)!important;border-color:var(--gold)!important;color:var(--bg)!important;box-shadow:0 4px 16px rgba(255,209,102,0.3);}
 
-  /* INTERVIEW */
-  .interview-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.8rem;padding-bottom:1rem;border-bottom:1px solid var(--border);}
-  .progress-wrap{flex:1;}
-  .progress-label{font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.4rem;}
-  .progress-bg{height:2px;background:var(--border);border-radius:99px;width:200px;}
-  .progress-fill{height:100%;background:var(--accent);border-radius:99px;transition:width 0.5s ease;width:0%;}
-  .q-label{font-size:0.7rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;}
-  .q-label::after{content:'';flex:1;height:1px;background:rgba(79,195,247,0.2);}
-  .q-text{font-size:clamp(1.05rem,3vw,1.2rem);line-height:1.55;font-weight:300;min-height:50px;margin-bottom:1.2rem;}
-  .q-text.typing::after{content:'▋';animation:blink 0.7s step-end infinite;color:var(--accent);}
-  @keyframes blink{50%{opacity:0}}
-  .thinking{display:flex;align-items:center;gap:0.5rem;color:var(--muted2);font-size:0.82rem;font-style:italic;min-height:22px;margin-bottom:0.5rem;}
+  /* THINKING */
+  .thinking{display:flex;align-items:center;gap:0.5rem;color:var(--muted2);font-size:0.82rem;font-style:italic;min-height:22px;margin-bottom:0.8rem;}
   .dot-pulse{display:flex;gap:3px;}
   .dot-pulse span{width:4px;height:4px;border-radius:50%;background:var(--accent);animation:pulse 1.2s ease-in-out infinite;}
   .dot-pulse span:nth-child(2){animation-delay:0.2s}.dot-pulse span:nth-child(3){animation-delay:0.4s}
   @keyframes pulse{0%,80%,100%{transform:scale(0.6);opacity:0.3}40%{transform:scale(1);opacity:1}}
+
+  /* INTERVIEW */
+  .interview-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.6rem;padding-bottom:1rem;border-bottom:1px solid var(--border);}
+  .progress-wrap{flex:1;}
+  .progress-label{font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.4rem;}
+  .progress-bg{height:2px;background:var(--border);border-radius:99px;width:200px;}
+  .progress-fill{height:100%;background:var(--accent);border-radius:99px;transition:width 0.5s ease;width:0%;}
   .btn-send{display:flex;align-items:center;gap:0.5rem;padding:0.8rem 1.5rem;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.08em;color:var(--bg);background:var(--accent);border:none;border-radius:8px;cursor:pointer;transition:all 0.2s;margin-left:auto;margin-top:0.8rem;}
   .btn-send:hover{background:#81d4fa;}
   .btn-send:disabled{background:var(--border);color:var(--muted);cursor:not-allowed;}
 
   /* MODULE */
-  .module-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.4rem;margin-bottom:1.2rem;text-align:center;}
-  .module-box p{font-size:0.92rem;color:var(--muted2);font-weight:300;line-height:1.6;margin-bottom:1rem;}
-  .btn-row{display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap;}
+  .module-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.4rem;margin-bottom:1.2rem;}
+  .btn-row{display:flex;gap:0.8rem;flex-wrap:wrap;}
   .btn-yes{padding:0.75rem 1.6rem;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.08em;color:var(--bg);background:var(--green);border:none;border-radius:8px;cursor:pointer;transition:all 0.2s;}
   .btn-yes:hover{background:#51c96a;}
   .btn-no{padding:0.75rem 1.4rem;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.08em;color:var(--muted2);background:transparent;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:all 0.2s;}
@@ -107,6 +112,7 @@
   /* CLOSED */
   .closed-wrap{text-align:center;padding:4rem 0;}
   .closed-wrap h2{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--red);margin-bottom:1rem;}
+  .closed-wrap p{color:var(--muted2);font-weight:300;line-height:1.6;}
 
   .skip-link{display:block;text-align:center;margin-top:0.8rem;font-size:0.82rem;color:var(--muted);cursor:pointer;background:none;border:none;width:100%;text-decoration:underline;}
   .skip-link:hover{color:var(--muted2);}
@@ -120,7 +126,7 @@
 <div id="screen-setup" class="screen active">
   <div class="eyebrow">Outil de feedback musical</div>
   <div class="big-title">ÉCOUTE<br>&amp; <span>ÉVALUE</span></div>
-  <p class="sub">Configure ton titre. Les auditeurs vivront une expérience d'évaluation guidée par l'IA.</p>
+  <p class="sub">Configure ton titre. Les auditeurs vivront une expérience d'évaluation guidée par Écho, notre agent IA.</p>
   <div class="card">
     <div class="field-group">
       <label class="field-label">Clé API Anthropic</label>
@@ -144,7 +150,7 @@
       <input type="text" id="setup-genre" placeholder="ex. Pop urbaine / Électro">
     </div>
     <div class="field-group">
-      <label class="field-label">Contexte optionnel pour l'IA</label>
+      <label class="field-label">Contexte optionnel pour Écho</label>
       <textarea id="setup-context" rows="2" placeholder="ex. Premier single, cible 25-35 ans…"></textarea>
     </div>
     <button class="btn-primary" onclick="generateLink()">Générer le lien →</button>
@@ -167,22 +173,28 @@
   </div>
 </div>
 
-<!-- INTRO -->
+<!-- INTRO ECHO -->
 <div id="screen-intro" class="screen">
   <div class="step-eyebrow">Feedback musical</div>
   <div class="step-title" id="intro-artist">—</div>
-  <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.4rem;margin-bottom:1.5rem;text-align:center;">
-    <div style="font-size:2rem;margin-bottom:0.6rem;">🎧</div>
-    <p style="font-size:0.92rem;color:var(--muted2);font-weight:300;line-height:1.6;">Écoute attentivement <strong style="color:var(--text);" id="intro-track">—</strong> avant de continuer.<br>Ton avis sera anonyme et transmis directement à l'artiste.</p>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.2rem 1.4rem;margin-bottom:1.4rem;text-align:center;">
+    <p style="font-size:0.88rem;color:var(--muted2);font-weight:300;line-height:1.6;">Écoute attentivement <strong style="color:var(--text);" id="intro-track">—</strong> avant de continuer.<br>Ton avis sera anonyme et transmis directement à l'artiste.</p>
   </div>
-  <button class="btn-primary" onclick="showScreen('screen-sig')">J'ai écouté, je donne mon avis →</button>
+  <div class="echo-wrap">
+    <div class="echo-avatar">É</div>
+    <div class="echo-bubble">
+      <div class="echo-name">Écho</div>
+      <div class="echo-text" id="echo-intro-text"></div>
+    </div>
+  </div>
+  <button class="btn-primary" id="btn-intro-next" onclick="showScreen('screen-sig')" style="opacity:0.4;" disabled>Commencer →</button>
 </div>
 
 <!-- SIGNALÉTIQUES -->
 <div id="screen-sig" class="screen">
   <div class="step-eyebrow">Avant de commencer</div>
   <div class="step-title">Quelques infos<br>sur toi</div>
-  <div class="step-sub">Pour analyser les résultats par profil. Rapide et anonyme.</div>
+  <div class="step-sub">Ces informations permettent à l'artiste de comprendre qui l'écoute et d'analyser les avis par profil. C'est rapide, anonyme, et tu peux passer si tu préfères.</div>
   <div class="card">
     <div class="field-group">
       <label class="field-label">Tranche d'âge</label>
@@ -215,20 +227,36 @@
 
 <!-- RATING -->
 <div id="screen-rating" class="screen">
-  <div class="step-eyebrow">Étape 1 / 5</div>
+  <div class="step-eyebrow">Étape 1 / 4</div>
   <div class="step-title">Ta note<br>artistique</div>
-  <div class="step-sub">0 = ça m'a vraiment déplu · 10 = j'ai adoré<br>Sois sincère — ton honnêteté aide vraiment l'artiste.</div>
+  <div class="step-sub">0 = ça m'a vraiment déplu · 10 = j'ai adoré<br>Sois sincère — ton honnêteté est ce qui aide vraiment l'artiste.</div>
   <div class="score-hero">
     <div class="score-val empty" id="score-val">—</div>
     <div class="score-label">sur 10</div>
   </div>
   <div class="score-grid" id="score-grid"></div>
-  <button class="btn-primary" id="btn-rating" onclick="goToEmotions()" disabled>Continuer →</button>
+  <button class="btn-primary" id="btn-rating" onclick="goToScoreComment()" disabled>Continuer →</button>
+</div>
+
+<!-- SCORE COMMENT -->
+<div id="screen-score-comment" class="screen">
+  <div class="echo-wrap">
+    <div class="echo-avatar">É</div>
+    <div class="echo-bubble">
+      <div class="echo-name">Écho</div>
+      <div class="echo-text" id="echo-score-text"></div>
+    </div>
+  </div>
+  <div class="thinking" id="score-thinking" style="display:none;">
+    <div class="dot-pulse"><span></span><span></span><span></span></div>
+    Écho réfléchit…
+  </div>
+  <button class="btn-primary" id="btn-score-next" onclick="showScreen('screen-emotions')" style="opacity:0.4;" disabled>Continuer →</button>
 </div>
 
 <!-- EMOTIONS -->
 <div id="screen-emotions" class="screen">
-  <div class="step-eyebrow">Étape 2 / 5</div>
+  <div class="step-eyebrow">Étape 2 / 4</div>
   <div class="step-title">Ce titre t'a<br>fait ressentir…</div>
   <div class="step-sub">Sélectionne une ou plusieurs émotions</div>
   <div class="pill-grid" id="emotion-grid"></div>
@@ -242,13 +270,18 @@
       <div class="progress-label">Progression</div>
       <div class="progress-bg"><div class="progress-fill" id="iv-progress"></div></div>
     </div>
-    <div style="font-size:0.72rem;color:var(--muted);font-family:monospace;" id="iv-timer">~5 min</div>
+    <div style="font-size:0.72rem;color:var(--muted);font-family:monospace;">~5 min</div>
   </div>
-  <div class="q-label">Question <span id="q-num">1</span></div>
-  <div class="q-text" id="q-text"></div>
+  <div class="echo-wrap" id="echo-question-wrap">
+    <div class="echo-avatar">É</div>
+    <div class="echo-bubble">
+      <div class="echo-name">Écho — Question <span id="q-num">1</span></div>
+      <div class="echo-text" id="q-text"></div>
+    </div>
+  </div>
   <div class="thinking" id="thinking" style="display:none;">
     <div class="dot-pulse"><span></span><span></span><span></span></div>
-    L'agent réfléchit…
+    Écho réfléchit…
   </div>
   <div id="answer-zone"></div>
   <div style="display:flex;justify-content:flex-end;">
@@ -259,15 +292,71 @@
   </div>
 </div>
 
+<!-- ACTIONS -->
+<div id="screen-actions" class="screen">
+  <div class="step-eyebrow">Étape 3 / 4</div>
+  <div class="step-title">Ce titre, tu<br>en ferais quoi ?</div>
+  <div class="step-sub">Plusieurs choix possibles</div>
+  <div class="pill-grid" id="action-grid"></div>
+  <button class="btn-primary" onclick="showScreen('screen-potential')">Continuer →</button>
+</div>
+
+<!-- POTENTIAL -->
+<div id="screen-potential" class="screen">
+  <div class="step-eyebrow">Étape 4 / 4</div>
+  <div class="step-title">Son potentiel<br>commercial ?</div>
+  <div class="step-sub">Indépendamment de tes goûts — ce titre peut-il toucher un large public ?</div>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:0.9rem 1.1rem;margin-bottom:1.2rem;font-size:0.85rem;color:var(--muted2);font-weight:300;">
+    Ta note artistique : <strong style="color:var(--text);" id="perso-recap">—</strong>/10
+  </div>
+  <div class="score-hero">
+    <div class="score-val empty" id="pot-val" style="color:var(--gold);">—</div>
+    <div class="score-label">potentiel / 10</div>
+  </div>
+  <div class="score-grid" id="pot-grid"></div>
+  <button class="btn-primary" id="btn-potential" onclick="goToPotentialComment()" disabled>Continuer →</button>
+</div>
+
+<!-- POTENTIAL COMMENT -->
+<div id="screen-potential-comment" class="screen">
+  <div class="echo-wrap">
+    <div class="echo-avatar">É</div>
+    <div class="echo-bubble">
+      <div class="echo-name">Écho</div>
+      <div class="echo-text" id="echo-pot-text"></div>
+    </div>
+  </div>
+  <div class="thinking" id="pot-thinking" style="display:none;">
+    <div class="dot-pulse"><span></span><span></span><span></span></div>
+    Écho réfléchit…
+  </div>
+  <!-- Si question sur l'écart -->
+  <div id="pot-gap-zone" style="display:none;">
+    <div id="pot-gap-answer-zone"></div>
+    <div style="display:flex;justify-content:flex-end;">
+      <button class="btn-send" id="btn-pot-gap-send" onclick="sendPotGapAnswer()">
+        Envoyer
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+  <button class="btn-primary" id="btn-pot-next" onclick="showScreen('screen-module')" style="display:none;">Continuer →</button>
+</div>
+
 <!-- MODULE OPTIONNEL -->
 <div id="screen-module" class="screen">
-  <div class="step-eyebrow">Module optionnel</div>
-  <div class="step-title">Encore<br>2 minutes ?</div>
+  <div class="echo-wrap">
+    <div class="echo-avatar">É</div>
+    <div class="echo-bubble">
+      <div class="echo-name">Écho</div>
+      <div class="echo-text">Merci, c'est vraiment utile. Est-ce qu'on peut creuser encore deux points ?</div>
+    </div>
+  </div>
   <div class="module-box">
-    <p>Je voudrais approfondir deux points de ton feedback pour donner à l'artiste des éléments encore plus utiles. C'est totalement optionnel et sans jugement.</p>
+    <p style="font-size:0.88rem;color:var(--muted2);font-weight:300;line-height:1.6;margin-bottom:1rem;">C'est totalement optionnel — quelques minutes supplémentaires pour donner à l'artiste des éléments encore plus précis.</p>
     <div class="btn-row">
-      <button class="btn-yes" onclick="startDeepDive()">Oui, j'approfondis !</button>
-      <button class="btn-no" onclick="goToPotential()">Non merci</button>
+      <button class="btn-yes" onclick="startDeepDive()">Oui, on continue</button>
+      <button class="btn-no" onclick="goToEnrichissement()">Non merci</button>
     </div>
   </div>
 </div>
@@ -281,11 +370,16 @@
     </div>
     <div style="font-size:0.72rem;color:var(--muted);">Thème <span id="dd-num">1</span> / 2</div>
   </div>
-  <div class="q-label">Approfondissement</div>
-  <div class="q-text" id="dd-text"></div>
+  <div class="echo-wrap">
+    <div class="echo-avatar">É</div>
+    <div class="echo-bubble">
+      <div class="echo-name">Écho</div>
+      <div class="echo-text" id="dd-text"></div>
+    </div>
+  </div>
   <div class="thinking" id="dd-thinking" style="display:none;">
     <div class="dot-pulse"><span></span><span></span><span></span></div>
-    L'agent réfléchit…
+    Écho réfléchit…
   </div>
   <div id="dd-answer-zone"></div>
   <div style="display:flex;justify-content:flex-end;">
@@ -296,38 +390,30 @@
   </div>
 </div>
 
-<!-- POTENTIAL -->
-<div id="screen-potential" class="screen">
-  <div class="step-eyebrow">Étape 3 / 5</div>
-  <div class="step-title">Son potentiel<br>commercial ?</div>
-  <div class="step-sub">Indépendamment de tes goûts — ce titre peut-il toucher un large public ?</div>
-  <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;margin-bottom:1.4rem;font-size:0.88rem;color:var(--muted2);font-weight:300;">
-    Ta note artistique : <strong style="color:var(--text);" id="perso-recap">—</strong>/10
-  </div>
-  <div class="score-hero">
-    <div class="score-val empty" id="pot-val" style="color:var(--gold);">—</div>
-    <div class="score-label">potentiel / 10</div>
-  </div>
-  <div class="score-grid" id="pot-grid"></div>
-  <div class="step-sub" style="margin-top:0.5rem;margin-bottom:0.8rem;">Ce titre, tu en ferais quoi ?</div>
-  <div class="pill-grid" id="action-grid"></div>
-  <button class="btn-primary" id="btn-potential" onclick="goToEnrichissement()" disabled>Continuer →</button>
-</div>
-
 <!-- ENRICHISSEMENT -->
 <div id="screen-enrichissement" class="screen">
-  <div class="step-eyebrow">Étape 4 / 5</div>
-  <div class="step-title">Un message<br>pour l'artiste ?</div>
-  <div class="step-sub">Un conseil, un encouragement, quelque chose à lui dire directement. Optionnel — écris ce que tu veux ou laisse vide.</div>
-  <textarea id="final-message" rows="4" placeholder="Ton message à l'artiste…" style="margin-bottom:1rem;min-height:110px;resize:vertical;"></textarea>
+  <div class="echo-wrap">
+    <div class="echo-avatar">É</div>
+    <div class="echo-bubble">
+      <div class="echo-name">Écho</div>
+      <div class="echo-text">Y a-t-il un dernier message ou conseil que tu aimerais transmettre directement à l'artiste ?</div>
+    </div>
+  </div>
+  <textarea id="final-message" rows="4" placeholder="Ton message… (optionnel)" style="width:100%;min-height:100px;resize:vertical;margin-bottom:1rem;font-family:'DM Sans',sans-serif;font-size:0.92rem;font-weight:300;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.7rem 1rem;outline:none;transition:border-color 0.2s;"></textarea>
   <button class="btn-primary" onclick="goToSynthesis()">Continuer →</button>
 </div>
 
 <!-- SYNTHESIS -->
 <div id="screen-synthesis" class="screen">
-  <div class="step-eyebrow">Étape 5 / 5</div>
+  <div class="step-eyebrow">Récapitulatif</div>
   <div class="step-title">Voilà ce qu'on<br>a retenu</div>
-  <p style="font-size:0.88rem;color:var(--muted2);font-weight:300;margin-bottom:1.5rem;">Vérifie que ça correspond bien à ce que tu voulais dire. Tu peux corriger ou compléter avant d'envoyer.</p>
+  <div class="echo-wrap" style="margin-bottom:1.2rem;">
+    <div class="echo-avatar">É</div>
+    <div class="echo-bubble">
+      <div class="echo-name">Écho</div>
+      <div class="echo-text">Vérifie que ce résumé reflète bien ton ressenti. Tu peux corriger ou compléter avant d'envoyer.</div>
+    </div>
+  </div>
   <div class="scores-pair">
     <div class="score-badge">
       <div class="score-badge-val" style="color:var(--accent);" id="syn-score">—</div>
@@ -344,7 +430,7 @@
   </div>
   <button class="btn-ghost" onclick="toggleCorrection()">✏️ &nbsp;Corriger ou ajouter quelque chose</button>
   <div id="correction-field" style="display:none;margin-bottom:1rem;">
-    <textarea id="correction-input" rows="3" placeholder="Quelque chose à préciser ou corriger…" style="min-height:90px;"></textarea>
+    <textarea id="correction-input" rows="3" placeholder="Quelque chose à préciser ou corriger…" style="width:100%;min-height:90px;resize:vertical;font-family:'DM Sans',sans-serif;font-size:0.92rem;font-weight:300;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.7rem 1rem;outline:none;transition:border-color 0.2s;"></textarea>
   </div>
   <button class="btn-gold" onclick="confirmSend()">Confirmer et envoyer →</button>
 </div>
@@ -354,24 +440,35 @@
   <div class="end-center">
     <div class="end-icon">✅</div>
     <div class="end-title">C'est envoyé !</div>
-    <p class="end-sub">Ton feedback complet a bien été transmis à l'artiste, de façon anonyme. Merci pour ton honnêteté — c'est ce qui aide vraiment.</p>
+    <div class="echo-wrap" style="margin-bottom:1.5rem;text-align:left;">
+      <div class="echo-avatar">É</div>
+      <div class="echo-bubble">
+        <div class="echo-name">Écho</div>
+        <div class="echo-text" id="echo-end-text">Merci pour ton temps et ton honnêteté. Ton avis a été transmis à l'artiste de façon anonyme — c'est exactement ce dont il a besoin pour progresser.</div>
+      </div>
+    </div>
     <div class="save-status" id="save-status"></div>
   </div>
 </div>
 
 </div>
 <script>
+// ══════════════════════════════
 // STATE
+// ══════════════════════════════
 let cfg = { apiKey:'', studyId:'', artist:'', track:'', genre:'', context:'' };
 let personalScore = -1, potentialScore = -1;
 let selectedEmotions = [], selectedActions = [];
 let conversation = [], transcript = [], qCount = 0;
 let ddConversation = [], ddTranscript = [], ddCount = 0;
+let potGapAnswer = '';
 let sigData = {};
-const MAX_Q = 7;
+const MAX_Q = 6;
 const MAX_RESPONDENTS = 300;
 
+// ══════════════════════════════
 // SETUP
+// ══════════════════════════════
 function generateLink() {
   const apiKey = document.getElementById('setup-apikey').value.trim();
   const sid    = document.getElementById('setup-sid').value.trim().replace(/\s+/g,'-');
@@ -379,45 +476,53 @@ function generateLink() {
   const track  = document.getElementById('setup-track').value.trim();
   const genre  = document.getElementById('setup-genre').value.trim();
   const ctx    = document.getElementById('setup-context').value.trim();
-  if (!apiKey || !artist || !track || !sid) { alert('Clé API, identifiant, artiste et titre sont requis.'); return; }
+  if (!apiKey||!artist||!track||!sid) { alert('Clé API, identifiant, artiste et titre sont requis.'); return; }
   const params = new URLSearchParams({ k:btoa(apiKey), s:sid, a:encodeURIComponent(artist), t:encodeURIComponent(track), g:encodeURIComponent(genre), c:encodeURIComponent(ctx) });
-  const url = window.location.href.split('?')[0] + '?' + params.toString();
-  document.getElementById('generated-link').value = url;
+  document.getElementById('generated-link').value = window.location.href.split('?')[0] + '?' + params.toString();
   document.getElementById('link-output').style.display = 'block';
 }
 function copyLink() {
   navigator.clipboard.writeText(document.getElementById('generated-link').value).then(() => {
-    const btn = document.getElementById('btn-copy-link');
-    btn.textContent = '✓ Copié !';
-    setTimeout(() => btn.textContent = 'Copier', 2000);
+    const b = document.getElementById('btn-copy-link');
+    b.textContent = '✓ Copié !';
+    setTimeout(()=>b.textContent='Copier',2000);
   });
 }
 
+// ══════════════════════════════
 // INIT
+// ══════════════════════════════
 window.addEventListener('DOMContentLoaded', async () => {
   const p = new URLSearchParams(window.location.search);
   if (!p.has('k')) return;
   cfg.apiKey  = atob(p.get('k'));
-  cfg.studyId = p.get('s') || 'track';
-  cfg.artist  = decodeURIComponent(p.get('a') || '');
-  cfg.track   = decodeURIComponent(p.get('t') || '');
-  cfg.genre   = decodeURIComponent(p.get('g') || '');
-  cfg.context = decodeURIComponent(p.get('c') || '');
+  cfg.studyId = p.get('s')||'track';
+  cfg.artist  = decodeURIComponent(p.get('a')||'');
+  cfg.track   = decodeURIComponent(p.get('t')||'');
+  cfg.genre   = decodeURIComponent(p.get('g')||'');
+  cfg.context = decodeURIComponent(p.get('c')||'');
   try {
     const cd = await window.storage.get('count:'+cfg.studyId, true);
     if (cd && parseInt(cd.value) >= MAX_RESPONDENTS) { showScreen('screen-closed'); return; }
   } catch(e) {}
   document.getElementById('intro-artist').textContent = cfg.artist;
-  document.getElementById('intro-track').textContent = '"' + cfg.track + '"';
+  document.getElementById('intro-track').textContent  = '"' + cfg.track + '"';
+  document.getElementById('perso-recap').textContent  = '—';
   buildSignaletics();
-  buildScoreGrid('score-grid', 'score-val', false);
-  buildScoreGrid('pot-grid', 'pot-val', true);
+  buildScoreGrid('score-grid','score-val',false);
+  buildScoreGrid('pot-grid','pot-val',true);
   buildEmotions();
   buildActions();
   showScreen('screen-intro');
+  typeEchoText('echo-intro-text', `Bonjour ! Je m'appelle Écho. Ma mission est de recueillir ton avis sur "${cfg.track}" de ${cfg.artist} et de le transmettre directement à l'artiste. Pas de bonne ou mauvaise réponse — ton ressenti honnête est ce qui compte vraiment.`, () => {
+    document.getElementById('btn-intro-next').disabled = false;
+    document.getElementById('btn-intro-next').style.opacity = '1';
+  });
 });
 
+// ══════════════════════════════
 // SCREENS
+// ══════════════════════════════
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById(id);
@@ -425,14 +530,16 @@ function showScreen(id) {
   window.scrollTo(0,0);
 }
 
+// ══════════════════════════════
 // SIGNALETICS
+// ══════════════════════════════
 function buildSignaletics() {
   buildRadio('sig-age', ['< 18','18–24','25–34','35–44','45–54','55+']);
   buildRadio('sig-gender', ['Homme','Femme','Non-binaire','Autre']);
   buildRadio('sig-relation', ['Je le/la découvre','Je connais un peu','J\'aime globalement','Je suis fan'], val => {
-    const knows = !val.includes('découvre');
-    document.getElementById('sig-since-wrap').style.display = knows ? 'block' : 'none';
-    document.getElementById('sig-habits-wrap').style.display = knows ? 'block' : 'none';
+    const k = !val.includes('découvre');
+    document.getElementById('sig-since-wrap').style.display = k?'block':'none';
+    document.getElementById('sig-habits-wrap').style.display = k?'block':'none';
   });
   buildRadio('sig-since', ['Moins de 6 mois','6 mois – 2 ans','Plus de 2 ans']);
   buildRadio('sig-habits', ['J\'écoute presque tout','Plusieurs morceaux','Quelques titres seulement']);
@@ -441,170 +548,216 @@ function buildRadio(id, opts, onChange) {
   const c = document.getElementById(id);
   opts.forEach(o => {
     const b = document.createElement('button');
-    b.className = 'pill'; b.textContent = o;
-    b.onclick = () => {
-      c.querySelectorAll('.pill').forEach(x => { x.classList.remove('selected'); x.classList.remove('selected-gold'); });
+    b.className='pill'; b.textContent=o;
+    b.onclick=()=>{
+      c.querySelectorAll('.pill').forEach(x=>{x.classList.remove('selected','selected-gold');});
       b.classList.add('selected');
-      sigData[id] = o;
-      if (onChange) onChange(o);
+      sigData[id]=o;
+      if(onChange) onChange(o);
     };
     c.appendChild(b);
   });
 }
 
+// ══════════════════════════════
 // SCORE GRIDS
+// ══════════════════════════════
 function buildScoreGrid(gridId, dispId, isGold) {
   const g = document.getElementById(gridId);
-  for (let i = 0; i <= 10; i++) {
+  for (let i=0; i<=10; i++) {
     const b = document.createElement('button');
-    b.className = 'score-btn'; b.textContent = i;
-    b.onclick = () => {
-      g.querySelectorAll('.score-btn').forEach(x => { x.classList.remove('selected','selected-gold'); });
-      b.classList.add(isGold ? 'selected-gold' : 'selected');
+    b.className='score-btn'; b.textContent=i;
+    b.onclick=()=>{
+      g.querySelectorAll('.score-btn').forEach(x=>{x.classList.remove('selected','selected-gold');});
+      b.classList.add(isGold?'selected-gold':'selected');
       const el = document.getElementById(dispId);
-      el.textContent = i + '/10'; el.classList.remove('empty');
+      el.textContent=i+'/10'; el.classList.remove('empty');
       if (!isGold) {
-        personalScore = i;
-        const btn = document.getElementById('btn-rating');
-        btn.disabled = false; btn.style.opacity = '1';
-        document.getElementById('perso-recap').textContent = i;
+        personalScore=i;
+        const btn=document.getElementById('btn-rating');
+        btn.disabled=false; btn.style.opacity='1';
+        document.getElementById('perso-recap').textContent=i;
       } else {
-        potentialScore = i;
-        const btn = document.getElementById('btn-potential');
-        btn.disabled = false; btn.style.opacity = '1';
+        potentialScore=i;
+        const btn=document.getElementById('btn-potential');
+        btn.disabled=false; btn.style.opacity='1';
       }
     };
     g.appendChild(b);
   }
 }
 
-// EMOTIONS
-const EMOTIONS = ['⚡ Énergie','🌟 Euphorie','🎵 Groove','✨ Frisson','☁️ Légèreté','🌊 Nostalgie','🌧 Mélancolie','🕯 Intimité','😶 Détachement'];
-function buildEmotions() {
-  document.getElementById('emotion-grid').innerHTML = '';
-  EMOTIONS.forEach(e => {
-    const b = document.createElement('button');
-    b.className = 'pill'; b.textContent = e;
-    b.onclick = () => {
-      b.classList.toggle('selected');
-      const i = selectedEmotions.indexOf(e);
-      if (i > -1) selectedEmotions.splice(i,1); else selectedEmotions.push(e);
-    };
-    document.getElementById('emotion-grid').appendChild(b);
-  });
-}
-function goToEmotions() { showScreen('screen-emotions'); }
-
-// ACTIONS
-const ACTIONS = ['Je le partagerais','Je l\'ajouterais en playlist','Je le mettrais en fond','J\'irais le voir en concert','Je ne ferais rien de particulier'];
-function buildActions() {
-  document.getElementById('action-grid').innerHTML = '';
-  ACTIONS.forEach(a => {
-    const b = document.createElement('button');
-    b.className = 'pill'; b.textContent = a;
-    b.onclick = () => {
-      b.classList.toggle('selected-gold');
-      const i = selectedActions.indexOf(a);
-      if (i > -1) selectedActions.splice(i,1); else selectedActions.push(a);
-    };
-    document.getElementById('action-grid').appendChild(b);
-  });
-}
-
-// SYSTEM PROMPT
-function buildSystemPrompt(isDD) {
-  const lowScore = personalScore <= 5;
-  const emotions = selectedEmotions.join(', ') || 'non précisées';
-  const sigProfile = Object.values(sigData).filter(Boolean).join(', ') || 'non renseigné';
-
-  if (isDD) {
-    return `Tu conduis un approfondissement qualitatif sur deux thèmes issus de l'entretien sur "${cfg.track}" par ${cfg.artist}.
-
-DONNÉES DE L'ENTRETIEN :
-Note artistique : ${personalScore}/10
-Émotions : ${emotions}
-Transcription : ${transcript.map((t,i)=>`Q${i+1}: ${t.q} — R: ${t.a}`).join(' | ')}
-
-MISSION :
-Identifie les 2 thèmes les plus saillants ou insuffisamment explorés parmi : mélodie, voix/interprétation, paroles, production, style/cohérence artistique, émotion/vibe, potentiel, public cible, point fort, point faible.
-
-RÈGLES :
-- 1 question principale par thème.
-- Maximum 2 relances par thème si la réponse apporte vraiment quelque chose.
-- Ne pas dépasser 2 thèmes au total.
-- Ton naturel, exploratoire, chaleureux.
-- Quand les 2 thèmes sont épuisés, réponds uniquement : [FIN_DD]`;
-  }
-
-  return `Tu conduis un entretien qualitatif sur le titre "${cfg.track}" par ${cfg.artist} (genre : ${cfg.genre}).
-${cfg.context ? 'Contexte artiste : ' + cfg.context : ''}
-
-DONNÉES COLLECTÉES EN AMONT — NE PAS REDEMANDER :
-Note artistique du répondant : ${personalScore}/10
-Émotions ressenties : ${emotions}
-Profil signalétique : ${sigProfile}
-
-${lowScore ? `MODE NOTE FAIBLE (${personalScore}/10) :
-Objectif : comprendre clairement ce qui n'a pas fonctionné et identifier 1-2 axes d'amélioration prioritaires. Ne pas chercher à projeter un potentiel non perçu.
-Questions autorisées : éléments problématiques (mélodie, voix, paroles, production, style), émotions négatives ou absentes, axes d'amélioration.
-Questions à éviter : recommandation, écoute future, références artistiques positives.
-Ne pas insister si la réponse est courte ou abrupte. Maximum 1 question par thème.` : `THÈMES À EXPLORER en ${MAX_Q} questions max :
-1. Premières impressions globales
-2. Éléments musicaux marquants (mélodie, voix/flow, paroles, production)
-3. Émotion principale et pourquoi
-4. Mémorabilité (une phrase, un son, un moment qui reste)
-5. Références artistiques (ça ressemble à quoi, ça évoque quel univers ?)
-6. Correspondance avec l'image habituelle de l'artiste (si connu)
-7. Ce qui pourrait être amélioré`}
-
-RÈGLES DE MODÉRATION — STRICTEMENT OBLIGATOIRES :
-- Une seule question par message. Jamais de liste. Jamais de numérotation.
-- Une seule idée par message.
-- Relance uniquement si la réponse est trop courte (moins de 2 phrases), vague ou inexploitable.
-- Une seule relance par question, sur le même axe uniquement.
-- Ne jamais relancer un sujet déjà traité.
-- Ne jamais poser une question à laquelle le répondant a déjà répondu — vérifier la transcription avant chaque question.
-- Ton chaleureux, simple, naturel. Jamais jargonneux.
-- Si le répondant digresse ou pose une question hors sujet : répondre "Je comprends ta question, mais mon rôle est uniquement de recueillir ton retour sur ce morceau pour le transmettre à l'artiste." Puis reprendre l'entretien.
-- Si le répondant semble pressé ou impatient (réponses très courtes répétées, "j'sais pas", "next", "peu importe") : regrouper les questions restantes en une seule synthétique et conclure.
-- Quand les ${MAX_Q} questions sont posées et répondues : répondre uniquement [FIN]`;
-}
-
-// INTERVIEW
-async function startInterview() { await askNext(null); }
-
-async function askNext(lastAnswer) {
-  setThinking(true, 'thinking', 'btn-send');
-  if (lastAnswer !== null) conversation.push({ role:'user', content: lastAnswer });
-  const isFirst = qCount === 0;
-  const userMsg = isFirst
-    ? 'Commence l\'entretien avec la première question.'
-    : `Voici la réponse. Pose la question suivante (${qCount+1}/${MAX_Q}). Si toutes les questions sont faites, réponds uniquement [FIN].`;
-  const messages = [...conversation, { role:'user', content: userMsg }];
+// ══════════════════════════════
+// SCORE COMMENT
+// ══════════════════════════════
+async function goToScoreComment() {
+  showScreen('screen-score-comment');
+  document.getElementById('score-thinking').style.display='flex';
+  document.getElementById('btn-score-next').style.opacity='0.4';
+  document.getElementById('btn-score-next').disabled=true;
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':cfg.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:400, system: buildSystemPrompt(false), messages })
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514', max_tokens:120,
+        messages:[{ role:'user', content: buildScoreCommentPrompt() }]
+      })
     });
     const data = await res.json();
-    if (data.error) { showApiError(data.error.message, 'q-text', 'answer-zone', 'btn-send', 'thinking'); return; }
-    const reply = (data.content?.[0]?.text || '').trim();
-    if (!reply) { showApiError('Réponse vide. Réessaie.', 'q-text', 'answer-zone', 'btn-send', 'thinking'); return; }
-    conversation.push({ role:'assistant', content: reply });
-    if (reply.includes('[FIN]') || qCount >= MAX_Q) {
-      setThinking(false, 'thinking', 'btn-send');
-      showScreen('screen-module');
+    const reply = (data.content?.[0]?.text||'').trim();
+    document.getElementById('score-thinking').style.display='none';
+    typeEchoText('echo-score-text', reply || getScoreCommentFallback(), () => {
+      document.getElementById('btn-score-next').disabled=false;
+      document.getElementById('btn-score-next').style.opacity='1';
+    });
+  } catch(e) {
+    document.getElementById('score-thinking').style.display='none';
+    typeEchoText('echo-score-text', getScoreCommentFallback(), () => {
+      document.getElementById('btn-score-next').disabled=false;
+      document.getElementById('btn-score-next').style.opacity='1';
+    });
+  }
+}
+
+function buildScoreCommentPrompt() {
+  return `Tu es Écho, un agent d'évaluation musicale chaleureux et naturel. Un répondant vient de donner la note ${personalScore}/10 au titre "${cfg.track}" de ${cfg.artist}. Génère UNE seule phrase de réaction courte et naturelle (20 mots max) adaptée à ce niveau de note, sans jugement, sans être condescendant. Puis enchaîne avec une courte phrase de transition vers les questions sur les émotions. Ton total : 2 phrases max.`;
+}
+
+function getScoreCommentFallback() {
+  if (personalScore >= 8) return `${personalScore}/10, c'est un beau signal ! Dis-moi ce que tu as ressenti en écoutant.`;
+  if (personalScore >= 6) return `${personalScore}/10 — intéressant. Voyons ce qui t'a touché ou moins convaincu.`;
+  if (personalScore >= 4) return `${personalScore}/10, c'est noté. Dis-moi ce qui a fonctionné ou non pour toi.`;
+  return `${personalScore}/10 — tu as été direct, c'est exactement ce qu'il faut. Dis-moi ce qui t'a bloqué.`;
+}
+
+// ══════════════════════════════
+// EMOTIONS
+// ══════════════════════════════
+const EMOTIONS = ['⚡ Énergie','🌟 Euphorie','🎵 Groove','✨ Frisson','☁️ Légèreté','🌊 Nostalgie','🌧 Mélancolie','🕯 Intimité','😶 Détachement'];
+function buildEmotions() {
+  const c = document.getElementById('emotion-grid');
+  EMOTIONS.forEach(e => {
+    const b = document.createElement('button');
+    b.className='pill'; b.textContent=e;
+    b.onclick=()=>{
+      b.classList.toggle('selected');
+      const i=selectedEmotions.indexOf(e);
+      if(i>-1) selectedEmotions.splice(i,1); else selectedEmotions.push(e);
+    };
+    c.appendChild(b);
+  });
+}
+
+// ══════════════════════════════
+// ACTIONS
+// ══════════════════════════════
+const ACTIONS = ['Je le partagerais','Je l\'ajouterais en playlist','Je le mettrais en fond','J\'irais le voir en concert','Je ne ferais rien de particulier'];
+function buildActions() {
+  const c = document.getElementById('action-grid');
+  ACTIONS.forEach(a => {
+    const b = document.createElement('button');
+    b.className='pill'; b.textContent=a;
+    b.onclick=()=>{
+      b.classList.toggle('selected-gold');
+      const i=selectedActions.indexOf(a);
+      if(i>-1) selectedActions.splice(i,1); else selectedActions.push(a);
+    };
+    c.appendChild(b);
+  });
+}
+
+// ══════════════════════════════
+// SYSTEM PROMPT
+// ══════════════════════════════
+function buildSystemPrompt(mode) {
+  const lowScore = personalScore <= 5;
+  const emotions = selectedEmotions.join(', ')||'non précisées';
+  const sigProfile = Object.values(sigData).filter(Boolean).join(', ')||'non renseigné';
+
+  if (mode === 'deepdive') {
+    return `Tu es Écho, un agent d'évaluation musicale chaleureux et précis. Tu conduis un approfondissement sur deux thèmes issus de l'entretien sur "${cfg.track}" par ${cfg.artist}.
+
+TRANSCRIPTION DE L'ENTRETIEN :
+${transcript.map((t,i)=>`Q${i+1}: ${t.q} — R: ${t.a}`).join('\n')}
+
+MISSION : Identifie les 2 thèmes les plus saillants ou insuffisamment explorés parmi :
+mélodie · voix/interprétation · paroles · production · style · émotion/vibe · potentiel · public cible · point fort · point faible.
+
+RÈGLES :
+- 1 question principale par thème avec possibilité de 2 relances approfondies si pertinent.
+- Exploite vraiment les réponses déjà données pour creuser plus loin.
+- Ne pas dépasser 2 thèmes.
+- Ton naturel, curieux, respectueux.
+- Quand les 2 thèmes sont épuisés : répondre uniquement [FIN_DD]`;
+  }
+
+  return `Tu es Écho, un agent d'évaluation musicale chaleureux et efficace. Tu conduis un entretien qualitatif sur le titre "${cfg.track}" par ${cfg.artist} (genre : ${cfg.genre}).
+${cfg.context ? 'Contexte : ' + cfg.context : ''}
+
+DONNÉES COLLECTÉES EN AMONT — NE JAMAIS REDEMANDER :
+Note artistique : ${personalScore}/10
+Émotions ressenties : ${emotions}
+Profil : ${sigProfile}
+
+${lowScore ? `MODE NOTE FAIBLE (${personalScore}/10) :
+Objectif : comprendre ce qui n'a pas fonctionné et identifier 1-2 axes d'amélioration.
+Ne pas projeter un potentiel non perçu. Questions uniquement sur : éléments problématiques, émotions négatives, axes d'amélioration.
+Accepter les réponses courtes sans insister. Max 1 question par thème.` :
+`THÈMES EN ${MAX_Q} QUESTIONS MAX :
+1. Premières impressions globales
+2. Éléments musicaux marquants (mélodie, voix/flow, paroles, production)
+3. Mémorabilité (une phrase, un son, un moment qui reste)
+4. Références artistiques (univers évoqué, comparaisons)
+5. Correspondance avec l'image de l'artiste (si connu)
+6. Ce qui pourrait être amélioré`}
+
+RÈGLES STRICTES :
+- Une seule question courte et directe par message. Jamais de liste, jamais de numérotation.
+- Relance légère uniquement si la réponse est clairement insuffisante (moins de 2 phrases ou vraiment vague). En cas de doute, passer à la question suivante.
+- Maximum 1 relance par question, sur le même axe.
+- Ne jamais revenir sur un sujet déjà traité clairement.
+- Avant chaque question : vérifier la transcription pour ne pas redemander ce qui est déjà connu.
+- Si le répondant digresse ou pose une question : "Je comprends, mais mon rôle est uniquement de recueillir ton avis sur ce morceau pour l'artiste." Reprendre aussitôt.
+- Si impatience détectée (réponses très courtes répétées, "j'sais pas", "next", "peu importe") : regrouper les questions restantes en une seule et conclure.
+- Ton chaleureux, naturel, jamais condescendant.
+- Quand toutes les questions sont posées et répondues : répondre uniquement [FIN]`;
+}
+
+// ══════════════════════════════
+// INTERVIEW
+// ══════════════════════════════
+async function startInterview() { await askNext(null); }
+
+async function askNext(lastAnswer) {
+  setThinking(true,'thinking','btn-send');
+  if (lastAnswer!==null) conversation.push({role:'user',content:lastAnswer});
+  const userMsg = qCount===0
+    ? 'Commence l\'entretien avec ta première question.'
+    : `Voici la réponse. Pose la question suivante (${qCount+1}/${MAX_Q}). Si toutes les questions sont posées et répondues, réponds uniquement [FIN].`;
+  const messages = [...conversation, {role:'user',content:userMsg}];
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':cfg.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:350,system:buildSystemPrompt('main'),messages})
+    });
+    const data = await res.json();
+    if (data.error) { showApiError(data.error.message); return; }
+    const reply = (data.content?.[0]?.text||'').trim();
+    if (!reply) { showApiError('Réponse vide. Réessaie.'); return; }
+    conversation.push({role:'assistant',content:reply});
+    if (reply.includes('[FIN]')||qCount>=MAX_Q) {
+      setThinking(false,'thinking','btn-send');
+      showScreen('screen-actions');
       return;
     }
     qCount++;
-    document.getElementById('q-num').textContent = qCount;
-    document.getElementById('iv-progress').style.width = (qCount/MAX_Q*100)+'%';
-    displayQ(reply, 'q-text', 'answer-zone', 'answer-input', 'btn-send');
-    setThinking(false, 'thinking', 'btn-send');
-  } catch(err) {
-    showApiError(err.message, 'q-text', 'answer-zone', 'btn-send', 'thinking');
-  }
+    document.getElementById('q-num').textContent=qCount;
+    document.getElementById('iv-progress').style.width=(qCount/MAX_Q*100)+'%';
+    displayQ(reply,'q-text','answer-zone','answer-input','btn-send');
+    setThinking(false,'thinking','btn-send');
+  } catch(err) { showApiError(err.message); }
 }
 
 async function sendAnswer() {
@@ -612,48 +765,113 @@ async function sendAnswer() {
   if (!input) return;
   const answer = input.value.trim();
   if (!answer) return;
-  const lastQ = conversation.filter(m=>m.role==='assistant').slice(-1)[0]?.content || '';
-  transcript.push({ q: lastQ, a: answer });
-  document.getElementById('btn-send').disabled = true;
-  document.getElementById('q-text').textContent = '';
+  const lastQ = conversation.filter(m=>m.role==='assistant').slice(-1)[0]?.content||'';
+  transcript.push({q:lastQ,a:answer});
+  document.getElementById('btn-send').disabled=true;
+  document.getElementById('q-text').textContent='';
   await askNext(answer);
 }
 
+// ══════════════════════════════
+// POTENTIAL COMMENT
+// ══════════════════════════════
+async function goToPotentialComment() {
+  showScreen('screen-potential-comment');
+  document.getElementById('pot-thinking').style.display='flex';
+  const gap = Math.abs(potentialScore - personalScore);
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':cfg.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514', max_tokens:150,
+        messages:[{role:'user',content:buildPotCommentPrompt(gap)}]
+      })
+    });
+    const data = await res.json();
+    const reply = (data.content?.[0]?.text||'').trim();
+    document.getElementById('pot-thinking').style.display='none';
+    if (gap >= 3) {
+      typeEchoText('echo-pot-text', reply || getPotCommentFallback(gap), () => {
+        document.getElementById('pot-gap-zone').style.display='block';
+        displayQ(
+          reply.includes('?') ? reply.split('?').pop().trim() + (reply.includes('?')?'?':'') : `Qu'est-ce qui explique cet écart entre les deux notes ?`,
+          'echo-pot-text', 'pot-gap-answer-zone', 'pot-gap-input', 'btn-pot-gap-send'
+        );
+      });
+    } else {
+      typeEchoText('echo-pot-text', reply || getPotCommentFallback(0), () => {
+        document.getElementById('btn-pot-next').style.display='block';
+      });
+    }
+  } catch(e) {
+    document.getElementById('pot-thinking').style.display='none';
+    typeEchoText('echo-pot-text', getPotCommentFallback(gap), () => {
+      if (gap>=3) {
+        document.getElementById('pot-gap-zone').style.display='block';
+        displayQ("Qu'est-ce qui explique cet écart entre les deux notes ?",'echo-pot-text','pot-gap-answer-zone','pot-gap-input','btn-pot-gap-send');
+      } else {
+        document.getElementById('btn-pot-next').style.display='block';
+      }
+    });
+  }
+}
+
+function buildPotCommentPrompt(gap) {
+  const gapDir = potentialScore > personalScore ? 'supérieure' : 'inférieure';
+  return `Tu es Écho. Un répondant vient de donner ${potentialScore}/10 de potentiel commercial au titre "${cfg.track}" (note artistique : ${personalScore}/10). ${gap>=3 ? `L'écart est de ${gap} points (potentiel ${gapDir} à la note perso). Génère une phrase de réaction sur cet écart intéressant, puis pose UNE question ouverte courte pour comprendre pourquoi. 2 phrases max.` : `Génère une courte réaction naturelle sur cette note de potentiel (1 phrase max, sans être condescendant).`}`;
+}
+
+function getPotCommentFallback(gap) {
+  if (gap >= 3 && potentialScore > personalScore) return `Intéressant — tu lui accordes plus de potentiel commercial que d'adhésion personnelle. Qu'est-ce qui explique cette différence ?`;
+  if (gap >= 3 && potentialScore < personalScore) return `Tu l'apprécies plus que tu ne lui vois de potentiel large. Pourquoi cette différence selon toi ?`;
+  if (potentialScore >= 8) return `Un potentiel commercial fort, c'est noté.`;
+  if (potentialScore >= 6) return `Un potentiel réel, c'est noté.`;
+  return `Un potentiel plus limité selon toi, c'est noté.`;
+}
+
+async function sendPotGapAnswer() {
+  const input = document.getElementById('pot-gap-input');
+  if (!input) return;
+  potGapAnswer = input.value.trim();
+  document.getElementById('pot-gap-zone').style.display='none';
+  document.getElementById('btn-pot-next').style.display='block';
+}
+
+// ══════════════════════════════
 // DEEP DIVE
+// ══════════════════════════════
 async function startDeepDive() {
   showScreen('screen-deepdive');
   await askDeepNext(null);
 }
 
 async function askDeepNext(lastAnswer) {
-  setThinking(true, 'dd-thinking', 'dd-btn-send');
-  if (lastAnswer !== null) ddConversation.push({ role:'user', content: lastAnswer });
-  const userMsg = ddCount === 0
+  setThinking(true,'dd-thinking','dd-btn-send');
+  if (lastAnswer!==null) ddConversation.push({role:'user',content:lastAnswer});
+  const userMsg = ddCount===0
     ? 'Lance l\'approfondissement sur le premier thème.'
-    : 'Réponse reçue. Continue si un rebond utile est possible, sinon passe au second thème. Si les 2 thèmes sont épuisés, réponds uniquement [FIN_DD].';
-  const messages = [...ddConversation, { role:'user', content: userMsg }];
+    : 'Réponse reçue. Rebond si vraiment utile, sinon passe au second thème. Si les 2 thèmes sont épuisés : [FIN_DD]';
+  const messages = [...ddConversation, {role:'user',content:userMsg}];
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':cfg.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:400, system: buildSystemPrompt(true), messages })
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:350,system:buildSystemPrompt('deepdive'),messages})
     });
     const data = await res.json();
-    const reply = ((data.content?.[0]?.text) || '').trim();
-    ddConversation.push({ role:'assistant', content: reply });
-    if (!reply || reply.includes('[FIN_DD]') || ddCount >= 8) {
-      setThinking(false, 'dd-thinking', 'dd-btn-send');
-      goToPotential(); return;
+    const reply = ((data.content?.[0]?.text)||'').trim();
+    ddConversation.push({role:'assistant',content:reply});
+    if (!reply||reply.includes('[FIN_DD]')||ddCount>=8) {
+      setThinking(false,'dd-thinking','dd-btn-send');
+      goToEnrichissement(); return;
     }
     ddCount++;
-    const themeNum = ddCount <= 4 ? '1' : '2';
-    document.getElementById('dd-num').textContent = themeNum;
-    document.getElementById('dd-progress').style.width = (ddCount/8*100)+'%';
-    displayQ(reply, 'dd-text', 'dd-answer-zone', 'dd-answer-input', 'dd-btn-send');
-    setThinking(false, 'dd-thinking', 'dd-btn-send');
-  } catch(err) {
-    goToPotential();
-  }
+    document.getElementById('dd-num').textContent = ddCount<=4?'1':'2';
+    document.getElementById('dd-progress').style.width=(ddCount/8*100)+'%';
+    displayQ(reply,'dd-text','dd-answer-zone','dd-answer-input','dd-btn-send');
+    setThinking(false,'dd-thinking','dd-btn-send');
+  } catch(err) { goToEnrichissement(); }
 }
 
 async function sendDeepAnswer() {
@@ -661,113 +879,118 @@ async function sendDeepAnswer() {
   if (!input) return;
   const answer = input.value.trim();
   if (!answer) return;
-  const lastQ = ddConversation.filter(m=>m.role==='assistant').slice(-1)[0]?.content || '';
-  ddTranscript.push({ q: lastQ, a: answer });
-  document.getElementById('dd-btn-send').disabled = true;
-  document.getElementById('dd-text').textContent = '';
+  const lastQ = ddConversation.filter(m=>m.role==='assistant').slice(-1)[0]?.content||'';
+  ddTranscript.push({q:lastQ,a:answer});
+  document.getElementById('dd-btn-send').disabled=true;
+  document.getElementById('dd-text').textContent='';
   await askDeepNext(answer);
 }
 
-function goToPotential() { showScreen('screen-potential'); }
 function goToEnrichissement() { showScreen('screen-enrichissement'); }
 
+// ══════════════════════════════
 // SYNTHESIS
+// ══════════════════════════════
 function goToSynthesis() {
-  document.getElementById('syn-score').textContent = personalScore + '/10';
-  document.getElementById('syn-pot').textContent   = potentialScore > -1 ? potentialScore + '/10' : '—';
+  document.getElementById('syn-score').textContent = personalScore+'/10';
+  document.getElementById('syn-pot').textContent   = potentialScore>=0 ? potentialScore+'/10' : '—';
   document.getElementById('syn-narrative').textContent = buildNarrative();
   showScreen('screen-synthesis');
 }
 
 function buildNarrative() {
-  const emotions = selectedEmotions.map(e => e.replace(/^[\S]+\s/,'')).join(', ');
-  const actions  = selectedActions.filter(a => !a.includes('rien')).join(', ').toLowerCase();
-  const sw = personalScore >= 8 ? 'un vrai coup de cœur' : personalScore >= 6 ? 'une bonne impression' : personalScore >= 4 ? 'un avis mitigé' : 'peu d\'adhésion';
-  const pw = potentialScore >= 8 ? 'fort' : potentialScore >= 6 ? 'réel' : potentialScore >= 0 ? 'limité' : 'non évalué';
-
+  const emotions = selectedEmotions.map(e=>e.replace(/^[\S]+\s/,'')).join(', ');
+  const actions  = selectedActions.filter(a=>!a.includes('rien')).join(', ').toLowerCase();
+  const sw = personalScore>=8?'un vrai coup de cœur':personalScore>=6?'une bonne impression':personalScore>=4?'un avis mitigé':'peu d\'adhésion';
+  const pw = potentialScore>=8?'fort':potentialScore>=6?'réel':potentialScore>=0?'limité':'non évalué';
   const parts = [];
-  parts.push(`Tu gardes ${sw} de ce titre — ${personalScore}/10 — avec un potentiel commercial que tu juges ${pw}${potentialScore >= 0 ? ' (' + potentialScore + '/10)' : ''}.`);
+  parts.push(`Tu gardes ${sw} de ce titre — ${personalScore}/10 — avec un potentiel commercial que tu juges ${pw}${potentialScore>=0?' ('+potentialScore+'/10)':''}.`);
   if (emotions) parts.push(`À l'écoute, ce morceau t'a évoqué : ${emotions}.`);
-
-  const labels = ['Tes premières impressions','Sur les éléments musicaux','L\'émotion principale','Ce qui reste en tête','Les références artistiques','Ce qui correspond à l\'artiste','Ce qui pourrait être amélioré'];
-  transcript.forEach((t, i) => {
-    if (t.a && t.a.trim().length > 3) {
-      const a = t.a.trim();
-      const lower = a.charAt(0).toLowerCase() + a.slice(1);
-      parts.push(`${labels[i] || 'Autre retour'} : ${lower}${a.endsWith('.') ? '' : '.'}`);
-    }
+  const labels = ['Tes premières impressions','Sur les éléments musicaux','Ce qui reste en tête','Les références évoquées','La cohérence avec l\'artiste','Ce qui pourrait être amélioré'];
+  transcript.forEach((t,i) => {
+    if (t.a&&t.a.trim().length>3) {
+      const a=t.a.trim();
+      parts.push(`${labels[i]||'Autre retour'} : ${a.charAt(0).toLowerCase()+a.slice(1)}${a.endsWith('.')?'':'.'}`);}
   });
-
+  if (potGapAnswer) parts.push(`Sur l'écart entre les deux notes : ${potGapAnswer.charAt(0).toLowerCase()+potGapAnswer.slice(1)}${potGapAnswer.endsWith('.')?'':'.'}`)
   ddTranscript.forEach(t => {
-    if (t.a && t.a.trim().length > 3) {
-      const a = t.a.trim();
-      parts.push(`${a.charAt(0).toLowerCase() + a.slice(1)}${a.endsWith('.') ? '' : '.'}`);
-    }
+    if (t.a&&t.a.trim().length>3) { const a=t.a.trim(); parts.push(`${a.charAt(0).toLowerCase()+a.slice(1)}${a.endsWith('.')?'':'.'}`);}
   });
-
   if (actions) parts.push(`Ce titre t'inciterait à : ${actions}.`);
   const msg = document.getElementById('final-message')?.value.trim();
   if (msg) parts.push(`Ton message à l'artiste : "${msg}"`);
-
   return parts.join('\n\n');
 }
 
 function toggleCorrection() {
   const f = document.getElementById('correction-field');
-  f.style.display = f.style.display === 'none' ? 'block' : 'none';
-  if (f.style.display === 'block') document.getElementById('correction-input').focus();
+  f.style.display = f.style.display==='none'?'block':'none';
+  if (f.style.display==='block') document.getElementById('correction-input').focus();
 }
 
 async function confirmSend() {
   showScreen('screen-end');
-  const correction = document.getElementById('correction-input')?.value.trim() || '';
+  const correction = document.getElementById('correction-input')?.value.trim()||'';
   const record = {
-    id: 'R' + Date.now(), studyId: cfg.studyId, artist: cfg.artist, track: cfg.track,
-    date: new Date().toISOString(), personalScore, potentialScore,
-    emotions: selectedEmotions, actions: selectedActions,
-    transcript, ddTranscript,
-    narrative: document.getElementById('syn-narrative')?.textContent || '',
-    correction, finalMessage: document.getElementById('final-message')?.value.trim() || '',
-    sig: { age: sigData['sig-age']||null, gender: sigData['sig-gender']||null, location: document.getElementById('sig-location')?.value||null, relation: sigData['sig-relation']||null, since: sigData['sig-since']||null, habits: sigData['sig-habits']||null }
+    id:'R'+Date.now(), studyId:cfg.studyId, artist:cfg.artist, track:cfg.track,
+    date:new Date().toISOString(), personalScore, potentialScore,
+    emotions:selectedEmotions, actions:selectedActions,
+    transcript, ddTranscript, potGapAnswer,
+    narrative:document.getElementById('syn-narrative')?.textContent||'',
+    correction, finalMessage:document.getElementById('final-message')?.value.trim()||'',
+    sig:{age:sigData['sig-age']||null,gender:sigData['sig-gender']||null,location:document.getElementById('sig-location')?.value||null,relation:sigData['sig-relation']||null,since:sigData['sig-since']||null,habits:sigData['sig-habits']||null}
   };
-  const statusEl = document.getElementById('save-status');
   try {
-    let count = 0;
-    try { const cd = await window.storage.get('count:'+cfg.studyId, true); count = cd ? parseInt(cd.value) : 0; } catch(e){}
-    await window.storage.set('count:'+cfg.studyId, String(count+1), true);
-    let responses = [];
-    try { const rd = await window.storage.get('responses:'+cfg.studyId, true); if(rd) responses = JSON.parse(rd.value); } catch(e){}
+    let count=0;
+    try{const cd=await window.storage.get('count:'+cfg.studyId,true);count=cd?parseInt(cd.value):0;}catch(e){}
+    await window.storage.set('count:'+cfg.studyId,String(count+1),true);
+    let responses=[];
+    try{const rd=await window.storage.get('responses:'+cfg.studyId,true);if(rd)responses=JSON.parse(rd.value);}catch(e){}
     responses.push(record);
-    await window.storage.set('responses:'+cfg.studyId, JSON.stringify(responses), true);
-    statusEl.textContent = `✓ Avis #${count+1} enregistré — merci !`;
-  } catch(err) { statusEl.textContent = 'Merci pour ton temps !'; }
+    await window.storage.set('responses:'+cfg.studyId,JSON.stringify(responses),true);
+    document.getElementById('save-status').textContent=`✓ Avis #${count+1} enregistré — merci !`;
+  } catch(err) {
+    document.getElementById('save-status').textContent='Merci pour ton temps !';
+  }
 }
 
+// ══════════════════════════════
 // HELPERS
+// ══════════════════════════════
+function typeEchoText(elemId, text, onDone) {
+  const el = document.getElementById(elemId);
+  el.textContent=''; el.classList.add('typing');
+  let i=0;
+  const iv = setInterval(()=>{
+    if(i<text.length){el.textContent+=text[i];i++;}
+    else{el.classList.remove('typing');clearInterval(iv);if(onDone)onDone();}
+  },18);
+}
+
 function displayQ(text, textId, zoneId, inputId, btnId) {
   const el = document.getElementById(textId);
-  el.textContent = ''; el.classList.add('typing');
-  document.getElementById(zoneId).innerHTML = `<div><textarea id="${inputId}" rows="3" placeholder="Ta réponse…" style="width:100%;min-height:100px;resize:vertical;font-family:'DM Sans',sans-serif;font-size:0.92rem;font-weight:300;color:var(--text);background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:0.7rem 1rem;outline:none;transition:border-color 0.2s;margin-bottom:0;"></textarea></div>`;
-  document.getElementById(inputId).addEventListener('focus', function(){ this.style.borderColor='var(--accent)'; });
-  document.getElementById(inputId).addEventListener('blur', function(){ this.style.borderColor='var(--border)'; });
-  document.getElementById(btnId).disabled = false;
-  let i = 0;
-  const iv = setInterval(() => {
-    if (i < text.length) { el.textContent += text[i]; i++; }
-    else { el.classList.remove('typing'); clearInterval(iv); }
-  }, 16);
+  el.textContent=''; el.classList.add('typing');
+  document.getElementById(zoneId).innerHTML=`<textarea id="${inputId}" rows="3" placeholder="Ta réponse…" style="width:100%;min-height:100px;resize:vertical;font-family:'DM Sans',sans-serif;font-size:0.92rem;font-weight:300;color:var(--text);background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:0.7rem 1rem;outline:none;transition:border-color 0.2s;margin-bottom:0;display:block;"></textarea>`;
+  const inp = document.getElementById(inputId);
+  inp.addEventListener('focus',()=>inp.style.borderColor='var(--accent)');
+  inp.addEventListener('blur',()=>inp.style.borderColor='var(--border)');
+  document.getElementById(btnId).disabled=false;
+  let i=0;
+  const iv=setInterval(()=>{
+    if(i<text.length){el.textContent+=text[i];i++;}
+    else{el.classList.remove('typing');clearInterval(iv);}
+  },16);
 }
 
 function setThinking(show, thinkId, btnId) {
-  document.getElementById(thinkId).style.display = show ? 'flex' : 'none';
-  const btn = document.getElementById(btnId);
-  if (btn) btn.disabled = show;
+  document.getElementById(thinkId).style.display=show?'flex':'none';
+  const b=document.getElementById(btnId); if(b) b.disabled=show;
 }
 
-function showApiError(msg, textId, zoneId, btnId, thinkId) {
-  setThinking(false, thinkId, btnId);
-  document.getElementById(textId).textContent = '⚠️ ' + msg;
-  document.getElementById(zoneId).innerHTML = '';
+function showApiError(msg) {
+  setThinking(false,'thinking','btn-send');
+  document.getElementById('q-text').textContent='⚠️ '+msg;
+  document.getElementById('answer-zone').innerHTML='';
 }
 </script>
 </body>
