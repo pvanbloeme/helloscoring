@@ -6,433 +6,418 @@
 <title>Écoute & Évalue</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg:#080a0f; --surface:#0f1219; --surface2:#161b26; --border:#1e2535;
-    --accent:#4fc3f7; --accent2:#ff6b6b; --gold:#ffd166;
-    --text:#e8eaf0; --muted:#5a6278; --muted2:#8892a4;
-  }
+  :root{--bg:#080a0f;--surface:#0f1219;--surface2:#161b26;--border:#1e2535;--accent:#4fc3f7;--gold:#ffd166;--green:#69db7c;--red:#ff6b6b;--text:#e8eaf0;--muted:#5a6278;--muted2:#8892a4;}
   *{margin:0;padding:0;box-sizing:border-box;}
   body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem 1rem;position:relative;overflow-x:hidden;}
-  body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 80% 10%,rgba(79,195,247,0.07) 0%,transparent 60%),radial-gradient(ellipse 50% 50% at 10% 90%,rgba(255,107,107,0.06) 0%,transparent 60%);pointer-events:none;}
+  body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 80% 10%,rgba(79,195,247,0.07) 0%,transparent 60%),radial-gradient(ellipse 50% 50% at 10% 90%,rgba(255,209,102,0.05) 0%,transparent 60%);pointer-events:none;}
   .container{width:100%;max-width:560px;position:relative;z-index:1;}
-
-  .screen{display:none;animation:fadeUp 0.45s ease both;}
+  .screen{display:none;animation:fadeUp 0.4s ease both;}
   .screen.active{display:flex;flex-direction:column;}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 
   /* SETUP */
   .eyebrow{font-family:'Bebas Neue',sans-serif;font-size:0.82rem;letter-spacing:0.22em;color:var(--accent);margin-bottom:0.8rem;}
-  .big-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,9vw,4.5rem);line-height:0.92;margin-bottom:1rem;}
+  .big-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,9vw,4.2rem);line-height:0.92;margin-bottom:1rem;}
   .big-title span{color:var(--accent);}
   .sub{color:var(--muted2);font-size:0.88rem;font-weight:300;line-height:1.6;margin-bottom:2rem;}
   .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.8rem;margin-bottom:1rem;}
   .field-label{font-size:0.72rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted2);margin-bottom:0.5rem;display:block;}
-  input[type="text"],textarea,select{width:100%;font-family:'DM Sans',sans-serif;font-size:0.92rem;font-weight:300;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.7rem 1rem;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
-  input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,195,247,0.1);}
-  select option{background:var(--surface2);}
+  input[type="text"],textarea{width:100%;font-family:'DM Sans',sans-serif;font-size:0.92rem;font-weight:300;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.7rem 1rem;outline:none;transition:border-color 0.2s;}
+  input:focus,textarea:focus{border-color:var(--accent);}
   .field-group{margin-bottom:1.2rem;}
   .field-group:last-child{margin-bottom:0;}
-  .hint{font-size:0.74rem;color:var(--muted);margin-top:0.4rem;line-height:1.4;}
-
-  .upload-zone{border:2px dashed var(--border);border-radius:10px;padding:1.5rem;text-align:center;cursor:pointer;transition:border-color 0.2s,background 0.2s;position:relative;}
-  .upload-zone:hover{border-color:var(--accent);background:rgba(79,195,247,0.03);}
-  .upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
-  .upload-icon{font-size:1.8rem;margin-bottom:0.5rem;}
-  .upload-text{font-size:0.85rem;color:var(--muted2);font-weight:300;}
-  .upload-text strong{color:var(--accent);}
-  .upload-success{color:var(--accent);font-size:0.85rem;font-weight:500;margin-top:0.5rem;display:none;}
-
-  .btn-primary{width:100%;padding:1rem;font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:0.1em;color:var(--bg);background:var(--accent);border:none;border-radius:10px;cursor:pointer;transition:all 0.2s;margin-top:0.5rem;}
+  .hint{font-size:0.74rem;color:var(--muted);margin-top:0.4rem;}
+  .btn-primary{width:100%;padding:1rem;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:0.1em;color:var(--bg);background:var(--accent);border:none;border-radius:10px;cursor:pointer;transition:all 0.2s;margin-top:0.5rem;}
   .btn-primary:hover{background:#81d4fa;transform:translateY(-1px);}
-  .btn-primary:disabled{background:var(--border);color:var(--muted);cursor:not-allowed;transform:none;}
+  .btn-primary:disabled{background:var(--border);color:var(--muted);cursor:not-allowed;transform:none;opacity:0.4;}
 
-  /* INTRO / LISTEN */
-  .intro-center{text-align:center;padding:2rem 0;}
-  .artist-name{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,8vw,3.5rem);line-height:1;color:var(--text);margin-bottom:0.3rem;}
-  .track-name{font-family:'DM Sans',sans-serif;font-size:1.1rem;font-style:italic;color:var(--muted2);font-weight:300;margin-bottom:2rem;}
-  .genre-tag{display:inline-block;background:rgba(79,195,247,0.1);color:var(--accent);font-size:0.72rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;padding:0.3rem 0.8rem;border-radius:99px;border:1px solid rgba(79,195,247,0.2);margin-bottom:2rem;}
+  /* STEP HEADER */
+  .step-eyebrow{font-size:0.7rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:0.6rem;}
+  .step-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.4rem);line-height:1.05;margin-bottom:0.5rem;}
+  .step-sub{font-size:0.88rem;color:var(--muted2);font-weight:300;line-height:1.5;margin-bottom:1.6rem;}
 
-  /* Audio player */
-  .audio-player{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:1.5rem;}
-  .player-label{font-size:0.7rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;}
-  .player-controls{display:flex;align-items:center;gap:1rem;}
-  .play-btn{width:44px;height:44px;border-radius:50%;background:var(--accent);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;}
-  .play-btn:hover{background:#81d4fa;transform:scale(1.05);}
-  .play-btn svg{width:18px;height:18px;color:var(--bg);}
-  .player-track{flex:1;}
-  .player-progress{height:4px;background:var(--border);border-radius:99px;cursor:pointer;position:relative;margin-bottom:0.5rem;}
-  .player-fill{height:100%;background:var(--accent);border-radius:99px;width:0%;transition:width 0.1s linear;}
-  .player-times{display:flex;justify-content:space-between;font-size:0.72rem;color:var(--muted);font-family:monospace;}
-  .listen-note{font-size:0.8rem;color:var(--muted);text-align:center;font-style:italic;margin-bottom:1.5rem;}
+  /* PILLS */
+  .pill-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.4rem;}
+  .pill{padding:0.5rem 1rem;border-radius:99px;background:var(--surface);border:1.5px solid var(--border);font-size:0.85rem;color:var(--muted2);cursor:pointer;transition:all 0.15s;user-select:none;}
+  .pill:hover{border-color:var(--accent);color:var(--accent);}
+  .pill.selected{background:var(--accent)!important;border-color:var(--accent)!important;color:var(--bg)!important;font-weight:500;}
+  .pill.selected-gold{background:var(--gold)!important;border-color:var(--gold)!important;color:var(--bg)!important;font-weight:500;}
 
-  .btn-cta{display:block;width:100%;padding:1rem;font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:0.1em;color:var(--bg);background:var(--gold);border:none;border-radius:10px;cursor:pointer;transition:all 0.2s;text-align:center;}
-  .btn-cta:hover{background:#ffe082;transform:translateY(-1px);}
-
-  /* RATING */
-  .rating-center{text-align:center;padding:1rem 0;}
-  .rating-q{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.4rem);line-height:1.1;margin-bottom:0.5rem;}
-  .rating-sub{color:var(--muted2);font-size:0.85rem;font-weight:300;margin-bottom:2rem;}
-  .stars-row{display:flex;justify-content:center;gap:0.5rem;margin-bottom:2rem;flex-wrap:wrap;}
-  .star-btn{width:52px;height:52px;border-radius:10px;background:var(--surface);border:1.5px solid var(--border);font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--muted2);cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;}
-  .star-btn:hover,.star-btn.selected{background:rgba(255,209,102,0.15);border-color:var(--gold);color:var(--gold);}
-  .rating-display{font-family:'Bebas Neue',sans-serif;font-size:4rem;color:var(--gold);min-height:5rem;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;}
-  .rating-display span{opacity:0.3;}
-
-  /* EMOTIONS */
-  .emotions-grid{display:flex;flex-wrap:wrap;gap:0.6rem;margin-bottom:1.5rem;}
-  .emotion-btn{padding:0.6rem 1.1rem;border-radius:99px;background:var(--surface);border:1.5px solid var(--border);font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:400;color:var(--muted2);cursor:pointer;transition:all 0.15s;}
-  .emotion-btn:hover{border-color:var(--accent2);color:var(--accent2);}
-  .emotion-btn.selected{background:rgba(255,107,107,0.12);border-color:var(--accent2);color:var(--accent2);}
-  .section-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;margin-bottom:0.4rem;}
-  .section-sub{color:var(--muted2);font-size:0.85rem;font-weight:300;margin-bottom:1.5rem;}
+  /* SCORE */
+  .score-hero{text-align:center;margin-bottom:1.2rem;}
+  .score-val{font-family:'Bebas Neue',sans-serif;font-size:5rem;line-height:1;color:var(--accent);transition:all 0.2s;}
+  .score-val.empty{color:var(--border);}
+  .score-label{font-size:0.78rem;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-top:0.3rem;}
+  .score-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-bottom:1.6rem;}
+  .score-btn{aspect-ratio:1;border-radius:9px;background:var(--surface);border:1.5px solid var(--border);font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--muted);cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;}
+  .score-btn:hover{border-color:var(--accent);color:var(--accent);}
+  .score-btn.selected{background:var(--accent)!important;border-color:var(--accent)!important;color:var(--bg)!important;box-shadow:0 4px 16px rgba(79,195,247,0.3);}
+  .score-btn.selected-gold{background:var(--gold)!important;border-color:var(--gold)!important;color:var(--bg)!important;box-shadow:0 4px 16px rgba(255,209,102,0.3);}
 
   /* INTERVIEW */
   .interview-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.8rem;padding-bottom:1rem;border-bottom:1px solid var(--border);}
   .progress-wrap{flex:1;}
   .progress-label{font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.4rem;}
-  .progress-bg{height:2px;background:var(--border);border-radius:99px;width:180px;}
+  .progress-bg{height:2px;background:var(--border);border-radius:99px;width:200px;}
   .progress-fill{height:100%;background:var(--accent);border-radius:99px;transition:width 0.5s ease;width:0%;}
-  .timer-badge{font-size:0.72rem;color:var(--muted);font-family:monospace;}
-
-  .question-area{min-height:100px;margin-bottom:1.5rem;}
   .q-label{font-size:0.7rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;}
   .q-label::after{content:'';flex:1;height:1px;background:rgba(79,195,247,0.2);}
-  .q-text{font-size:clamp(1.05rem,3vw,1.25rem);line-height:1.5;font-weight:300;min-height:50px;}
+  .q-text{font-size:clamp(1.05rem,3vw,1.2rem);line-height:1.55;font-weight:300;min-height:50px;margin-bottom:1.2rem;}
   .q-text.typing::after{content:'▋';animation:blink 0.7s step-end infinite;color:var(--accent);}
   @keyframes blink{50%{opacity:0}}
-
-  .answer-area{margin-bottom:1rem;}
-  .answer-area textarea{min-height:100px;resize:vertical;}
-
-  /* Choice buttons for interview */
-  .choices-grid{display:flex;flex-wrap:wrap;gap:0.6rem;margin-bottom:1rem;}
-  .choice-btn{padding:0.55rem 1rem;border-radius:8px;background:var(--surface);border:1.5px solid var(--border);font-family:'DM Sans',sans-serif;font-size:0.83rem;color:var(--muted2);cursor:pointer;transition:all 0.15s;}
-  .choice-btn:hover{border-color:var(--accent);color:var(--accent);}
-  .choice-btn.selected{background:rgba(79,195,247,0.1);border-color:var(--accent);color:var(--accent);}
-
   .thinking{display:flex;align-items:center;gap:0.5rem;color:var(--muted2);font-size:0.82rem;font-style:italic;min-height:22px;margin-bottom:0.5rem;}
   .dot-pulse{display:flex;gap:3px;}
   .dot-pulse span{width:4px;height:4px;border-radius:50%;background:var(--accent);animation:pulse 1.2s ease-in-out infinite;}
   .dot-pulse span:nth-child(2){animation-delay:0.2s}.dot-pulse span:nth-child(3){animation-delay:0.4s}
   @keyframes pulse{0%,80%,100%{transform:scale(0.6);opacity:0.3}40%{transform:scale(1);opacity:1}}
-
-  .send-row{display:flex;justify-content:flex-end;gap:0.8rem;align-items:center;}
-  .btn-send{display:flex;align-items:center;gap:0.5rem;padding:0.8rem 1.5rem;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.08em;color:var(--bg);background:var(--accent);border:none;border-radius:8px;cursor:pointer;transition:all 0.2s;}
+  .btn-send{display:flex;align-items:center;gap:0.5rem;padding:0.8rem 1.5rem;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.08em;color:var(--bg);background:var(--accent);border:none;border-radius:8px;cursor:pointer;transition:all 0.2s;margin-left:auto;margin-top:0.8rem;}
   .btn-send:hover{background:#81d4fa;}
   .btn-send:disabled{background:var(--border);color:var(--muted);cursor:not-allowed;}
 
-  /* POTENTIAL RATING */
-  .potential-context{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;margin-bottom:1.5rem;font-size:0.85rem;color:var(--muted2);font-weight:300;line-height:1.5;}
-  .potential-context strong{color:var(--text);}
+  /* MODULE */
+  .module-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.4rem;margin-bottom:1.2rem;text-align:center;}
+  .module-box p{font-size:0.92rem;color:var(--muted2);font-weight:300;line-height:1.6;margin-bottom:1rem;}
+  .btn-row{display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap;}
+  .btn-yes{padding:0.75rem 1.6rem;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.08em;color:var(--bg);background:var(--green);border:none;border-radius:8px;cursor:pointer;transition:all 0.2s;}
+  .btn-yes:hover{background:#51c96a;}
+  .btn-no{padding:0.75rem 1.4rem;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.08em;color:var(--muted2);background:transparent;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:all 0.2s;}
+  .btn-no:hover{border-color:var(--muted2);color:var(--text);}
 
-  /* SIGNALETICS */
-  .sig-skip{text-align:center;margin-top:1rem;}
-  .btn-skip{background:none;border:none;color:var(--muted);font-size:0.82rem;cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif;}
-  .btn-skip:hover{color:var(--muted2);}
-  .radio-group{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.5rem;}
-  .radio-btn{padding:0.5rem 1rem;border-radius:8px;background:var(--surface2);border:1.5px solid var(--border);font-size:0.82rem;color:var(--muted2);cursor:pointer;transition:all 0.15s;}
-  .radio-btn:hover{border-color:var(--accent);color:var(--accent);}
-  .radio-btn.selected{background:rgba(79,195,247,0.1);border-color:var(--accent);color:var(--accent);}
+  /* SYNTHESIS */
+  .syn-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.6rem;margin-bottom:1.2rem;}
+  .syn-label{font-size:0.7rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;}
+  .syn-label::after{content:'';flex:1;height:1px;background:var(--border);}
+  .syn-text{font-size:0.95rem;line-height:1.8;font-weight:300;color:#c8cdd8;white-space:pre-wrap;}
+  .scores-pair{display:flex;gap:0.8rem;margin-bottom:1.2rem;}
+  .score-badge{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;}
+  .score-badge-val{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;line-height:1;margin-bottom:0.2rem;}
+  .score-badge-lbl{font-size:0.7rem;color:var(--muted2);text-transform:uppercase;letter-spacing:0.08em;}
+  .btn-ghost{display:flex;align-items:center;justify-content:center;gap:0.5rem;padding:0.75rem 1.3rem;background:transparent;border:1.5px solid var(--border);border-radius:8px;color:var(--muted2);font-family:'DM Sans',sans-serif;font-size:0.88rem;cursor:pointer;transition:all 0.2s;width:100%;margin-bottom:0.8rem;}
+  .btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
+  .btn-gold{width:100%;padding:1rem;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:0.08em;color:var(--bg);background:var(--gold);border:none;border-radius:10px;cursor:pointer;transition:all 0.2s;}
+  .btn-gold:hover{background:#ffe082;transform:translateY(-1px);}
 
   /* END */
   .end-center{text-align:center;padding:2rem 0 1rem;}
   .end-icon{font-size:3rem;margin-bottom:1rem;}
-  .end-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,6vw,3rem);margin-bottom:0.8rem;}
-  .end-sub{color:var(--muted2);font-size:0.88rem;font-weight:300;line-height:1.6;max-width:400px;margin:0 auto;}
-  .save-status{font-size:0.78rem;color:var(--muted);margin-top:1.5rem;text-align:center;font-style:italic;}
+  .end-title{font-family:'Bebas Neue',sans-serif;font-size:3rem;margin-bottom:0.6rem;}
+  .end-sub{color:var(--muted2);font-size:0.9rem;font-weight:300;line-height:1.6;max-width:400px;margin:0 auto 1rem;}
+  .save-status{font-size:0.78rem;color:var(--muted);margin-top:1rem;font-style:italic;}
 
   /* CLOSED */
   .closed-wrap{text-align:center;padding:4rem 0;}
-  .closed-wrap h2{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--accent2);margin-bottom:1rem;}
-  .closed-wrap p{color:var(--muted2);font-weight:300;line-height:1.6;}
+  .closed-wrap h2{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--red);margin-bottom:1rem;}
+
+  .skip-link{display:block;text-align:center;margin-top:0.8rem;font-size:0.82rem;color:var(--muted);cursor:pointer;background:none;border:none;width:100%;text-decoration:underline;}
+  .skip-link:hover{color:var(--muted2);}
+  ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
 </style>
 </head>
 <body>
 <div class="container">
 
-  <!-- ══ SETUP (artiste) ══ -->
-  <div id="screen-setup" class="screen active">
-    <div class="eyebrow">Outil de feedback musical</div>
-    <div class="big-title">ÉCOUTE<br>&amp; <span>ÉVALUE</span></div>
-    <p class="sub">Configure ton titre ci-dessous. Tu obtiendras un lien à partager avec tes auditeurs — la clé API reste invisible.</p>
-
-    <div class="card">
-      <div class="field-group">
-        <label class="field-label">Clé API Anthropic</label>
-        <input type="text" id="setup-apikey" placeholder="sk-ant-..." autocomplete="off">
-        <div class="hint">Reste cachée dans le lien — jamais visible par les auditeurs.</div>
-      </div>
-      <div class="field-group">
-        <label class="field-label">Nom de l'artiste</label>
-        <input type="text" id="setup-artist" placeholder="ex. Clara V.">
-      </div>
-      <div class="field-group">
-        <label class="field-label">Titre du morceau</label>
-        <input type="text" id="setup-track" placeholder="ex. La mer en hiver">
-      </div>
-      <div class="field-group">
-        <label class="field-label">Genre musical</label>
-        <input type="text" id="setup-genre" placeholder="ex. Pop urbaine / Électro / Rap">
-      </div>
-      <div class="field-group">
-        <label class="field-label">Contexte optionnel pour l'IA</label>
-        <textarea id="setup-context" rows="2" placeholder="ex. Premier single, cible 25-35 ans, sortie prévue en mars..."></textarea>
-      </div>
-      <button class="btn-primary" onclick="generateLink()">Générer le lien →</button>
+<!-- SETUP -->
+<div id="screen-setup" class="screen active">
+  <div class="eyebrow">Outil de feedback musical</div>
+  <div class="big-title">ÉCOUTE<br>&amp; <span>ÉVALUE</span></div>
+  <p class="sub">Configure ton titre. Les auditeurs vivront une expérience d'évaluation guidée par l'IA.</p>
+  <div class="card">
+    <div class="field-group">
+      <label class="field-label">Clé API Anthropic</label>
+      <input type="text" id="setup-apikey" placeholder="sk-ant-..." autocomplete="off">
+      <div class="hint">Encodée dans le lien — jamais visible par les auditeurs.</div>
     </div>
-
-    <div id="link-output" style="display:none;" class="card">
-      <label class="field-label">Lien à envoyer à tes auditeurs</label>
-      <div style="display:flex;gap:0.6rem;align-items:center;">
-        <input type="text" id="generated-link" readonly style="font-size:0.78rem;">
-        <button class="btn-send" id="btn-copy-link" onclick="copyLink()" style="white-space:nowrap;flex-shrink:0;">Copier</button>
-      </div>
-      <p style="color:var(--muted);font-size:0.78rem;margin-top:0.8rem;font-weight:300;">⚠️ Ce lien encode ta clé API. Ne le poste pas publiquement.</p>
+    <div class="field-group">
+      <label class="field-label">Identifiant unique de l'étude</label>
+      <input type="text" id="setup-sid" placeholder="ex. mer-hiver-2026">
     </div>
+    <div class="field-group">
+      <label class="field-label">Nom de l'artiste</label>
+      <input type="text" id="setup-artist" placeholder="ex. Shaga">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Titre du morceau</label>
+      <input type="text" id="setup-track" placeholder="ex. La mer en hiver">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Genre musical</label>
+      <input type="text" id="setup-genre" placeholder="ex. Pop urbaine / Électro">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Contexte optionnel pour l'IA</label>
+      <textarea id="setup-context" rows="2" placeholder="ex. Premier single, cible 25-35 ans…"></textarea>
+    </div>
+    <button class="btn-primary" onclick="generateLink()">Générer le lien →</button>
   </div>
-
-  <!-- ══ CLOSED ══ -->
-  <div id="screen-closed" class="screen">
-    <div class="closed-wrap">
-      <h2>Étude fermée</h2>
-      <p>Le nombre maximum de répondants (300) a été atteint.<br>Merci pour ta participation !</p>
+  <div id="link-output" style="display:none;" class="card">
+    <label class="field-label">Lien auditeur</label>
+    <div style="display:flex;gap:0.6rem;align-items:center;">
+      <input type="text" id="generated-link" readonly style="font-size:0.75rem;">
+      <button class="btn-send" id="btn-copy-link" onclick="copyLink()" style="flex-shrink:0;white-space:nowrap;margin:0;">Copier</button>
     </div>
+    <p style="color:var(--muted);font-size:0.75rem;margin-top:0.6rem;">⚠️ Ce lien encode ta clé API — ne le poste pas publiquement.</p>
   </div>
-
-  <!-- ══ INTRO ══ -->
-  <div id="screen-listen" class="screen">
-    <div class="intro-center">
-      <div class="eyebrow">Feedback musical</div>
-      <div class="artist-name" id="display-artist">—</div>
-      <div class="track-name" id="display-track">—</div>
-      <div class="genre-tag" id="display-genre">—</div>
-    </div>
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.6rem;margin-bottom:1.5rem;text-align:center;">
-      <div style="font-size:2rem;margin-bottom:0.8rem;">🎧</div>
-      <p style="font-size:0.95rem;color:var(--muted2);font-weight:300;line-height:1.6;">Écoute le titre <strong style="color:var(--text);" id="display-track2">—</strong> avant de continuer, puis reviens ici pour donner ton avis.</p>
-    </div>
-    <p class="listen-note">Prends le temps d'écouter en entier — ton avis compte vraiment pour l'artiste 🎶</p>
-    <button class="btn-cta" onclick="goToRating()">J'ai écouté, je donne mon avis →</button>
-  </div>
-
-  <!-- ══ RATING ══ -->
-  <div id="screen-rating" class="screen">
-    <div class="rating-center">
-      <div class="rating-q">Quelle note donnes-tu<br>à ce titre ?</div>
-      <div class="rating-sub">1 = ça accroche pas du tout · 10 = j'adore</div>
-      <div class="rating-display" id="rating-display"><span>—</span></div>
-      <div class="stars-row" id="stars-row"></div>
-      <button class="btn-cta" id="btn-rating-next" onclick="goToEmotions()" disabled style="opacity:0.4;transition:opacity 0.2s;">Continuer →</button>
-    </div>
-  </div>
-
-  <!-- ══ EMOTIONS ══ -->
-  <div id="screen-emotions" class="screen">
-    <div class="section-title">Ce titre t'a fait ressentir…</div>
-    <div class="section-sub">Sélectionne une ou plusieurs émotions</div>
-    <div class="emotions-grid" id="emotions-grid"></div>
-    <button class="btn-cta" onclick="goToInterview()">Continuer →</button>
-  </div>
-
-  <!-- ══ INTERVIEW ══ -->
-  <div id="screen-interview" class="screen">
-    <div class="interview-header">
-      <div class="progress-wrap">
-        <div class="progress-label">Progression</div>
-        <div class="progress-bg"><div class="progress-fill" id="iv-progress"></div></div>
-      </div>
-      <div class="timer-badge" id="timer-badge">~5 min</div>
-    </div>
-    <div class="question-area">
-      <div class="q-label">Question <span id="q-num">1</span></div>
-      <div class="q-text" id="q-text"></div>
-    </div>
-    <div class="thinking" id="thinking" style="display:none;">
-      <div class="dot-pulse"><span></span><span></span><span></span></div>
-      L'agent réfléchit…
-    </div>
-    <div id="answer-zone"></div>
-    <div class="send-row">
-      <button class="btn-send" id="btn-send" onclick="sendAnswer()">
-        Envoyer
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- ══ POTENTIAL ══ -->
-  <div id="screen-potential" class="screen">
-    <div class="rating-center">
-      <div class="rating-q">Potentiel commercial</div>
-      <div class="rating-sub">Selon toi, quel est le potentiel de ce titre à toucher un large public ?</div>
-      <div class="potential-context">
-        Ta note perso était <strong id="personal-score-display">—</strong>/10.
-        Indépendamment de tes goûts, ce titre peut-il plaire largement ?
-      </div>
-      <div class="rating-display" id="potential-display"><span>—</span></div>
-      <div class="stars-row" id="potential-stars"></div>
-      <button class="btn-cta" id="btn-potential-next" onclick="goToSignaletics()" disabled style="opacity:0.4;transition:opacity 0.2s;">Continuer →</button>
-    </div>
-  </div>
-
-  <!-- ══ SIGNALETICS ══ -->
-  <div id="screen-sig" class="screen">
-    <div class="section-title">Quelques infos sur toi</div>
-    <div class="section-sub">Optionnel — aide l'artiste à mieux comprendre son audience</div>
-
-    <div class="card">
-      <div class="field-group">
-        <label class="field-label">Tranche d'âge</label>
-        <div class="radio-group" id="sig-age"></div>
-      </div>
-      <div class="field-group">
-        <label class="field-label">Genre</label>
-        <div class="radio-group" id="sig-gender"></div>
-      </div>
-      <div class="field-group">
-        <label class="field-label">Localisation</label>
-        <input type="text" id="sig-location" placeholder="Ville ou région">
-      </div>
-      <div class="field-group">
-        <label class="field-label">Habitudes d'écoute musicale</label>
-        <div class="radio-group" id="sig-habits"></div>
-      </div>
-      <div class="field-group">
-        <label class="field-label">Tu connais cet artiste ?</label>
-        <div class="radio-group" id="sig-relation"></div>
-      </div>
-    </div>
-
-    <button class="btn-cta" onclick="showSynthesis()">Envoyer mon avis →</button>
-    <div class="sig-skip"><button class="btn-skip" onclick="showSynthesis()">Passer cette étape</button></div>
-  </div>
-
-  <!-- ══ SYNTHESIS ══ -->
-  <div id="screen-synthesis" class="screen">
-    <div class="end-center" style="text-align:left;padding:0;">
-      <div class="end-icon" style="text-align:center;">🎶</div>
-      <div class="end-title" style="text-align:center;font-size:2rem;margin-bottom:0.5rem;">Voilà ce qu'on a retenu</div>
-      <p class="end-sub" style="text-align:center;margin-bottom:1.5rem;">Vérifie que ça correspond bien à ce que tu voulais dire.</p>
-    </div>
-
-    <div style="display:flex;gap:0.8rem;margin-bottom:1.2rem;">
-      <div style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center;">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--accent);line-height:1;" id="syn-score">—</div>
-        <div style="font-size:0.7rem;color:var(--muted2);text-transform:uppercase;letter-spacing:0.08em;">Note perso</div>
-      </div>
-      <div style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center;">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--gold);line-height:1;" id="syn-pot">—</div>
-        <div style="font-size:0.7rem;color:var(--muted2);text-transform:uppercase;letter-spacing:0.08em;">Potentiel</div>
-      </div>
-    </div>
-
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.6rem;margin-bottom:1.2rem;">
-      <div style="font-size:0.7rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;">En quelques mots <span style="flex:1;height:1px;background:var(--border);display:block;"></span></div>
-      <p id="syn-narrative" style="font-size:0.97rem;line-height:1.8;font-weight:300;color:#c8cdd8;"></p>
-    </div>
-
-    <div style="margin-bottom:1.4rem;">
-      <button class="btn-send" style="width:100%;justify-content:center;background:var(--surface);color:var(--muted2);border:1.5px solid var(--border);" onclick="toggleCorrection()">
-        ✏️ &nbsp;Corriger ou ajouter quelque chose
-      </button>
-      <div id="correction-field" style="display:none;margin-top:0.8rem;">
-        <textarea id="correction-input" placeholder="Quelque chose à préciser, corriger ou ajouter…" style="min-height:90px;"></textarea>
-      </div>
-    </div>
-
-    <div style="display:flex;gap:0.8rem;">
-      <button class="btn-cta" onclick="confirmSend()">Confirmer et envoyer →</button>
-    </div>
-  </div>
-
-  <!-- ══ END ══ -->
-  <div id="screen-end" class="screen">
-    <div class="end-center">
-      <div class="end-icon">✅</div>
-      <div class="end-title">C'est envoyé !</div>
-      <p class="end-sub">Ton feedback complet a bien été transmis à l'artiste. Ce genre d'avis honnête est précieux pour créer de la musique qui touche vraiment.</p>
-      <div class="save-status" id="save-status"></div>
-    </div>
-  </div>
-
 </div>
 
-<audio id="audio-el" preload="auto"></audio>
+<!-- CLOSED -->
+<div id="screen-closed" class="screen">
+  <div class="closed-wrap">
+    <h2>Étude fermée</h2>
+    <p>Le nombre maximum de répondants a été atteint.<br>Merci pour ta participation !</p>
+  </div>
+</div>
 
+<!-- INTRO -->
+<div id="screen-intro" class="screen">
+  <div class="step-eyebrow">Feedback musical</div>
+  <div class="step-title" id="intro-artist">—</div>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.4rem;margin-bottom:1.5rem;text-align:center;">
+    <div style="font-size:2rem;margin-bottom:0.6rem;">🎧</div>
+    <p style="font-size:0.92rem;color:var(--muted2);font-weight:300;line-height:1.6;">Écoute attentivement <strong style="color:var(--text);" id="intro-track">—</strong> avant de continuer.<br>Ton avis sera anonyme et transmis directement à l'artiste.</p>
+  </div>
+  <button class="btn-primary" onclick="showScreen('screen-sig')">J'ai écouté, je donne mon avis →</button>
+</div>
+
+<!-- SIGNALÉTIQUES -->
+<div id="screen-sig" class="screen">
+  <div class="step-eyebrow">Avant de commencer</div>
+  <div class="step-title">Quelques infos<br>sur toi</div>
+  <div class="step-sub">Pour analyser les résultats par profil. Rapide et anonyme.</div>
+  <div class="card">
+    <div class="field-group">
+      <label class="field-label">Tranche d'âge</label>
+      <div class="pill-grid" id="sig-age"></div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Genre</label>
+      <div class="pill-grid" id="sig-gender"></div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Lieu de vie</label>
+      <input type="text" id="sig-location" placeholder="Ville ou région">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Tu connais cet artiste ?</label>
+      <div class="pill-grid" id="sig-relation"></div>
+    </div>
+    <div class="field-group" id="sig-since-wrap" style="display:none;">
+      <label class="field-label">Depuis combien de temps ?</label>
+      <div class="pill-grid" id="sig-since"></div>
+    </div>
+    <div class="field-group" id="sig-habits-wrap" style="display:none;">
+      <label class="field-label">Ta relation à sa musique</label>
+      <div class="pill-grid" id="sig-habits"></div>
+    </div>
+  </div>
+  <button class="btn-primary" onclick="showScreen('screen-rating')">Continuer →</button>
+  <button class="skip-link" onclick="showScreen('screen-rating')">Passer cette étape</button>
+</div>
+
+<!-- RATING -->
+<div id="screen-rating" class="screen">
+  <div class="step-eyebrow">Étape 1 / 5</div>
+  <div class="step-title">Ta note<br>artistique</div>
+  <div class="step-sub">0 = ça m'a vraiment déplu · 10 = j'ai adoré<br>Sois sincère — ton honnêteté aide vraiment l'artiste.</div>
+  <div class="score-hero">
+    <div class="score-val empty" id="score-val">—</div>
+    <div class="score-label">sur 10</div>
+  </div>
+  <div class="score-grid" id="score-grid"></div>
+  <button class="btn-primary" id="btn-rating" onclick="goToEmotions()" disabled>Continuer →</button>
+</div>
+
+<!-- EMOTIONS -->
+<div id="screen-emotions" class="screen">
+  <div class="step-eyebrow">Étape 2 / 5</div>
+  <div class="step-title">Ce titre t'a<br>fait ressentir…</div>
+  <div class="step-sub">Sélectionne une ou plusieurs émotions</div>
+  <div class="pill-grid" id="emotion-grid"></div>
+  <button class="btn-primary" onclick="showScreen('screen-interview');startInterview();">Continuer →</button>
+</div>
+
+<!-- INTERVIEW -->
+<div id="screen-interview" class="screen">
+  <div class="interview-header">
+    <div class="progress-wrap">
+      <div class="progress-label">Progression</div>
+      <div class="progress-bg"><div class="progress-fill" id="iv-progress"></div></div>
+    </div>
+    <div style="font-size:0.72rem;color:var(--muted);font-family:monospace;" id="iv-timer">~5 min</div>
+  </div>
+  <div class="q-label">Question <span id="q-num">1</span></div>
+  <div class="q-text" id="q-text"></div>
+  <div class="thinking" id="thinking" style="display:none;">
+    <div class="dot-pulse"><span></span><span></span><span></span></div>
+    L'agent réfléchit…
+  </div>
+  <div id="answer-zone"></div>
+  <div style="display:flex;justify-content:flex-end;">
+    <button class="btn-send" id="btn-send" onclick="sendAnswer()">
+      Envoyer
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- MODULE OPTIONNEL -->
+<div id="screen-module" class="screen">
+  <div class="step-eyebrow">Module optionnel</div>
+  <div class="step-title">Encore<br>2 minutes ?</div>
+  <div class="module-box">
+    <p>Je voudrais approfondir deux points de ton feedback pour donner à l'artiste des éléments encore plus utiles. C'est totalement optionnel et sans jugement.</p>
+    <div class="btn-row">
+      <button class="btn-yes" onclick="startDeepDive()">Oui, j'approfondis !</button>
+      <button class="btn-no" onclick="goToPotential()">Non merci</button>
+    </div>
+  </div>
+</div>
+
+<!-- DEEP DIVE -->
+<div id="screen-deepdive" class="screen">
+  <div class="interview-header">
+    <div class="progress-wrap">
+      <div class="progress-label">Approfondissement</div>
+      <div class="progress-bg"><div class="progress-fill" id="dd-progress"></div></div>
+    </div>
+    <div style="font-size:0.72rem;color:var(--muted);">Thème <span id="dd-num">1</span> / 2</div>
+  </div>
+  <div class="q-label">Approfondissement</div>
+  <div class="q-text" id="dd-text"></div>
+  <div class="thinking" id="dd-thinking" style="display:none;">
+    <div class="dot-pulse"><span></span><span></span><span></span></div>
+    L'agent réfléchit…
+  </div>
+  <div id="dd-answer-zone"></div>
+  <div style="display:flex;justify-content:flex-end;">
+    <button class="btn-send" id="dd-btn-send" onclick="sendDeepAnswer()">
+      Envoyer
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- POTENTIAL -->
+<div id="screen-potential" class="screen">
+  <div class="step-eyebrow">Étape 3 / 5</div>
+  <div class="step-title">Son potentiel<br>commercial ?</div>
+  <div class="step-sub">Indépendamment de tes goûts — ce titre peut-il toucher un large public ?</div>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;margin-bottom:1.4rem;font-size:0.88rem;color:var(--muted2);font-weight:300;">
+    Ta note artistique : <strong style="color:var(--text);" id="perso-recap">—</strong>/10
+  </div>
+  <div class="score-hero">
+    <div class="score-val empty" id="pot-val" style="color:var(--gold);">—</div>
+    <div class="score-label">potentiel / 10</div>
+  </div>
+  <div class="score-grid" id="pot-grid"></div>
+  <div class="step-sub" style="margin-top:0.5rem;margin-bottom:0.8rem;">Ce titre, tu en ferais quoi ?</div>
+  <div class="pill-grid" id="action-grid"></div>
+  <button class="btn-primary" id="btn-potential" onclick="goToEnrichissement()" disabled>Continuer →</button>
+</div>
+
+<!-- ENRICHISSEMENT -->
+<div id="screen-enrichissement" class="screen">
+  <div class="step-eyebrow">Étape 4 / 5</div>
+  <div class="step-title">Un message<br>pour l'artiste ?</div>
+  <div class="step-sub">Un conseil, un encouragement, quelque chose à lui dire directement. Optionnel — écris ce que tu veux ou laisse vide.</div>
+  <textarea id="final-message" rows="4" placeholder="Ton message à l'artiste…" style="margin-bottom:1rem;min-height:110px;resize:vertical;"></textarea>
+  <button class="btn-primary" onclick="goToSynthesis()">Continuer →</button>
+</div>
+
+<!-- SYNTHESIS -->
+<div id="screen-synthesis" class="screen">
+  <div class="step-eyebrow">Étape 5 / 5</div>
+  <div class="step-title">Voilà ce qu'on<br>a retenu</div>
+  <p style="font-size:0.88rem;color:var(--muted2);font-weight:300;margin-bottom:1.5rem;">Vérifie que ça correspond bien à ce que tu voulais dire. Tu peux corriger ou compléter avant d'envoyer.</p>
+  <div class="scores-pair">
+    <div class="score-badge">
+      <div class="score-badge-val" style="color:var(--accent);" id="syn-score">—</div>
+      <div class="score-badge-lbl">Note artistique</div>
+    </div>
+    <div class="score-badge">
+      <div class="score-badge-val" style="color:var(--gold);" id="syn-pot">—</div>
+      <div class="score-badge-lbl">Potentiel</div>
+    </div>
+  </div>
+  <div class="syn-card">
+    <div class="syn-label">En quelques mots</div>
+    <div class="syn-text" id="syn-narrative"></div>
+  </div>
+  <button class="btn-ghost" onclick="toggleCorrection()">✏️ &nbsp;Corriger ou ajouter quelque chose</button>
+  <div id="correction-field" style="display:none;margin-bottom:1rem;">
+    <textarea id="correction-input" rows="3" placeholder="Quelque chose à préciser ou corriger…" style="min-height:90px;"></textarea>
+  </div>
+  <button class="btn-gold" onclick="confirmSend()">Confirmer et envoyer →</button>
+</div>
+
+<!-- END -->
+<div id="screen-end" class="screen">
+  <div class="end-center">
+    <div class="end-icon">✅</div>
+    <div class="end-title">C'est envoyé !</div>
+    <p class="end-sub">Ton feedback complet a bien été transmis à l'artiste, de façon anonyme. Merci pour ton honnêteté — c'est ce qui aide vraiment.</p>
+    <div class="save-status" id="save-status"></div>
+  </div>
+</div>
+
+</div>
 <script>
-// ═══ CONFIG (artiste remplit le setup) ═══
-// La clé API est encodée dans l'URL par le setup — jamais en dur ici.
-
-let cfg = { apiKey:'', artist:'', track:'', genre:'', context:'', audioB64:'' };
-let personalScore = 0, potentialScore = 0;
-let selectedEmotions = [];
+// STATE
+let cfg = { apiKey:'', studyId:'', artist:'', track:'', genre:'', context:'' };
+let personalScore = -1, potentialScore = -1;
+let selectedEmotions = [], selectedActions = [];
 let conversation = [], transcript = [], qCount = 0;
-const MAX_QUESTIONS = 6;
-const MAX_RESPONDENTS = 300;
-let audioEl, audioLoaded = false;
+let ddConversation = [], ddTranscript = [], ddCount = 0;
 let sigData = {};
-let studyId = '';
+const MAX_Q = 7;
+const MAX_RESPONDENTS = 300;
 
-// ═══ SETUP ═══
+// SETUP
 function generateLink() {
   const apiKey = document.getElementById('setup-apikey').value.trim();
+  const sid    = document.getElementById('setup-sid').value.trim().replace(/\s+/g,'-');
   const artist = document.getElementById('setup-artist').value.trim();
   const track  = document.getElementById('setup-track').value.trim();
   const genre  = document.getElementById('setup-genre').value.trim();
   const ctx    = document.getElementById('setup-context').value.trim();
-  if (!apiKey || !artist || !track) { alert('Clé API, artiste et titre sont requis.'); return; }
-  const sid = 'track-' + artist.toLowerCase().replace(/\s+/g,'-') + '-' + Date.now();
-  const params = new URLSearchParams({
-    k: btoa(apiKey), a: encodeURIComponent(artist), t: encodeURIComponent(track),
-    g: encodeURIComponent(genre), c: encodeURIComponent(ctx), s: sid
-  });
+  if (!apiKey || !artist || !track || !sid) { alert('Clé API, identifiant, artiste et titre sont requis.'); return; }
+  const params = new URLSearchParams({ k:btoa(apiKey), s:sid, a:encodeURIComponent(artist), t:encodeURIComponent(track), g:encodeURIComponent(genre), c:encodeURIComponent(ctx) });
   const url = window.location.href.split('?')[0] + '?' + params.toString();
   document.getElementById('generated-link').value = url;
   document.getElementById('link-output').style.display = 'block';
 }
-
 function copyLink() {
   navigator.clipboard.writeText(document.getElementById('generated-link').value).then(() => {
     const btn = document.getElementById('btn-copy-link');
     btn.textContent = '✓ Copié !';
-    setTimeout(()=>btn.textContent='Copier',2000);
+    setTimeout(() => btn.textContent = 'Copier', 2000);
   });
 }
 
-// ═══ INIT ═══
+// INIT
 window.addEventListener('DOMContentLoaded', async () => {
   const p = new URLSearchParams(window.location.search);
   if (!p.has('k')) return;
-
   cfg.apiKey  = atob(p.get('k'));
+  cfg.studyId = p.get('s') || 'track';
   cfg.artist  = decodeURIComponent(p.get('a') || '');
   cfg.track   = decodeURIComponent(p.get('t') || '');
   cfg.genre   = decodeURIComponent(p.get('g') || '');
   cfg.context = decodeURIComponent(p.get('c') || '');
-  studyId     = p.get('s') || 'track';
-
-  // Check respondent cap
   try {
-    const countData = await window.storage.get('count:' + studyId, true);
-    const count = countData ? parseInt(countData.value) : 0;
-    if (count >= MAX_RESPONDENTS) { showScreen('screen-closed'); return; }
+    const cd = await window.storage.get('count:'+cfg.studyId, true);
+    if (cd && parseInt(cd.value) >= MAX_RESPONDENTS) { showScreen('screen-closed'); return; }
   } catch(e) {}
-
-  // Fill UI
-  document.getElementById('display-artist').textContent = cfg.artist;
-  document.getElementById('display-track').textContent  = '"' + cfg.track + '"';
-  document.getElementById('display-track2').textContent = '"' + cfg.track + '"';
-  document.getElementById('display-genre').textContent  = cfg.genre;
-
-  buildRatingStars();
-  buildPotentialStars();
-  buildEmotions();
+  document.getElementById('intro-artist').textContent = cfg.artist;
+  document.getElementById('intro-track').textContent = '"' + cfg.track + '"';
   buildSignaletics();
-
-  showScreen('screen-listen');
+  buildScoreGrid('score-grid', 'score-val', false);
+  buildScoreGrid('pot-grid', 'pot-val', true);
+  buildEmotions();
+  buildActions();
+  showScreen('screen-intro');
 });
 
-// ═══ SCREENS ═══
+// SCREENS
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById(id);
@@ -440,170 +425,186 @@ function showScreen(id) {
   window.scrollTo(0,0);
 }
 
-function goToRating()     { showScreen('screen-rating'); }
-function goToEmotions()   { showScreen('screen-emotions'); }
-function goToInterview()  { showScreen('screen-interview'); startInterview(); }
-function goToSignaletics(){ showScreen('screen-sig'); }
-
-// ═══ RATING STARS ═══
-function buildRatingStars() {
-  const c = document.getElementById('stars-row');
-  for (let i=1; i<=10; i++) {
-    const btn = document.createElement('button');
-    btn.className = 'star-btn'; btn.textContent = i;
-    btn.onclick = () => selectScore(i, 'rating');
-    c.appendChild(btn);
-  }
+// SIGNALETICS
+function buildSignaletics() {
+  buildRadio('sig-age', ['< 18','18–24','25–34','35–44','45–54','55+']);
+  buildRadio('sig-gender', ['Homme','Femme','Non-binaire','Autre']);
+  buildRadio('sig-relation', ['Je le/la découvre','Je connais un peu','J\'aime globalement','Je suis fan'], val => {
+    const knows = !val.includes('découvre');
+    document.getElementById('sig-since-wrap').style.display = knows ? 'block' : 'none';
+    document.getElementById('sig-habits-wrap').style.display = knows ? 'block' : 'none';
+  });
+  buildRadio('sig-since', ['Moins de 6 mois','6 mois – 2 ans','Plus de 2 ans']);
+  buildRadio('sig-habits', ['J\'écoute presque tout','Plusieurs morceaux','Quelques titres seulement']);
 }
-function buildPotentialStars() {
-  const c = document.getElementById('potential-stars');
-  for (let i=1; i<=10; i++) {
-    const btn = document.createElement('button');
-    btn.className = 'star-btn'; btn.textContent = i;
-    btn.onclick = () => selectScore(i, 'potential');
-    c.appendChild(btn);
-  }
-}
-function selectScore(val, type) {
-  if (type === 'rating') {
-    personalScore = val;
-    document.getElementById('rating-display').innerHTML = val + '<span>/10</span>';
-    document.querySelectorAll('#stars-row .star-btn').forEach((b,i) => b.classList.toggle('selected', i+1===val));
-    const btn = document.getElementById('btn-rating-next');
-    btn.disabled = false; btn.style.opacity = '1';
-  } else {
-    potentialScore = val;
-    document.getElementById('potential-display').innerHTML = val + '<span>/10</span>';
-    document.querySelectorAll('#potential-stars .star-btn').forEach((b,i) => b.classList.toggle('selected', i+1===val));
-    const btn = document.getElementById('btn-potential-next');
-    btn.disabled = false; btn.style.opacity = '1';
-  }
-}
-
-// ═══ EMOTIONS ═══
-const EMOTIONS = ['⚡ Énergie','🌟 Euphorie','🎵 Groove','✨ Frisson','☁️ Légèreté','🌊 Nostalgie','🌧 Mélancolie','🕯 Intimité','😶 Détachement'];
-function buildEmotions() {
-  const c = document.getElementById('emotions-grid');
-  EMOTIONS.forEach(e => {
-    const btn = document.createElement('button');
-    btn.className = 'emotion-btn'; btn.textContent = e;
-    btn.onclick = () => {
-      btn.classList.toggle('selected');
-      const idx = selectedEmotions.indexOf(e);
-      if (idx > -1) selectedEmotions.splice(idx,1); else selectedEmotions.push(e);
+function buildRadio(id, opts, onChange) {
+  const c = document.getElementById(id);
+  opts.forEach(o => {
+    const b = document.createElement('button');
+    b.className = 'pill'; b.textContent = o;
+    b.onclick = () => {
+      c.querySelectorAll('.pill').forEach(x => { x.classList.remove('selected'); x.classList.remove('selected-gold'); });
+      b.classList.add('selected');
+      sigData[id] = o;
+      if (onChange) onChange(o);
     };
-    c.appendChild(btn);
+    c.appendChild(b);
   });
 }
 
-// ═══ INTERVIEW ═══
-async function startInterview() {
-  document.getElementById('personal-score-display').textContent = personalScore;
-  await askNext(null);
+// SCORE GRIDS
+function buildScoreGrid(gridId, dispId, isGold) {
+  const g = document.getElementById(gridId);
+  for (let i = 0; i <= 10; i++) {
+    const b = document.createElement('button');
+    b.className = 'score-btn'; b.textContent = i;
+    b.onclick = () => {
+      g.querySelectorAll('.score-btn').forEach(x => { x.classList.remove('selected','selected-gold'); });
+      b.classList.add(isGold ? 'selected-gold' : 'selected');
+      const el = document.getElementById(dispId);
+      el.textContent = i + '/10'; el.classList.remove('empty');
+      if (!isGold) {
+        personalScore = i;
+        const btn = document.getElementById('btn-rating');
+        btn.disabled = false; btn.style.opacity = '1';
+        document.getElementById('perso-recap').textContent = i;
+      } else {
+        potentialScore = i;
+        const btn = document.getElementById('btn-potential');
+        btn.disabled = false; btn.style.opacity = '1';
+      }
+    };
+    g.appendChild(b);
+  }
 }
 
-function buildSystemPrompt() {
-  return `Tu es un enquêteur musical expert, chaleureux et efficace. Tu recueilles le feedback d'un auditeur sur un titre musical.
-
-TITRE : "${cfg.track}" par ${cfg.artist}
-GENRE : ${cfg.genre}
-CONTEXTE : ${cfg.context || 'Aucun contexte supplémentaire.'}
-NOTE PERSONNELLE DE L'AUDITEUR : ${personalScore}/10
-ÉMOTIONS RESSENTIES : ${selectedEmotions.join(', ') || 'non précisées'}
-
-TES OBJECTIFS en ${MAX_QUESTIONS} questions max (5-7 min au total) :
-1. Premières impressions & accroche
-2. Mémorabilité (hook, phrase qui reste en tête)
-3. Texte/paroles + voix/interprétation (regroupe si possible)
-4. Production & son
-5. Style perçu, références et univers évoqués (artistes, époques, comparaisons)
-6. Adéquation genre/image artiste + intention d'action (partager, playlist, concert ?)
-
-RÈGLES STRICTES :
-- Questions courtes, directes, ouvertes. Une seule à la fois.
-- Adapte-toi aux réponses : creuse ce qui est intéressant, passe vite sur ce qui est neutre.
-- Si note perso et potentiel divergent fortement : interroge cet écart.
-- Si l'auditeur part hors sujet ou te pose des questions : recadre DOUCEMENT ("Je note ! Revenons au titre — ...").
-
-RELANCES INTELLIGENTES :
-- Si une réponse est trop courte (moins de 5 mots), vague ou ne dit rien d'utile pour l'artiste : relance avec une question plus précise AVANT de passer à la suivante. Ex: "Tu peux développer un peu ? Qu'est-ce qui te fait dire ça ?"
-- Si une réponse est monosyllabique ou évasive une deuxième fois : accepte-la et passe à la suite sans insister.
-- DÉTECTE la frustration ou l'impatience (réponses très courtes répétées, "j'sais pas", "peu importe", "next", "..." etc.) : dans ce cas, raccourcis l'interview, regroupe les questions restantes en une seule, et conclus rapidement.
-- Ne relance JAMAIS deux fois sur la même question.
-- Jamais de questions fermées (oui/non).
-- Quand les ${MAX_QUESTIONS} questions sont posées et répondues : réponds uniquement [FIN].`;
+// EMOTIONS
+const EMOTIONS = ['⚡ Énergie','🌟 Euphorie','🎵 Groove','✨ Frisson','☁️ Légèreté','🌊 Nostalgie','🌧 Mélancolie','🕯 Intimité','😶 Détachement'];
+function buildEmotions() {
+  document.getElementById('emotion-grid').innerHTML = '';
+  EMOTIONS.forEach(e => {
+    const b = document.createElement('button');
+    b.className = 'pill'; b.textContent = e;
+    b.onclick = () => {
+      b.classList.toggle('selected');
+      const i = selectedEmotions.indexOf(e);
+      if (i > -1) selectedEmotions.splice(i,1); else selectedEmotions.push(e);
+    };
+    document.getElementById('emotion-grid').appendChild(b);
+  });
 }
+function goToEmotions() { showScreen('screen-emotions'); }
+
+// ACTIONS
+const ACTIONS = ['Je le partagerais','Je l\'ajouterais en playlist','Je le mettrais en fond','J\'irais le voir en concert','Je ne ferais rien de particulier'];
+function buildActions() {
+  document.getElementById('action-grid').innerHTML = '';
+  ACTIONS.forEach(a => {
+    const b = document.createElement('button');
+    b.className = 'pill'; b.textContent = a;
+    b.onclick = () => {
+      b.classList.toggle('selected-gold');
+      const i = selectedActions.indexOf(a);
+      if (i > -1) selectedActions.splice(i,1); else selectedActions.push(a);
+    };
+    document.getElementById('action-grid').appendChild(b);
+  });
+}
+
+// SYSTEM PROMPT
+function buildSystemPrompt(isDD) {
+  const lowScore = personalScore <= 5;
+  const emotions = selectedEmotions.join(', ') || 'non précisées';
+  const sigProfile = Object.values(sigData).filter(Boolean).join(', ') || 'non renseigné';
+
+  if (isDD) {
+    return `Tu conduis un approfondissement qualitatif sur deux thèmes issus de l'entretien sur "${cfg.track}" par ${cfg.artist}.
+
+DONNÉES DE L'ENTRETIEN :
+Note artistique : ${personalScore}/10
+Émotions : ${emotions}
+Transcription : ${transcript.map((t,i)=>`Q${i+1}: ${t.q} — R: ${t.a}`).join(' | ')}
+
+MISSION :
+Identifie les 2 thèmes les plus saillants ou insuffisamment explorés parmi : mélodie, voix/interprétation, paroles, production, style/cohérence artistique, émotion/vibe, potentiel, public cible, point fort, point faible.
+
+RÈGLES :
+- 1 question principale par thème.
+- Maximum 2 relances par thème si la réponse apporte vraiment quelque chose.
+- Ne pas dépasser 2 thèmes au total.
+- Ton naturel, exploratoire, chaleureux.
+- Quand les 2 thèmes sont épuisés, réponds uniquement : [FIN_DD]`;
+  }
+
+  return `Tu conduis un entretien qualitatif sur le titre "${cfg.track}" par ${cfg.artist} (genre : ${cfg.genre}).
+${cfg.context ? 'Contexte artiste : ' + cfg.context : ''}
+
+DONNÉES COLLECTÉES EN AMONT — NE PAS REDEMANDER :
+Note artistique du répondant : ${personalScore}/10
+Émotions ressenties : ${emotions}
+Profil signalétique : ${sigProfile}
+
+${lowScore ? `MODE NOTE FAIBLE (${personalScore}/10) :
+Objectif : comprendre clairement ce qui n'a pas fonctionné et identifier 1-2 axes d'amélioration prioritaires. Ne pas chercher à projeter un potentiel non perçu.
+Questions autorisées : éléments problématiques (mélodie, voix, paroles, production, style), émotions négatives ou absentes, axes d'amélioration.
+Questions à éviter : recommandation, écoute future, références artistiques positives.
+Ne pas insister si la réponse est courte ou abrupte. Maximum 1 question par thème.` : `THÈMES À EXPLORER en ${MAX_Q} questions max :
+1. Premières impressions globales
+2. Éléments musicaux marquants (mélodie, voix/flow, paroles, production)
+3. Émotion principale et pourquoi
+4. Mémorabilité (une phrase, un son, un moment qui reste)
+5. Références artistiques (ça ressemble à quoi, ça évoque quel univers ?)
+6. Correspondance avec l'image habituelle de l'artiste (si connu)
+7. Ce qui pourrait être amélioré`}
+
+RÈGLES DE MODÉRATION — STRICTEMENT OBLIGATOIRES :
+- Une seule question par message. Jamais de liste. Jamais de numérotation.
+- Une seule idée par message.
+- Relance uniquement si la réponse est trop courte (moins de 2 phrases), vague ou inexploitable.
+- Une seule relance par question, sur le même axe uniquement.
+- Ne jamais relancer un sujet déjà traité.
+- Ne jamais poser une question à laquelle le répondant a déjà répondu — vérifier la transcription avant chaque question.
+- Ton chaleureux, simple, naturel. Jamais jargonneux.
+- Si le répondant digresse ou pose une question hors sujet : répondre "Je comprends ta question, mais mon rôle est uniquement de recueillir ton retour sur ce morceau pour le transmettre à l'artiste." Puis reprendre l'entretien.
+- Si le répondant semble pressé ou impatient (réponses très courtes répétées, "j'sais pas", "next", "peu importe") : regrouper les questions restantes en une seule synthétique et conclure.
+- Quand les ${MAX_Q} questions sont posées et répondues : répondre uniquement [FIN]`;
+}
+
+// INTERVIEW
+async function startInterview() { await askNext(null); }
 
 async function askNext(lastAnswer) {
-  setThinking(true);
+  setThinking(true, 'thinking', 'btn-send');
   if (lastAnswer !== null) conversation.push({ role:'user', content: lastAnswer });
-  const userMsg = qCount === 0
-    ? 'Pose la première question.'
-    : `Voici la réponse. Pose la question ${qCount+1}/${MAX_QUESTIONS}. Si toutes sont faites, réponds [FIN].`;
+  const isFirst = qCount === 0;
+  const userMsg = isFirst
+    ? 'Commence l\'entretien avec la première question.'
+    : `Voici la réponse. Pose la question suivante (${qCount+1}/${MAX_Q}). Si toutes les questions sont faites, réponds uniquement [FIN].`;
   const messages = [...conversation, { role:'user', content: userMsg }];
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'x-api-key':cfg.apiKey,
-        'anthropic-version':'2023-06-01',
-        'anthropic-dangerous-direct-browser-access':'true'
-      },
-      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:400, system: buildSystemPrompt(), messages })
+      headers:{'Content-Type':'application/json','x-api-key':cfg.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:400, system: buildSystemPrompt(false), messages })
     });
     const data = await res.json();
-
-    // Detect API-level errors (invalid key, quota, etc.)
-    if (data.error) {
-      setThinking(false);
-      document.getElementById('q-text').textContent = '⚠️ Erreur API : ' + (data.error.message || JSON.stringify(data.error));
-      document.getElementById('answer-zone').innerHTML = '';
-      return;
-    }
-
+    if (data.error) { showApiError(data.error.message, 'q-text', 'answer-zone', 'btn-send', 'thinking'); return; }
     const reply = (data.content?.[0]?.text || '').trim();
-
-    if (!reply) {
-      setThinking(false);
-      document.getElementById('q-text').textContent = '⚠️ Réponse vide de l\'API. Réessaie.';
-      document.getElementById('btn-send').disabled = false;
-      return;
-    }
-
+    if (!reply) { showApiError('Réponse vide. Réessaie.', 'q-text', 'answer-zone', 'btn-send', 'thinking'); return; }
     conversation.push({ role:'assistant', content: reply });
-
-    if (reply.includes('[FIN]') || qCount >= MAX_QUESTIONS) {
-      setThinking(false); showScreen('screen-potential'); return;
+    if (reply.includes('[FIN]') || qCount >= MAX_Q) {
+      setThinking(false, 'thinking', 'btn-send');
+      showScreen('screen-module');
+      return;
     }
     qCount++;
     document.getElementById('q-num').textContent = qCount;
-    document.getElementById('iv-progress').style.width = ((qCount/MAX_QUESTIONS)*100)+'%';
-    displayQuestion(reply);
-    setThinking(false);
+    document.getElementById('iv-progress').style.width = (qCount/MAX_Q*100)+'%';
+    displayQ(reply, 'q-text', 'answer-zone', 'answer-input', 'btn-send');
+    setThinking(false, 'thinking', 'btn-send');
   } catch(err) {
-    setThinking(false);
-    document.getElementById('q-text').textContent = '⚠️ Erreur : ' + err.message + ' — Vérifie ta clé API et recharge la page.';
-    document.getElementById('answer-zone').innerHTML = '';
+    showApiError(err.message, 'q-text', 'answer-zone', 'btn-send', 'thinking');
   }
-}
-
-function displayQuestion(text) {
-  const el = document.getElementById('q-text');
-  el.textContent = ''; el.classList.add('typing');
-  // Render answer zone as textarea
-  document.getElementById('answer-zone').innerHTML = `<div class="answer-area"><textarea id="answer-input" rows="3" placeholder="Ta réponse…"></textarea></div>`;
-  document.getElementById('btn-send').disabled = false;
-  let i = 0;
-  const iv = setInterval(() => {
-    if (i < text.length) { el.textContent += text[i]; i++; }
-    else { el.classList.remove('typing'); clearInterval(iv); }
-  }, 16);
-}
-
-function setThinking(show) {
-  document.getElementById('thinking').style.display = show ? 'flex' : 'none';
-  if (document.getElementById('btn-send')) document.getElementById('btn-send').disabled = show;
 }
 
 async function sendAnswer() {
@@ -618,127 +619,155 @@ async function sendAnswer() {
   await askNext(answer);
 }
 
-// ═══ SIGNALETICS ═══
-function buildSignaletics() {
-  buildRadio('sig-age',   ['< 18','18–24','25–34','35–44','45–54','55+']);
-  buildRadio('sig-gender',['Homme','Femme','Non-binaire','Autre']);
-  buildRadio('sig-habits',['Casual (quelques h/semaine)','Régulier (tous les jours)','Passionné (plusieurs h/jour)']);
-  buildRadio('sig-relation',['Fan','Je connais bien','Je connais un peu','Presque pas']);
-}
-function buildRadio(containerId, options) {
-  const c = document.getElementById(containerId);
-  options.forEach(opt => {
-    const btn = document.createElement('button');
-    btn.className = 'radio-btn'; btn.textContent = opt;
-    btn.onclick = () => {
-      c.querySelectorAll('.radio-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      sigData[containerId] = opt;
-    };
-    c.appendChild(btn);
-  });
+// DEEP DIVE
+async function startDeepDive() {
+  showScreen('screen-deepdive');
+  await askDeepNext(null);
 }
 
-// ═══ SYNTHESIS & SUBMIT ═══
-function buildNarrative() {
-  const emotions = selectedEmotions.map(e => e.replace(/^[\S]+\s/, ''));
-  const actions  = [];
-  transcript.forEach(t => {
-    const a = t.a.toLowerCase();
-    if (a.includes('partag')) actions.push('le partager');
-    if (a.includes('playlist') || a.includes('liste')) actions.push('l\'ajouter en playlist');
-    if (a.includes('concert') || a.includes('scène') || a.includes('voir')) actions.push('aller le voir en concert');
-  });
-
-  const scoreWord = personalScore >= 8 ? 'un vrai coup de cœur' : personalScore >= 6 ? 'une bonne impression' : personalScore >= 4 ? 'un avis mitigé' : 'peu d\'adhésion';
-  const potWord   = potentialScore >= 8 ? 'fort' : potentialScore >= 6 ? 'réel' : 'limité';
-
-  let parts = [];
-  parts.push(`Tu gardes ${scoreWord} de ce titre — ${personalScore}/10 — avec un potentiel commercial que tu juges ${potWord} (${potentialScore}/10).`);
-
-  if (emotions.length) {
-    const last = emotions[emotions.length - 1];
-    const rest = emotions.slice(0, -1);
-    const emStr = rest.length ? rest.join(', ') + ' et ' + last : last;
-    parts.push(`À l'écoute, ce morceau t'a principalement évoqué ${emStr}.`);
-  }
-
-  transcript.forEach((t, i) => {
-    if (t.a && t.a.trim().length > 4) {
-      const a = t.a.trim();
-      const lower = a.charAt(0).toLowerCase() + a.slice(1);
-      const dot = a.endsWith('.') ? '' : '.';
-      if (i === 0) parts.push(`Ce qui t'a d'abord frappé : ${lower}${dot}`);
-      else if (i === 1) parts.push(`Sur la mémorabilité et les paroles : ${lower}${dot}`);
-      else if (i === 2) parts.push(`Concernant la production et la voix : ${lower}${dot}`);
-      else if (i === 3) parts.push(`En termes de références et style perçu : ${lower}${dot}`);
+async function askDeepNext(lastAnswer) {
+  setThinking(true, 'dd-thinking', 'dd-btn-send');
+  if (lastAnswer !== null) ddConversation.push({ role:'user', content: lastAnswer });
+  const userMsg = ddCount === 0
+    ? 'Lance l\'approfondissement sur le premier thème.'
+    : 'Réponse reçue. Continue si un rebond utile est possible, sinon passe au second thème. Si les 2 thèmes sont épuisés, réponds uniquement [FIN_DD].';
+  const messages = [...ddConversation, { role:'user', content: userMsg }];
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':cfg.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:400, system: buildSystemPrompt(true), messages })
+    });
+    const data = await res.json();
+    const reply = ((data.content?.[0]?.text) || '').trim();
+    ddConversation.push({ role:'assistant', content: reply });
+    if (!reply || reply.includes('[FIN_DD]') || ddCount >= 8) {
+      setThinking(false, 'dd-thinking', 'dd-btn-send');
+      goToPotential(); return;
     }
-  });
-
-  if (actions.length) {
-    const unique = [...new Set(actions)];
-    parts.push(`Ce titre t'inciterait à : ${unique.join(', ')}.`);
+    ddCount++;
+    const themeNum = ddCount <= 4 ? '1' : '2';
+    document.getElementById('dd-num').textContent = themeNum;
+    document.getElementById('dd-progress').style.width = (ddCount/8*100)+'%';
+    displayQ(reply, 'dd-text', 'dd-answer-zone', 'dd-answer-input', 'dd-btn-send');
+    setThinking(false, 'dd-thinking', 'dd-btn-send');
+  } catch(err) {
+    goToPotential();
   }
-
-  return parts.join(' ');
 }
 
-function showSynthesis() {
+async function sendDeepAnswer() {
+  const input = document.getElementById('dd-answer-input');
+  if (!input) return;
+  const answer = input.value.trim();
+  if (!answer) return;
+  const lastQ = ddConversation.filter(m=>m.role==='assistant').slice(-1)[0]?.content || '';
+  ddTranscript.push({ q: lastQ, a: answer });
+  document.getElementById('dd-btn-send').disabled = true;
+  document.getElementById('dd-text').textContent = '';
+  await askDeepNext(answer);
+}
+
+function goToPotential() { showScreen('screen-potential'); }
+function goToEnrichissement() { showScreen('screen-enrichissement'); }
+
+// SYNTHESIS
+function goToSynthesis() {
   document.getElementById('syn-score').textContent = personalScore + '/10';
-  document.getElementById('syn-pot').textContent   = potentialScore + '/10';
+  document.getElementById('syn-pot').textContent   = potentialScore > -1 ? potentialScore + '/10' : '—';
   document.getElementById('syn-narrative').textContent = buildNarrative();
-  document.getElementById('correction-field').style.display = 'none';
-  if (document.getElementById('correction-input')) document.getElementById('correction-input').value = '';
   showScreen('screen-synthesis');
 }
 
+function buildNarrative() {
+  const emotions = selectedEmotions.map(e => e.replace(/^[\S]+\s/,'')).join(', ');
+  const actions  = selectedActions.filter(a => !a.includes('rien')).join(', ').toLowerCase();
+  const sw = personalScore >= 8 ? 'un vrai coup de cœur' : personalScore >= 6 ? 'une bonne impression' : personalScore >= 4 ? 'un avis mitigé' : 'peu d\'adhésion';
+  const pw = potentialScore >= 8 ? 'fort' : potentialScore >= 6 ? 'réel' : potentialScore >= 0 ? 'limité' : 'non évalué';
+
+  const parts = [];
+  parts.push(`Tu gardes ${sw} de ce titre — ${personalScore}/10 — avec un potentiel commercial que tu juges ${pw}${potentialScore >= 0 ? ' (' + potentialScore + '/10)' : ''}.`);
+  if (emotions) parts.push(`À l'écoute, ce morceau t'a évoqué : ${emotions}.`);
+
+  const labels = ['Tes premières impressions','Sur les éléments musicaux','L\'émotion principale','Ce qui reste en tête','Les références artistiques','Ce qui correspond à l\'artiste','Ce qui pourrait être amélioré'];
+  transcript.forEach((t, i) => {
+    if (t.a && t.a.trim().length > 3) {
+      const a = t.a.trim();
+      const lower = a.charAt(0).toLowerCase() + a.slice(1);
+      parts.push(`${labels[i] || 'Autre retour'} : ${lower}${a.endsWith('.') ? '' : '.'}`);
+    }
+  });
+
+  ddTranscript.forEach(t => {
+    if (t.a && t.a.trim().length > 3) {
+      const a = t.a.trim();
+      parts.push(`${a.charAt(0).toLowerCase() + a.slice(1)}${a.endsWith('.') ? '' : '.'}`);
+    }
+  });
+
+  if (actions) parts.push(`Ce titre t'inciterait à : ${actions}.`);
+  const msg = document.getElementById('final-message')?.value.trim();
+  if (msg) parts.push(`Ton message à l'artiste : "${msg}"`);
+
+  return parts.join('\n\n');
+}
+
 function toggleCorrection() {
-  const field = document.getElementById('correction-field');
-  field.style.display = field.style.display === 'none' ? 'block' : 'none';
-  if (field.style.display === 'block') document.getElementById('correction-input').focus();
+  const f = document.getElementById('correction-field');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+  if (f.style.display === 'block') document.getElementById('correction-input').focus();
 }
 
 async function confirmSend() {
   showScreen('screen-end');
   const correction = document.getElementById('correction-input')?.value.trim() || '';
-  await submitAll(correction);
-}
-
-async function submitAll(correction = '') {
   const record = {
-    id: 'R' + Date.now(),
-    studyId,
-    artist: cfg.artist,
-    track: cfg.track,
-    date: new Date().toISOString(),
-    personalScore,
-    potentialScore,
-    emotions: selectedEmotions,
-    transcript,
+    id: 'R' + Date.now(), studyId: cfg.studyId, artist: cfg.artist, track: cfg.track,
+    date: new Date().toISOString(), personalScore, potentialScore,
+    emotions: selectedEmotions, actions: selectedActions,
+    transcript, ddTranscript,
     narrative: document.getElementById('syn-narrative')?.textContent || '',
-    correction,
-    sig: {
-      age: sigData['sig-age'] || null,
-      gender: sigData['sig-gender'] || null,
-      location: document.getElementById('sig-location')?.value || null,
-      habits: sigData['sig-habits'] || null,
-      relation: sigData['sig-relation'] || null
-    }
+    correction, finalMessage: document.getElementById('final-message')?.value.trim() || '',
+    sig: { age: sigData['sig-age']||null, gender: sigData['sig-gender']||null, location: document.getElementById('sig-location')?.value||null, relation: sigData['sig-relation']||null, since: sigData['sig-since']||null, habits: sigData['sig-habits']||null }
   };
   const statusEl = document.getElementById('save-status');
-  statusEl.textContent = 'Sauvegarde…';
   try {
     let count = 0;
-    try { const cd = await window.storage.get('count:'+studyId, true); count = cd ? parseInt(cd.value) : 0; } catch(e){}
-    await window.storage.set('count:'+studyId, String(count+1), true);
+    try { const cd = await window.storage.get('count:'+cfg.studyId, true); count = cd ? parseInt(cd.value) : 0; } catch(e){}
+    await window.storage.set('count:'+cfg.studyId, String(count+1), true);
     let responses = [];
-    try { const rd = await window.storage.get('responses:'+studyId, true); if(rd) responses = JSON.parse(rd.value); } catch(e){}
+    try { const rd = await window.storage.get('responses:'+cfg.studyId, true); if(rd) responses = JSON.parse(rd.value); } catch(e){}
     responses.push(record);
-    await window.storage.set('responses:'+studyId, JSON.stringify(responses), true);
-    statusEl.textContent = `✓ Avis #${count+1} enregistré. Merci !`;
-  } catch(err) {
-    statusEl.textContent = 'Merci pour ton temps !';
-  }
+    await window.storage.set('responses:'+cfg.studyId, JSON.stringify(responses), true);
+    statusEl.textContent = `✓ Avis #${count+1} enregistré — merci !`;
+  } catch(err) { statusEl.textContent = 'Merci pour ton temps !'; }
+}
+
+// HELPERS
+function displayQ(text, textId, zoneId, inputId, btnId) {
+  const el = document.getElementById(textId);
+  el.textContent = ''; el.classList.add('typing');
+  document.getElementById(zoneId).innerHTML = `<div><textarea id="${inputId}" rows="3" placeholder="Ta réponse…" style="width:100%;min-height:100px;resize:vertical;font-family:'DM Sans',sans-serif;font-size:0.92rem;font-weight:300;color:var(--text);background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:0.7rem 1rem;outline:none;transition:border-color 0.2s;margin-bottom:0;"></textarea></div>`;
+  document.getElementById(inputId).addEventListener('focus', function(){ this.style.borderColor='var(--accent)'; });
+  document.getElementById(inputId).addEventListener('blur', function(){ this.style.borderColor='var(--border)'; });
+  document.getElementById(btnId).disabled = false;
+  let i = 0;
+  const iv = setInterval(() => {
+    if (i < text.length) { el.textContent += text[i]; i++; }
+    else { el.classList.remove('typing'); clearInterval(iv); }
+  }, 16);
+}
+
+function setThinking(show, thinkId, btnId) {
+  document.getElementById(thinkId).style.display = show ? 'flex' : 'none';
+  const btn = document.getElementById(btnId);
+  if (btn) btn.disabled = show;
+}
+
+function showApiError(msg, textId, zoneId, btnId, thinkId) {
+  setThinking(false, thinkId, btnId);
+  document.getElementById(textId).textContent = '⚠️ ' + msg;
+  document.getElementById(zoneId).innerHTML = '';
 }
 </script>
 </body>
