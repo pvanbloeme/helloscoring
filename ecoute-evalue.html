@@ -514,7 +514,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   buildEmotions();
   buildActions();
   showScreen('screen-intro');
-  typeEchoText('echo-intro-text', `Bonjour ! Je m'appelle Écho. Ma mission est de recueillir ton avis sur "${cfg.track}" de ${cfg.artist} et de le transmettre directement à l'artiste. Pas de bonne ou mauvaise réponse — ton ressenti honnête est ce qui compte vraiment.`, () => {
+  typeEchoText('echo-intro-text', `Bonjour ! Je m'appelle Écho. Ma mission est de recueillir ton avis sur "${cfg.track}" de ${cfg.artist} et de le transmettre directement à l'artiste. Il n'y a pas de bonne ou mauvaise réponse — ce qui compte, c'est ton ressenti honnête.`, () => {
     document.getElementById('btn-intro-next').disabled = false;
     document.getElementById('btn-intro-next').style.opacity = '1';
   });
@@ -621,7 +621,7 @@ async function goToScoreComment() {
 }
 
 function buildScoreCommentPrompt() {
-  return `Tu es Écho, un agent d'évaluation musicale chaleureux et naturel. Un répondant vient de donner la note ${personalScore}/10 au titre "${cfg.track}" de ${cfg.artist}. Génère UNE seule phrase de réaction courte et naturelle (20 mots max) adaptée à ce niveau de note, sans jugement, sans être condescendant. Puis enchaîne avec une courte phrase de transition vers les questions sur les émotions. Ton total : 2 phrases max.`;
+  return `Tu es Écho, un agent d'évaluation musicale chaleureux et naturel. Tu tutoies toujours le répondant. Un répondant vient de donner la note ${personalScore}/10 au titre "${cfg.track}" de ${cfg.artist}. Génère UNE seule phrase de réaction courte et naturelle (20 mots max) adaptée à ce niveau de note, sans jugement, sans être condescendant. Puis enchaîne avec une courte phrase de transition vers les questions sur les émotions. Ton total : 2 phrases max. Tutoiement obligatoire.`;
 }
 
 function getScoreCommentFallback() {
@@ -676,7 +676,7 @@ function buildSystemPrompt(mode) {
   const sigProfile = Object.values(sigData).filter(Boolean).join(', ')||'non renseigné';
 
   if (mode === 'deepdive') {
-    return `Tu es Écho, un agent d'évaluation musicale chaleureux et précis. Tu conduis un approfondissement sur deux thèmes issus de l'entretien sur "${cfg.track}" par ${cfg.artist}.
+    return `Tu es Écho, un agent d'évaluation musicale chaleureux et précis. Tu tutoies toujours le répondant. Tu conduis un approfondissement sur deux thèmes issus de l'entretien sur "${cfg.track}" par ${cfg.artist}.
 
 TRANSCRIPTION DE L'ENTRETIEN :
 ${transcript.map((t,i)=>`Q${i+1}: ${t.q} — R: ${t.a}`).join('\n')}
@@ -688,11 +688,11 @@ RÈGLES :
 - 1 question principale par thème avec possibilité de 2 relances approfondies si pertinent.
 - Exploite vraiment les réponses déjà données pour creuser plus loin.
 - Ne pas dépasser 2 thèmes.
-- Ton naturel, curieux, respectueux.
+- Tutoiement obligatoire. Ton naturel, curieux, respectueux.
 - Quand les 2 thèmes sont épuisés : répondre uniquement [FIN_DD]`;
   }
 
-  return `Tu es Écho, un agent d'évaluation musicale chaleureux et efficace. Tu conduis un entretien qualitatif sur le titre "${cfg.track}" par ${cfg.artist} (genre : ${cfg.genre}).
+  return `Tu es Écho, un agent d'évaluation musicale chaleureux et efficace. Tu tutoies toujours le répondant. Tu conduis un entretien qualitatif sur le titre "${cfg.track}" par ${cfg.artist} (genre : ${cfg.genre}).
 ${cfg.context ? 'Contexte : ' + cfg.context : ''}
 
 DONNÉES COLLECTÉES EN AMONT — NE JAMAIS REDEMANDER :
@@ -713,6 +713,7 @@ Accepter les réponses courtes sans insister. Max 1 question par thème.` :
 6. Ce qui pourrait être amélioré`}
 
 RÈGLES STRICTES :
+- Tutoiement obligatoire dans toutes les questions et relances.
 - Une seule question courte et directe par message. Jamais de liste, jamais de numérotation.
 - Relance légère uniquement si la réponse est clairement insuffisante (moins de 2 phrases ou vraiment vague). En cas de doute, passer à la question suivante.
 - Maximum 1 relance par question, sur le même axe.
@@ -819,7 +820,7 @@ async function goToPotentialComment() {
 
 function buildPotCommentPrompt(gap) {
   const gapDir = potentialScore > personalScore ? 'supérieure' : 'inférieure';
-  return `Tu es Écho. Un répondant vient de donner ${potentialScore}/10 de potentiel commercial au titre "${cfg.track}" (note artistique : ${personalScore}/10). ${gap>=3 ? `L'écart est de ${gap} points (potentiel ${gapDir} à la note perso). Génère une phrase de réaction sur cet écart intéressant, puis pose UNE question ouverte courte pour comprendre pourquoi. 2 phrases max.` : `Génère une courte réaction naturelle sur cette note de potentiel (1 phrase max, sans être condescendant).`}`;
+  return `Tu es Écho. Tu tutoies toujours le répondant. Un répondant vient de donner ${potentialScore}/10 de potentiel commercial au titre "${cfg.track}" (note artistique : ${personalScore}/10). ${gap>=3 ? `L'écart est de ${gap} points (potentiel ${gapDir} à la note perso). Génère une phrase de réaction sur cet écart intéressant, puis pose UNE question ouverte courte pour comprendre pourquoi. Tutoiement obligatoire. 2 phrases max.` : `Génère une courte réaction naturelle sur cette note de potentiel (1 phrase max, sans être condescendant). Tutoiement obligatoire.`}`;
 }
 
 function getPotCommentFallback(gap) {
@@ -900,26 +901,99 @@ function goToSynthesis() {
 
 function buildNarrative() {
   const emotions = selectedEmotions.map(e=>e.replace(/^[\S]+\s/,'')).join(', ');
-  const actions  = selectedActions.filter(a=>!a.includes('rien')).join(', ').toLowerCase();
-  const sw = personalScore>=8?'un vrai coup de cœur':personalScore>=6?'une bonne impression':personalScore>=4?'un avis mitigé':'peu d\'adhésion';
-  const pw = potentialScore>=8?'fort':potentialScore>=6?'réel':potentialScore>=0?'limité':'non évalué';
-  const parts = [];
-  parts.push(`Tu gardes ${sw} de ce titre — ${personalScore}/10 — avec un potentiel commercial que tu juges ${pw}${potentialScore>=0?' ('+potentialScore+'/10)':''}.`);
-  if (emotions) parts.push(`À l'écoute, ce morceau t'a évoqué : ${emotions}.`);
-  const labels = ['Tes premières impressions','Sur les éléments musicaux','Ce qui reste en tête','Les références évoquées','La cohérence avec l\'artiste','Ce qui pourrait être amélioré'];
-  transcript.forEach((t,i) => {
-    if (t.a&&t.a.trim().length>3) {
+  const actions  = selectedActions.filter(a=>!a.includes('rien'));
+  const sw = personalScore>=8?'un vrai coup de cœur':personalScore>=6?'une belle impression':personalScore>=4?'un avis plutôt mitigé':'assez peu d\'adhésion';
+  const pw = potentialScore>=8?'un fort potentiel':potentialScore>=6?'un potentiel réel':potentialScore>=0?'un potentiel limité':'un potentiel que tu n\'as pas évalué';
+
+  let narrative = '';
+
+  // Accroche globale
+  narrative += `Tu as écouté ce titre en lui donnant ${personalScore}/10 — ${sw}`;
+  if (potentialScore >= 0) {
+    narrative += `, tout en lui reconnaissant ${pw} auprès d'un large public (${potentialScore}/10)`;
+  }
+  narrative += '.\n\n';
+
+  // Émotions
+  if (emotions) {
+    narrative += `À l'écoute, ce morceau t'a principalement évoqué ${emotions}`;
+    narrative += '. ';
+  }
+
+  // Premières impressions
+  const q0 = transcript[0];
+  if (q0?.a?.trim().length > 3) {
+    const a = q0.a.trim();
+    narrative += `Ce qui t'a frappé en premier : ${a.charAt(0).toLowerCase()+a.slice(1)}${a.endsWith('.')?'':'.'}`;
+    narrative += '\n\n';
+  }
+
+  // Éléments musicaux + mémorabilité
+  const q1 = transcript[1];
+  const q2 = transcript[2];
+  if (q1?.a?.trim().length > 3 || q2?.a?.trim().length > 3) {
+    if (q1?.a?.trim().length > 3) {
+      const a = q1.a.trim();
+      narrative += `Sur les éléments musicaux, tu notes : ${a.charAt(0).toLowerCase()+a.slice(1)}${a.endsWith('.')?'':'.'} `;
+    }
+    if (q2?.a?.trim().length > 3) {
+      const a = q2.a.trim();
+      narrative += `${a.charAt(0).toUpperCase()+a.slice(1)}${a.endsWith('.')?'':'.'}`;
+    }
+    narrative += '\n\n';
+  }
+
+  // Références + cohérence artiste
+  const q3 = transcript[3];
+  const q4 = transcript[4];
+  if (q3?.a?.trim().length > 3 || q4?.a?.trim().length > 3) {
+    if (q3?.a?.trim().length > 3) {
+      const a = q3.a.trim();
+      narrative += `En termes de références et d'univers, ${a.charAt(0).toLowerCase()+a.slice(1)}${a.endsWith('.')?'':'.'} `;
+    }
+    if (q4?.a?.trim().length > 3) {
+      const a = q4.a.trim();
+      narrative += `${a.charAt(0).toUpperCase()+a.slice(1)}${a.endsWith('.')?'':'.'}`;
+    }
+    narrative += '\n\n';
+  }
+
+  // Ce qui pourrait être amélioré
+  const q5 = transcript[5];
+  if (q5?.a?.trim().length > 3) {
+    const a = q5.a.trim();
+    narrative += `Si tu devais pointer quelque chose à améliorer : ${a.charAt(0).toLowerCase()+a.slice(1)}${a.endsWith('.')?'':'.'}\n\n`;
+  }
+
+  // Approfondissement
+  if (ddTranscript.length > 0) {
+    const ddParts = ddTranscript.filter(t=>t.a?.trim().length>3).map(t=>{
       const a=t.a.trim();
-      parts.push(`${labels[i]||'Autre retour'} : ${a.charAt(0).toLowerCase()+a.slice(1)}${a.endsWith('.')?'':'.'}`);}
-  });
-  if (potGapAnswer) parts.push(`Sur l'écart entre les deux notes : ${potGapAnswer.charAt(0).toLowerCase()+potGapAnswer.slice(1)}${potGapAnswer.endsWith('.')?'':'.'}`)
-  ddTranscript.forEach(t => {
-    if (t.a&&t.a.trim().length>3) { const a=t.a.trim(); parts.push(`${a.charAt(0).toLowerCase()+a.slice(1)}${a.endsWith('.')?'':'.'}`);}
-  });
-  if (actions) parts.push(`Ce titre t'inciterait à : ${actions}.`);
+      return a.charAt(0).toLowerCase()+a.slice(1)+(a.endsWith('.')?'':'.');
+    });
+    if (ddParts.length > 0) {
+      narrative += `En approfondissant, tu ajoutes : ${ddParts.join(' ')}\n\n`;
+    }
+  }
+
+  // Écart potentiel
+  if (potGapAnswer?.trim().length > 3) {
+    const a = potGapAnswer.trim();
+    narrative += `Sur l'écart entre tes deux notes : ${a.charAt(0).toLowerCase()+a.slice(1)}${a.endsWith('.')?'':'.'}\n\n`;
+  }
+
+  // Intentions
+  if (actions.length > 0) {
+    narrative += `Ce titre t'inciterait à : ${actions.join(', ').toLowerCase()}.`;
+  }
+
+  // Message artiste
   const msg = document.getElementById('final-message')?.value.trim();
-  if (msg) parts.push(`Ton message à l'artiste : "${msg}"`);
-  return parts.join('\n\n');
+  if (msg) {
+    narrative += `\n\nTon message à l'artiste : "${msg}"`;
+  }
+
+  return narrative.trim();
 }
 
 function toggleCorrection() {
