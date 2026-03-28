@@ -319,28 +319,36 @@
 
 <!-- POTENTIAL COMMENT -->
 <div id="screen-potential-comment" class="screen">
-  <div class="echo-wrap">
-    <div class="echo-avatar">É</div>
-    <div class="echo-bubble">
-      <div class="echo-name">Écho</div>
-      <div class="echo-text" id="echo-pot-text"></div>
-    </div>
-  </div>
-  <div class="thinking" id="pot-thinking" style="display:none;">
+  <div class="thinking" id="pot-thinking" style="display:flex;">
     <div class="dot-pulse"><span></span><span></span><span></span></div>
     Écho réfléchit…
   </div>
-  <!-- Si question sur l'écart -->
-  <div id="pot-gap-zone" style="display:none;">
-    <div id="pot-gap-answer-zone"></div>
+  <!-- Commentaire Écho -->
+  <div class="echo-wrap" id="pot-comment-wrap" style="display:none;">
+    <div class="echo-avatar">É</div>
+    <div class="echo-bubble">
+      <div class="echo-name">Écho</div>
+      <div class="echo-text" id="echo-pot-comment"></div>
+    </div>
+  </div>
+  <!-- Question sur l'écart (séparée) -->
+  <div id="pot-gap-zone" style="display:none;margin-top:1rem;">
+    <div class="echo-wrap">
+      <div class="echo-avatar">É</div>
+      <div class="echo-bubble">
+        <div class="echo-name">Écho</div>
+        <div class="echo-text" id="echo-pot-question"></div>
+      </div>
+    </div>
+    <textarea id="pot-gap-input" rows="3" placeholder="Ta réponse…" style="width:100%;min-height:90px;resize:vertical;font-family:'DM Sans',sans-serif;font-size:0.92rem;font-weight:300;color:var(--text);background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:0.7rem 1rem;outline:none;transition:border-color 0.2s;margin-top:0.8rem;display:block;"></textarea>
     <div style="display:flex;justify-content:flex-end;">
-      <button class="btn-send" id="btn-pot-gap-send" onclick="sendPotGapAnswer()">
+      <button class="btn-send" id="btn-pot-gap-send" onclick="sendPotGapAnswer()" style="margin-top:0.8rem;">
         Envoyer
         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>
     </div>
   </div>
-  <button class="btn-primary" id="btn-pot-next" onclick="showScreen('screen-module')" style="display:none;">Continuer →</button>
+  <button class="btn-primary" id="btn-pot-next" onclick="showScreen('screen-module')" style="display:none;margin-top:1rem;">Continuer →</button>
 </div>
 
 <!-- MODULE OPTIONNEL -->
@@ -778,7 +786,6 @@ async function sendAnswer() {
 // ══════════════════════════════
 async function goToPotentialComment() {
   showScreen('screen-potential-comment');
-  document.getElementById('pot-thinking').style.display='flex';
   const gap = Math.abs(potentialScore - personalScore);
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages',{
@@ -790,31 +797,49 @@ async function goToPotentialComment() {
       })
     });
     const data = await res.json();
-    const reply = (data.content?.[0]?.text||'').trim();
+    let reply = (data.content?.[0]?.text||'').trim();
+
+    // Sépare commentaire et question si écart
     document.getElementById('pot-thinking').style.display='none';
+    document.getElementById('pot-comment-wrap').style.display='flex';
+
     if (gap >= 3) {
-      typeEchoText('echo-pot-text', reply || getPotCommentFallback(gap), () => {
-        document.getElementById('pot-gap-zone').style.display='block';
-        displayQ(
-          reply.includes('?') ? reply.split('?').pop().trim() + (reply.includes('?')?'?':'') : `Qu'est-ce qui explique cet écart entre les deux notes ?`,
-          'echo-pot-text', 'pot-gap-answer-zone', 'pot-gap-input', 'btn-pot-gap-send'
-        );
+      // Extraire la phrase de commentaire (avant le '?') et la question (avec '?')
+      const parts = reply.split(/(?<=[.!])\s+(?=[A-ZÀ-Ü])/);
+      const comment = parts.length > 1 ? parts.slice(0,-1).join(' ') : getPotCommentFallback(gap).split('?')[0].trim() + '.';
+      const question = reply.includes('?')
+        ? reply.substring(reply.lastIndexOf('.',reply.indexOf('?')-1)+1).trim()
+        : 'Qu\'est-ce qui explique cet écart selon toi ?';
+
+      typeEchoText('echo-pot-comment', comment, () => {
+        setTimeout(() => {
+          document.getElementById('pot-gap-zone').style.display='block';
+          typeEchoText('echo-pot-question', question, () => {
+            document.getElementById('pot-gap-input').focus();
+          });
+        }, 400);
       });
     } else {
-      typeEchoText('echo-pot-text', reply || getPotCommentFallback(0), () => {
+      const comment = reply || getPotCommentFallback(0);
+      typeEchoText('echo-pot-comment', comment, () => {
         document.getElementById('btn-pot-next').style.display='block';
       });
     }
   } catch(e) {
     document.getElementById('pot-thinking').style.display='none';
-    typeEchoText('echo-pot-text', getPotCommentFallback(gap), () => {
-      if (gap>=3) {
-        document.getElementById('pot-gap-zone').style.display='block';
-        displayQ("Qu'est-ce qui explique cet écart entre les deux notes ?",'echo-pot-text','pot-gap-answer-zone','pot-gap-input','btn-pot-gap-send');
-      } else {
+    document.getElementById('pot-comment-wrap').style.display='flex';
+    if (gap >= 3) {
+      typeEchoText('echo-pot-comment', `Intéressant cet écart entre les deux notes.`, () => {
+        setTimeout(() => {
+          document.getElementById('pot-gap-zone').style.display='block';
+          typeEchoText('echo-pot-question', `Qu'est-ce qui explique cette différence selon toi ?`, () => {});
+        }, 400);
+      });
+    } else {
+      typeEchoText('echo-pot-comment', getPotCommentFallback(0), () => {
         document.getElementById('btn-pot-next').style.display='block';
-      }
-    });
+      });
+    }
   }
 }
 
@@ -892,108 +917,73 @@ function goToEnrichissement() { showScreen('screen-enrichissement'); }
 // ══════════════════════════════
 // SYNTHESIS
 // ══════════════════════════════
-function goToSynthesis() {
+async function goToSynthesis() {
   document.getElementById('syn-score').textContent = personalScore+'/10';
   document.getElementById('syn-pot').textContent   = potentialScore>=0 ? potentialScore+'/10' : '—';
-  document.getElementById('syn-narrative').textContent = buildNarrative();
+  document.getElementById('syn-narrative').textContent = 'Écho rédige ton résumé…';
   showScreen('screen-synthesis');
+  // Générer la synthèse via IA
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':cfg.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514', max_tokens:600,
+        messages:[{role:'user', content: buildSynthesisPrompt()}]
+      })
+    });
+    const data = await res.json();
+    const narrative = (data.content?.[0]?.text||'').trim();
+    document.getElementById('syn-narrative').textContent = narrative || buildNarrativeFallback();
+  } catch(e) {
+    document.getElementById('syn-narrative').textContent = buildNarrativeFallback();
+  }
 }
 
-function buildNarrative() {
+function buildSynthesisPrompt() {
   const emotions = selectedEmotions.map(e=>e.replace(/^[\S]+\s/,'')).join(', ');
-  const actions  = selectedActions.filter(a=>!a.includes('rien'));
+  const actions  = selectedActions.filter(a=>!a.includes('rien')).join(', ');
+  const transcriptText = transcript.map((t,i)=>`Q: ${t.q}\nR: ${t.a}`).join('\n\n');
+  const ddText = ddTranscript.length > 0 ? '\n\nAPPROFONDISSEMENT :\n' + ddTranscript.map(t=>`Q: ${t.q}\nR: ${t.a}`).join('\n\n') : '';
+  const gapText = potGapAnswer ? `\n\nSur l'écart entre les notes : ${potGapAnswer}` : '';
+  const msgText = document.getElementById('final-message')?.value.trim();
+
+  return `Tu es Écho. Tu dois rédiger la synthèse d'un entretien musical pour la montrer au répondant avant qu'il l'envoie à l'artiste.
+
+DONNÉES DE L'ENTRETIEN :
+Note artistique : ${personalScore}/10
+Note de potentiel commercial : ${potentialScore >= 0 ? potentialScore+'/10' : 'non évaluée'}
+Émotions ressenties : ${emotions || 'non précisées'}
+Intentions d'usage : ${actions || 'aucune sélectionnée'}
+
+TRANSCRIPTION :
+${transcriptText}${ddText}${gapText}
+${msgText ? '\nMESSAGE À L\'ARTISTE : ' + msgText : ''}
+
+RÈGLES DE RÉDACTION :
+- Rédige en tutoiement, en t'adressant directement au répondant.
+- Texte narratif fluide, en prose. Pas de liste, pas de tirets, pas de titres.
+- Paragraphes courts séparés par des sauts de ligne.
+- Ne recopie JAMAIS les réponses mot pour mot. Réécris et reformule.
+- Utilise des guillemets uniquement pour les formulations vraiment marquantes et originales du répondant.
+- Ignore les réponses inutilisables ("déjà dit", "non", réponses trop courtes ou hors sujet).
+- Commence par la note et le sentiment global.
+- Intègre naturellement les émotions, les impressions, les éléments musicaux, les références, les points d'amélioration.
+- Termine par les intentions d'usage et le message à l'artiste si renseigné.
+- 200 mots maximum. Ton chaleureux, naturel, précis.`;
+}
+
+function buildNarrativeFallback() {
+  const emotions = selectedEmotions.map(e=>e.replace(/^[\S]+\s/,'')).join(', ');
+  const actions  = selectedActions.filter(a=>!a.includes('rien')).join(', ').toLowerCase();
   const sw = personalScore>=8?'un vrai coup de cœur':personalScore>=6?'une belle impression':personalScore>=4?'un avis plutôt mitigé':'assez peu d\'adhésion';
-  const pw = potentialScore>=8?'un fort potentiel':potentialScore>=6?'un potentiel réel':potentialScore>=0?'un potentiel limité':'un potentiel que tu n\'as pas évalué';
-
-  let narrative = '';
-
-  // Accroche globale
-  narrative += `Tu as écouté ce titre en lui donnant ${personalScore}/10 — ${sw}`;
-  if (potentialScore >= 0) {
-    narrative += `, tout en lui reconnaissant ${pw} auprès d'un large public (${potentialScore}/10)`;
-  }
-  narrative += '.\n\n';
-
-  // Émotions
-  if (emotions) {
-    narrative += `À l'écoute, ce morceau t'a principalement évoqué ${emotions}`;
-    narrative += '. ';
-  }
-
-  // Premières impressions
-  const q0 = transcript[0];
-  if (q0?.a?.trim().length > 3) {
-    const a = q0.a.trim();
-    narrative += `Ce qui t'a frappé en premier : ${a.charAt(0).toLowerCase()+a.slice(1)}${a.endsWith('.')?'':'.'}`;
-    narrative += '\n\n';
-  }
-
-  // Éléments musicaux + mémorabilité
-  const q1 = transcript[1];
-  const q2 = transcript[2];
-  if (q1?.a?.trim().length > 3 || q2?.a?.trim().length > 3) {
-    if (q1?.a?.trim().length > 3) {
-      const a = q1.a.trim();
-      narrative += `Sur les éléments musicaux, tu notes : ${a.charAt(0).toLowerCase()+a.slice(1)}${a.endsWith('.')?'':'.'} `;
-    }
-    if (q2?.a?.trim().length > 3) {
-      const a = q2.a.trim();
-      narrative += `${a.charAt(0).toUpperCase()+a.slice(1)}${a.endsWith('.')?'':'.'}`;
-    }
-    narrative += '\n\n';
-  }
-
-  // Références + cohérence artiste
-  const q3 = transcript[3];
-  const q4 = transcript[4];
-  if (q3?.a?.trim().length > 3 || q4?.a?.trim().length > 3) {
-    if (q3?.a?.trim().length > 3) {
-      const a = q3.a.trim();
-      narrative += `En termes de références et d'univers, ${a.charAt(0).toLowerCase()+a.slice(1)}${a.endsWith('.')?'':'.'} `;
-    }
-    if (q4?.a?.trim().length > 3) {
-      const a = q4.a.trim();
-      narrative += `${a.charAt(0).toUpperCase()+a.slice(1)}${a.endsWith('.')?'':'.'}`;
-    }
-    narrative += '\n\n';
-  }
-
-  // Ce qui pourrait être amélioré
-  const q5 = transcript[5];
-  if (q5?.a?.trim().length > 3) {
-    const a = q5.a.trim();
-    narrative += `Si tu devais pointer quelque chose à améliorer : ${a.charAt(0).toLowerCase()+a.slice(1)}${a.endsWith('.')?'':'.'}\n\n`;
-  }
-
-  // Approfondissement
-  if (ddTranscript.length > 0) {
-    const ddParts = ddTranscript.filter(t=>t.a?.trim().length>3).map(t=>{
-      const a=t.a.trim();
-      return a.charAt(0).toLowerCase()+a.slice(1)+(a.endsWith('.')?'':'.');
-    });
-    if (ddParts.length > 0) {
-      narrative += `En approfondissant, tu ajoutes : ${ddParts.join(' ')}\n\n`;
-    }
-  }
-
-  // Écart potentiel
-  if (potGapAnswer?.trim().length > 3) {
-    const a = potGapAnswer.trim();
-    narrative += `Sur l'écart entre tes deux notes : ${a.charAt(0).toLowerCase()+a.slice(1)}${a.endsWith('.')?'':'.'}\n\n`;
-  }
-
-  // Intentions
-  if (actions.length > 0) {
-    narrative += `Ce titre t'inciterait à : ${actions.join(', ').toLowerCase()}.`;
-  }
-
-  // Message artiste
-  const msg = document.getElementById('final-message')?.value.trim();
-  if (msg) {
-    narrative += `\n\nTon message à l'artiste : "${msg}"`;
-  }
-
-  return narrative.trim();
+  const pw = potentialScore>=8?'un fort potentiel':potentialScore>=6?'un potentiel réel':potentialScore>=0?'un potentiel limité':'';
+  let text = `Tu as donné ${personalScore}/10 à ce titre — ${sw}`;
+  if (pw) text += `, tout en lui reconnaissant ${pw} auprès d'un large public (${potentialScore}/10)`;
+  text += '.';
+  if (emotions) text += `\n\nÀ l'écoute, ce morceau t'a évoqué ${emotions}.`;
+  if (actions) text += `\n\nCe titre t'inciterait à : ${actions}.`;
+  return text;
 }
 
 function toggleCorrection() {
