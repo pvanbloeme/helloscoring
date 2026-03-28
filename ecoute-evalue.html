@@ -323,24 +323,17 @@
     <div class="dot-pulse"><span></span><span></span><span></span></div>
     Écho réfléchit…
   </div>
-  <!-- Commentaire Écho -->
+  <!-- Bulle Écho — commentaire + question si écart -->
   <div class="echo-wrap" id="pot-comment-wrap" style="display:none;">
     <div class="echo-avatar">É</div>
     <div class="echo-bubble">
       <div class="echo-name">Écho</div>
-      <div class="echo-text" id="echo-pot-comment"></div>
+      <div class="echo-text" id="echo-pot-text"></div>
     </div>
   </div>
-  <!-- Question sur l'écart (séparée) -->
+  <!-- Zone de réponse si écart significatif -->
   <div id="pot-gap-zone" style="display:none;margin-top:1rem;">
-    <div class="echo-wrap">
-      <div class="echo-avatar">É</div>
-      <div class="echo-bubble">
-        <div class="echo-name">Écho</div>
-        <div class="echo-text" id="echo-pot-question"></div>
-      </div>
-    </div>
-    <textarea id="pot-gap-input" rows="3" placeholder="Ta réponse…" style="width:100%;min-height:90px;resize:vertical;font-family:'DM Sans',sans-serif;font-size:0.92rem;font-weight:300;color:var(--text);background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:0.7rem 1rem;outline:none;transition:border-color 0.2s;margin-top:0.8rem;display:block;"></textarea>
+    <textarea id="pot-gap-input" rows="3" placeholder="Ta réponse…" style="width:100%;min-height:90px;resize:vertical;font-family:'DM Sans',sans-serif;font-size:0.92rem;font-weight:300;color:var(--text);background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:0.7rem 1rem;outline:none;transition:border-color 0.2s;display:block;"></textarea>
     <div style="display:flex;justify-content:flex-end;">
       <button class="btn-send" id="btn-pot-gap-send" onclick="sendPotGapAnswer()" style="margin-top:0.8rem;">
         Envoyer
@@ -786,72 +779,58 @@ async function sendAnswer() {
 // ══════════════════════════════
 async function goToPotentialComment() {
   showScreen('screen-potential-comment');
+  document.getElementById('pot-thinking').style.display = 'flex';
+  document.getElementById('pot-comment-wrap').style.display = 'none';
+  document.getElementById('pot-gap-zone').style.display = 'none';
+  document.getElementById('btn-pot-next').style.display = 'none';
+  document.getElementById('echo-pot-text').textContent = '';
+
   const gap = Math.abs(potentialScore - personalScore);
+
+  let fullText = '';
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':cfg.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514', max_tokens:150,
-        messages:[{role:'user',content:buildPotCommentPrompt(gap)}]
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','x-api-key':cfg.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 120,
+        messages: [{ role: 'user', content: buildPotCommentPrompt(gap) }]
       })
     });
     const data = await res.json();
-    let reply = (data.content?.[0]?.text||'').trim();
+    fullText = (data.content?.[0]?.text || '').trim();
+  } catch(e) {}
 
-    // Sépare commentaire et question si écart
-    document.getElementById('pot-thinking').style.display='none';
-    document.getElementById('pot-comment-wrap').style.display='flex';
+  if (!fullText) fullText = getPotCommentFallback(gap);
 
+  document.getElementById('pot-thinking').style.display = 'none';
+  document.getElementById('pot-comment-wrap').style.display = 'flex';
+
+  // Affiche le texte complet (commentaire + question si écart) dans une seule bulle
+  typeEchoText('echo-pot-text', fullText, () => {
     if (gap >= 3) {
-      // Extraire la phrase de commentaire (avant le '?') et la question (avec '?')
-      const parts = reply.split(/(?<=[.!])\s+(?=[A-ZÀ-Ü])/);
-      const comment = parts.length > 1 ? parts.slice(0,-1).join(' ') : getPotCommentFallback(gap).split('?')[0].trim() + '.';
-      const question = reply.includes('?')
-        ? reply.substring(reply.lastIndexOf('.',reply.indexOf('?')-1)+1).trim()
-        : 'Qu\'est-ce qui explique cet écart selon toi ?';
-
-      typeEchoText('echo-pot-comment', comment, () => {
-        setTimeout(() => {
-          document.getElementById('pot-gap-zone').style.display='block';
-          typeEchoText('echo-pot-question', question, () => {
-            document.getElementById('pot-gap-input').focus();
-          });
-        }, 400);
-      });
+      // Affiche la zone de réponse après le texte
+      document.getElementById('pot-gap-zone').style.display = 'block';
+      document.getElementById('pot-gap-input').focus();
     } else {
-      const comment = reply || getPotCommentFallback(0);
-      typeEchoText('echo-pot-comment', comment, () => {
-        document.getElementById('btn-pot-next').style.display='block';
-      });
+      document.getElementById('btn-pot-next').style.display = 'block';
     }
-  } catch(e) {
-    document.getElementById('pot-thinking').style.display='none';
-    document.getElementById('pot-comment-wrap').style.display='flex';
-    if (gap >= 3) {
-      typeEchoText('echo-pot-comment', `Intéressant cet écart entre les deux notes.`, () => {
-        setTimeout(() => {
-          document.getElementById('pot-gap-zone').style.display='block';
-          typeEchoText('echo-pot-question', `Qu'est-ce qui explique cette différence selon toi ?`, () => {});
-        }, 400);
-      });
-    } else {
-      typeEchoText('echo-pot-comment', getPotCommentFallback(0), () => {
-        document.getElementById('btn-pot-next').style.display='block';
-      });
-    }
-  }
+  });
 }
 
 function buildPotCommentPrompt(gap) {
   const gapDir = potentialScore > personalScore ? 'supérieure' : 'inférieure';
-  return `Tu es Écho. Tu tutoies toujours le répondant. Un répondant vient de donner ${potentialScore}/10 de potentiel commercial au titre "${cfg.track}" (note artistique : ${personalScore}/10). ${gap>=3 ? `L'écart est de ${gap} points (potentiel ${gapDir} à la note perso). Génère une phrase de réaction sur cet écart intéressant, puis pose UNE question ouverte courte pour comprendre pourquoi. Tutoiement obligatoire. 2 phrases max.` : `Génère une courte réaction naturelle sur cette note de potentiel (1 phrase max, sans être condescendant). Tutoiement obligatoire.`}`;
+  if (gap >= 3) {
+    return `Tu es Écho. Tu tutoies le répondant. Un répondant vient de donner ${potentialScore}/10 de potentiel commercial au titre "${cfg.track}" (note artistique : ${personalScore}/10). L'écart est de ${gap} points (potentiel ${gapDir} à la note perso). En 2 phrases max : fais une courte réaction sur cet écart, puis pose UNE question ouverte directe pour comprendre pourquoi. Tutoiement obligatoire. Pas de liste.`;
+  }
+  return `Tu es Écho. Tu tutoies le répondant. Un répondant vient de donner ${potentialScore}/10 de potentiel commercial au titre "${cfg.track}" (note artistique : ${personalScore}/10). Génère UNE phrase de réaction naturelle sur cette note. Tutoiement obligatoire. Pas de liste.`;
 }
 
 function getPotCommentFallback(gap) {
-  if (gap >= 3 && potentialScore > personalScore) return `Intéressant — tu lui accordes plus de potentiel commercial que d'adhésion personnelle. Qu'est-ce qui explique cette différence ?`;
+  if (gap >= 3 && potentialScore > personalScore) return `Tu lui accordes plus de potentiel commercial que d'adhésion personnelle — c'est intéressant. Qu'est-ce qui explique cette différence selon toi ?`;
   if (gap >= 3 && potentialScore < personalScore) return `Tu l'apprécies plus que tu ne lui vois de potentiel large. Pourquoi cette différence selon toi ?`;
-  if (potentialScore >= 8) return `Un potentiel commercial fort, c'est noté.`;
+  if (potentialScore >= 8) return `Un fort potentiel commercial, c'est noté.`;
   if (potentialScore >= 6) return `Un potentiel réel, c'est noté.`;
   return `Un potentiel plus limité selon toi, c'est noté.`;
 }
@@ -860,8 +839,9 @@ async function sendPotGapAnswer() {
   const input = document.getElementById('pot-gap-input');
   if (!input) return;
   potGapAnswer = input.value.trim();
-  document.getElementById('pot-gap-zone').style.display='none';
-  document.getElementById('btn-pot-next').style.display='block';
+  if (!potGapAnswer) return;
+  document.getElementById('pot-gap-zone').style.display = 'none';
+  document.getElementById('btn-pot-next').style.display = 'block';
 }
 
 // ══════════════════════════════
