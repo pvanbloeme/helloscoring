@@ -778,12 +778,13 @@ function renderChdr(){
   if(showTog)h+="<div class='vtog'>"+
     "<button class='vtbtn"+(inverted?"":" on")+"' id='vtb1'>"+la+"</button>"+
     "<button class='vtbtn"+(inverted?" on":"")+"' id='vtb2'>Par cible</button></div>";
-  h+="<button class='expbtn' id='expbtn'>&#128247;&nbsp;Export PNG</button></div>";
+  h+="<button class='expbtn' id='helpbtn'>&#63;</button><button class='expbtn' id='expbtn'>&#128247;&nbsp;Export PNG</button></div>";
   el.innerHTML=h;
   var b1=document.getElementById("vtb1"),b2=document.getElementById("vtb2"),eb=document.getElementById("expbtn");
   if(b1)b1.addEventListener("click",function(){setInv(false);});
   if(b2)b2.addEventListener("click",function(){setInv(true);});
   if(eb)eb.addEventListener("click",doExp);
+  var hb=document.getElementById("helpbtn");if(hb)hb.addEventListener("click",function(){document.getElementById("tuto").className="open";});
 }
 
 function renderFrecap(){
