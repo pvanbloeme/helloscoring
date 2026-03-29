@@ -2,797 +2,866 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>HelloScoring — Dashboard · La mer en hiver · Shaga</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>HelloScoring - Dashboard</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'DM Sans',system-ui,sans-serif;background:#f4f3ef;color:#0e0f12;height:100vh;display:flex;flex-direction:column;overflow:hidden;}
-button{cursor:pointer;font-family:inherit;}
-/* LANDSCAPE */
-.lsp{display:none;position:fixed;inset:0;background:#0e0f12;color:white;z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:1.2rem;padding:2rem;text-align:center;}
-@media(max-width:640px) and (orientation:portrait){.lsp{display:flex!important;}}
-@keyframes rh{from{transform:rotate(0)}to{transform:rotate(-90deg)}}
-/* HEADER */
-#hdr{background:#0e0f12;color:white;padding:.65rem 1.2rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:1rem;}
-.brand{font-family:Georgia,serif;font-size:.95rem;white-space:nowrap;}
-.brand .r{color:#e63946;font-weight:700;}
-.brand .w{font-weight:700;}
-.sub-hdr{font-size:.62rem;color:rgba(255,255,255,.35);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.mode-btns{display:flex;gap:.4rem;flex-shrink:0;}
-.mode-btn{padding:.28rem .75rem;border-radius:5px;border:none;color:white;font-size:.68rem;font-weight:400;background:rgba(255,255,255,.1);transition:all .15s;white-space:nowrap;}
-.mode-btn.active{background:#e63946;font-weight:600;}
-/* LAYOUT */
-#layout{display:flex;flex:1;overflow:hidden;}
-/* SIDEBAR */
-#side{width:190px;background:white;border-right:1px solid #e0ddd6;display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;transition:width .2s;}
-#side.closed{width:0;}
-.side-top{padding:.75rem .85rem;border-bottom:2px solid #f0ede8;flex-shrink:0;}
-.side-bot{flex:1;padding:.75rem .85rem;overflow-y:auto;}
-.slbl{font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#aaa;margin-bottom:5px;}
-.slbl.active-dim{color:#c87030;}
-.chap-btn{width:100%;text-align:left;padding:.38rem .55rem;border-radius:7px;border:none;font-size:.76rem;display:flex;align-items:center;gap:6px;margin-bottom:1px;transition:all .12s;background:transparent;color:#444;}
-.chap-btn.active{background:#fff0ed;color:#e63946;font-weight:600;}
-.chap-dot{width:6px;height:6px;border-radius:50%;background:#e63946;flex-shrink:0;display:none;}
-.chap-dot.vis{display:block;}
-.filter-btn{display:block;width:100%;text-align:left;padding:2px 5px;border-radius:4px;border:none;font-size:.71rem;margin-bottom:1px;background:transparent;color:#555;transition:all .1s;}
-.filter-btn.active{background:#e63946;color:white;}
-.dim-lbl{font-size:.58rem;font-weight:700;color:#aaa;margin-bottom:3px;text-transform:uppercase;letter-spacing:.08em;}
-.dim-lbl.on{color:#c87030;}
-.dim-sep{border-top:1.5px solid #f0ede8;padding-top:.75rem;margin-top:.5rem;}
-.cmp-dim-btn{display:block;width:100%;text-align:left;padding:3px 5px;border-radius:4px;border:none;font-size:.71rem;margin-bottom:1px;background:transparent;color:#555;transition:all .1s;}
-.cmp-dim-btn.active{background:#0e0f12;color:white;}
-.cmp-val-btn{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;padding:3px 5px;border-radius:4px;border:none;font-size:.71rem;margin-bottom:1px;transition:all .1s;background:transparent;color:#555;}
-.cmp-val-btn.disabled{opacity:.4;cursor:not-allowed;}
-.toggle-all-btn{font-size:.58rem;color:#457b9d;background:none;border:1px solid #457b9d;border-radius:3px;padding:1px 5px;white-space:nowrap;}
-.sel-legend{margin-top:8px;padding:.4rem .5rem;background:#f4f3ef;border-radius:6px;}
-.sel-legend-item{display:flex;align-items:center;gap:5px;font-size:.62rem;color:#555;margin-bottom:2px;}
-.sel-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.n-badge{padding:.35rem .5rem;background:#f4f3ef;border-radius:6px;font-size:.68rem;color:#666;text-align:center;margin-top:4px;}
-.n-badge .rv{font-weight:700;color:#e63946;}
-/* MAIN */
-#main{flex:1;overflow-y:auto;padding:1rem 1.2rem;}
-#main-inner{max-width:900px;}
-.ch-header{display:flex;align-items:center;gap:.7rem;margin-bottom:.7rem;flex-wrap:wrap;}
-.ch-title{font-family:Georgia,serif;font-size:1.2rem;font-weight:700;}
-.cmp-badge{color:white;padding:1px 8px;border-radius:99px;font-size:.6rem;font-weight:600;}
-.ch-controls{margin-left:auto;display:flex;gap:.5rem;align-items:center;}
-.view-toggle{display:flex;align-items:center;gap:0;background:#f0ede8;border-radius:8px;padding:2px;}
-.view-btn{padding:.25rem .65rem;border-radius:6px;border:none;font-size:.65rem;font-weight:400;background:transparent;color:#888074;transition:all .15s;white-space:nowrap;}
-.view-btn.active{background:white;color:#0e0f12;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.12);}
-.export-btn{display:flex;align-items:center;gap:4px;padding:.28rem .65rem;border-radius:7px;border:1.5px solid #e0ddd6;background:white;color:#555;font-size:.68rem;font-weight:500;transition:all .15s;}
-.export-btn:hover{border-color:#e63946;color:#e63946;}
-/* FILTER RECAP */
-.flt-recap{display:flex;align-items:center;gap:6px;padding:.45rem .7rem;background:#fff8ed;border:1px solid #f4a261;border-radius:8px;margin-bottom:.8rem;flex-wrap:wrap;}
-.flt-lbl{font-size:.65rem;color:#c87030;font-weight:600;}
-.flt-tag{background:#f4a261;color:white;padding:1px 7px;border-radius:99px;font-size:.62rem;font-weight:600;}
-.flt-n{font-size:.65rem;color:#c87030;margin-left:2px;}
-.flt-clear{margin-left:auto;font-size:.62rem;color:#c87030;background:none;border:none;text-decoration:underline;}
-/* COMMENT */
-.comment-box{background:#0e0f12;color:white;border-radius:9px;padding:.65rem .85rem;margin-bottom:.8rem;font-size:.78rem;line-height:1.65;display:flex;gap:.5rem;align-items:flex-start;}
-.comment-box .dot{color:#e63946;flex-shrink:0;margin-top:1px;}
-/* CARDS */
-.card{background:white;border:1px solid #e0ddd6;border-radius:10px;padding:1rem;}
-.card-title{font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#999;margin-bottom:8px;}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;}
-.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:.65rem;margin-bottom:.8rem;}
-/* KPI */
-.kpi{background:white;border:1px solid #e0ddd6;border-radius:10px;padding:.8rem .9rem;}
-.kpi-val{font-family:Georgia,serif;font-size:1.85rem;font-weight:700;line-height:1;}
-.kpi-lbl{font-size:.6rem;text-transform:uppercase;letter-spacing:.08em;color:#888074;margin-top:3px;}
-/* DIST */
-.dist-wrap{display:flex;align-items:flex-end;gap:3px;height:76px;}
-.dist-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;}
-.dist-bar{width:100%;border-radius:2px 2px 0 0;min-height:2px;transition:height .4s;}
-.dist-n{font-size:.5rem;color:#333;font-weight:600;min-height:8px;}
-.dist-lbl{font-size:.48rem;color:#aaa;}
-/* BAR */
-.bar-row{display:flex;align-items:center;gap:6px;margin-bottom:.4rem;}
-.bar-lbl{font-size:.74rem;color:#555;min-width:148px;flex-shrink:0;line-height:1.3;display:flex;align-items:center;gap:4px;}
-.bar-lbl.warn{color:#c87030;}
-.warn-ico{color:#f4a261;font-size:.7rem;}
-.bar-track{flex:1;height:8px;background:#f0ede8;border-radius:99px;overflow:hidden;}
-.bar-fill{height:100%;border-radius:99px;transition:width .4s;}
-.bar-val{font-size:.7rem;font-weight:700;min-width:32px;text-align:right;}
-.bar-n{font-size:.6rem;color:#888074;min-width:22px;}
-/* GROUP BAR (compare) */
-.gbar-wrap{margin-bottom:.55rem;}
-.gbar-label{font-size:.74rem;color:#444;margin-bottom:2px;}
-.gbar-row{display:flex;align-items:center;gap:5px;margin-bottom:2px;}
-.gbar-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.gbar-name{width:90px;font-size:.6rem;color:#888074;flex-shrink:0;}
-.gbar-track{flex:1;height:7px;background:#f0ede8;border-radius:99px;overflow:hidden;}
-.gbar-fill{height:100%;border-radius:99px;transition:width .4s;}
-.gbar-pct{font-size:.64rem;font-weight:600;min-width:28px;text-align:right;}
-/* VERBATIM */
-.vb-grid{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;}
-.vb-card{background:white;border:1px solid #e0ddd6;border-radius:0 9px 9px 0;padding:.75rem .85rem;}
-.vb-text{font-size:.82rem;font-style:italic;line-height:1.6;margin-bottom:.4rem;}
-.vb-tags{display:flex;gap:3px;flex-wrap:wrap;}
-.tag{padding:1px 7px;border-radius:99px;font-size:.6rem;font-weight:500;}
-.tag-sc{font-weight:600;}
-.tag-info{background:#eef2f6;color:#457b9d;}
-/* VB sort */
-.vb-sort{display:flex;align-items:center;gap:6px;margin-bottom:.7rem;flex-wrap:wrap;}
-.sort-btn{padding:2px 9px;border-radius:99px;font-size:.68rem;border:1.5px solid #e0ddd6;background:white;color:#555;transition:all .12s;}
-.sort-btn.active{border-color:#e63946;background:#e63946;color:white;}
-/* CMP NOTES */
-.cmp-grid{display:grid;gap:.7rem;}
-.cmp-card{background:white;border-radius:10px;padding:.9rem;border-width:2px;border-style:solid;}
-.cmp-card-hdr{display:flex;align-items:center;gap:6px;margin-bottom:.75rem;}
-.cmp-card-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.cmp-card-lbl{font-weight:600;font-size:.82rem;}
-.cmp-card-n{font-size:.62rem;color:#888074;margin-left:auto;}
-.cmp-kpi-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid #f0ede8;}
-.cmp-kpi-lbl{font-size:.67rem;color:#888074;}
-.cmp-kpi-val{font-weight:700;font-size:.85rem;}
-/* TOO SMALL */
-.too-small{background:#fff8ed;border:1px solid #f4a261;border-radius:7px;padding:.4rem .8rem;margin-bottom:.4rem;font-size:.72rem;color:#b07030;display:flex;gap:6px;align-items:center;}
-/* EMPTY */
-.empty{text-align:center;padding:3rem;color:#888074;font-size:.82rem;}
-/* SEGMENTS */
-.seg-note{font-size:.82rem;color:#888074;line-height:1.6;}
-/* MODAL */
-#modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:8888;align-items:center;justify-content:center;padding:1rem;}
-#modal.open{display:flex;}
-#modal-inner{background:white;border-radius:16px;overflow:hidden;max-width:520px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.5);max-height:90vh;display:flex;flex-direction:column;}
-#modal-hdr{background:#0e0f12;padding:.8rem 1.1rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-#modal-img{overflow-y:auto;flex:1;}
-#modal-img img{width:100%;display:block;}
-#modal-foot{padding:.9rem 1.1rem;background:#f4f3ef;flex-shrink:0;display:flex;flex-direction:column;gap:.6rem;}
-#modal-dl{display:flex;align-items:center;justify-content:center;gap:.5rem;padding:.65rem 1rem;background:#e63946;color:white;border-radius:9px;font-size:.82rem;font-weight:600;text-decoration:none;text-align:center;}
-#modal-tip{display:flex;align-items:flex-start;gap:.5rem;padding:.5rem .7rem;background:white;border-radius:8px;border:1px solid #e0ddd6;font-size:.72rem;color:#666;line-height:1.5;}
-@media(max-width:768px){
-  .grid2,.vb-grid{grid-template-columns:1fr;}
-  .grid4{grid-template-columns:repeat(2,1fr);}
-  .bar-lbl{min-width:100px;}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syne:wght@700;800&display=swap');
+:root{
+  --bg:#0a0a0f;--bg2:#13131a;--bg3:#1a1a24;--bg4:#22222e;
+  --bdr:#2a2a38;--bdr2:#333344;
+  --gold:#c9a84c;--gold2:#e8c96d;--gold3:rgba(201,168,76,.15);
+  --purple:#8b5cf6;--purpleL:#a78bfa;
+  --txt:#e8e8f0;--txt2:#9999b0;--txt3:#555566;
+  --green:#22c55e;--orange:#f97316;--red:#ef4444;
+  --accent:#c9a84c;
 }
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--txt);height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+button{cursor:pointer;font-family:inherit;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--bg2);}
+::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:2px;}
+
+/* HEADER */
+#hdr{background:var(--bg2);border-bottom:1px solid var(--bdr);padding:.7rem 1.2rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:1rem;}
+.brand{font-family:'Syne',Georgia,serif;font-size:1.1rem;letter-spacing:-.01em;}
+.brand .r{color:var(--gold);font-weight:800;}
+.brand .w{color:var(--txt);font-weight:700;}
+.subhdr{font-size:.62rem;color:var(--txt2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* MODE BUTTONS — bien visibles avec description */
+.mbtns{display:flex;gap:.5rem;flex-shrink:0;}
+.mbtn{display:flex;flex-direction:column;align-items:center;padding:.4rem .9rem;border-radius:8px;border:1.5px solid var(--bdr2);color:var(--txt2);font-size:.72rem;font-weight:500;background:transparent;gap:2px;transition:all .2s;line-height:1;}
+.mbtn .mico{font-size:1rem;}
+.mbtn .msub{font-size:.52rem;opacity:.6;font-weight:400;}
+.mbtn:hover{border-color:var(--gold);color:var(--gold);}
+.mbtn.on{background:var(--gold3);border-color:var(--gold);color:var(--gold);font-weight:600;}
+.mbtn.on .mico{color:var(--gold);}
+
+/* LAYOUT */
+#lay{display:flex;flex:1;overflow:hidden;}
+
+/* SIDEBAR */
+#side{width:196px;background:var(--bg2);border-right:1px solid var(--bdr);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;transition:width .2s;}
+#side.shut{width:0;}
+.stop{padding:.8rem .9rem;border-bottom:1px solid var(--bdr);flex-shrink:0;}
+.sbot{flex:1;padding:.8rem .9rem;overflow-y:auto;}
+.slbl{font-size:.55rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--txt2);margin-bottom:6px;margin-top:10px;opacity:.6;}
+.slbl:first-child{margin-top:0;}
+
+/* Chapitre buttons */
+.cbtn{width:100%;text-align:left;padding:.42rem .6rem;border-radius:8px;border:none;font-size:.76rem;display:flex;align-items:center;gap:7px;margin-bottom:2px;background:transparent;color:var(--txt2);position:relative;transition:all .15s;}
+.cbtn:hover{background:var(--bg3);color:var(--txt);}
+.cbtn.on{background:var(--gold3);color:var(--gold);font-weight:600;}
+.cbtn .cico{font-size:.8rem;width:16px;text-align:center;opacity:.7;}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--gold);display:none;margin-left:auto;flex-shrink:0;}
+.dot.vis{display:block;}
+
+/* Filter / compare buttons */
+.fbtn{display:block;width:100%;text-align:left;padding:3px 6px;border-radius:5px;border:none;font-size:.7rem;margin-bottom:2px;background:transparent;color:var(--txt2);transition:all .1s;}
+.fbtn:hover{background:var(--bg3);color:var(--txt);}
+.fbtn.on{background:var(--gold3);color:var(--gold);font-weight:600;}
+.dbtn{display:block;width:100%;text-align:left;padding:3px 6px;border-radius:5px;border:none;font-size:.7rem;margin-bottom:2px;background:transparent;color:var(--txt2);transition:all .1s;}
+.dbtn:hover{background:var(--bg3);}
+.dbtn.on{background:var(--bg4);color:var(--txt);font-weight:500;}
+.vbtn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:4px 6px;border-radius:5px;border:none;font-size:.7rem;margin-bottom:2px;background:transparent;color:var(--txt2);transition:all .1s;}
+.vbtn:hover:not(.disabled){background:var(--bg3);}
+.nbadge{padding:.4rem .6rem;background:var(--bg3);border-radius:6px;font-size:.68rem;color:var(--txt2);text-align:center;margin-top:6px;border:1px solid var(--bdr);}
+.rv{font-weight:700;color:var(--gold);}
+.tatog{font-size:.58rem;color:var(--purpleL);background:none;border:1px solid var(--purple);border-radius:3px;padding:1px 6px;white-space:nowrap;transition:all .15s;}
+.tatog:hover{background:var(--purple);color:white;}
+.selleg{margin-top:8px;padding:.4rem .5rem;background:var(--bg);border-radius:6px;border:1px solid var(--bdr);}
+.sli{display:flex;align-items:center;gap:5px;font-size:.62rem;color:var(--txt2);margin-bottom:2px;}
+.sld{width:7px;height:7px;border-radius:50%;}
+
+/* MAIN */
+#main{flex:1;overflow-y:auto;padding:1rem 1.3rem;background:var(--bg);}
+
+/* Chapter header */
+.chdr{display:flex;align-items:center;gap:.7rem;margin-bottom:.9rem;flex-wrap:wrap;padding-bottom:.7rem;border-bottom:1px solid var(--bdr);}
+.chtitle{font-family:'Syne',serif;font-size:1.25rem;font-weight:700;color:var(--txt);}
+.cbadge{color:white;padding:2px 9px;border-radius:99px;font-size:.62rem;font-weight:600;}
+.ctrls{margin-left:auto;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;}
+
+/* INVERSION TOGGLE — visible et explicite */
+.vtog{display:flex;background:var(--bg3);border-radius:10px;padding:3px;border:1px solid var(--bdr2);}
+.vtbtn{padding:.3rem .75rem;border-radius:7px;border:none;font-size:.68rem;background:transparent;color:var(--txt2);transition:all .18s;white-space:nowrap;}
+.vtbtn:hover{color:var(--txt);}
+.vtbtn.on{background:var(--bg4);color:var(--gold);font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.4);}
+
+/* Export button */
+.expbtn{display:flex;align-items:center;gap:5px;padding:.32rem .7rem;border-radius:8px;border:1.5px solid var(--bdr2);background:transparent;color:var(--txt2);font-size:.68rem;font-weight:500;transition:all .15s;}
+.expbtn:hover{border-color:var(--gold);color:var(--gold);}
+
+/* Filter recap */
+.frecap{display:flex;align-items:center;gap:6px;padding:.5rem .8rem;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.3);border-radius:8px;margin-bottom:.9rem;flex-wrap:wrap;font-size:.7rem;}
+.ftag{background:var(--gold3);color:var(--gold);padding:2px 8px;border-radius:99px;font-size:.62rem;font-weight:600;border:1px solid rgba(201,168,76,.3);}
+.fclr{font-size:.62rem;color:var(--gold);background:none;border:none;text-decoration:underline;margin-left:auto;cursor:pointer;opacity:.7;}
+.fclr:hover{opacity:1;}
+
+/* Comment box — style Écho */
+.cbox{background:linear-gradient(135deg,var(--bg3),var(--bg2));border:1px solid var(--bdr2);border-left:3px solid var(--gold);border-radius:0 10px 10px 0;padding:.8rem 1rem;margin-bottom:.9rem;font-size:.8rem;line-height:1.7;display:flex;gap:.6rem;color:var(--txt);}
+.cbox .echo-name{font-size:.6rem;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:4px;}
+
+/* Cards */
+.card{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:1.1rem;}
+.ctitle{font-size:.58rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--txt2);margin-bottom:10px;opacity:.6;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:.7rem;margin-bottom:.9rem;}
+
+/* KPIs */
+.kpi{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:.9rem 1rem;transition:border-color .2s;}
+.kpi:hover{border-color:var(--bdr2);}
+.kv{font-family:'Syne',serif;font-size:2rem;font-weight:700;line-height:1;}
+.kl{font-size:.58rem;text-transform:uppercase;letter-spacing:.1em;color:var(--txt2);margin-top:4px;opacity:.7;}
+
+/* Distribution */
+.dw{display:flex;align-items:flex-end;gap:3px;height:80px;}
+.dc{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;}
+.db{width:100%;border-radius:3px 3px 0 0;transition:opacity .2s;}
+.dc:hover .db{opacity:1!important;filter:brightness(1.3);}
+.dn{font-size:.5rem;color:var(--txt2);font-weight:600;min-height:8px;}
+.dl{font-size:.48rem;color:var(--txt2);opacity:.5;}
+
+/* Bars */
+.br{display:flex;align-items:center;gap:7px;margin-bottom:.45rem;cursor:default;}
+.bl{font-size:.74rem;color:var(--txt2);min-width:148px;flex-shrink:0;}
+.bl.w{color:var(--orange);}
+.bt{flex:1;height:9px;background:var(--bg3);border-radius:99px;overflow:hidden;position:relative;}
+.bf{height:100%;border-radius:99px;transition:width .4s;}
+.bv{font-size:.7rem;font-weight:600;min-width:32px;text-align:right;color:var(--txt);}
+.bn{font-size:.6rem;color:var(--txt2);min-width:22px;opacity:.6;}
+
+/* Group bars */
+.gw{margin-bottom:.65rem;}
+.gl{font-size:.76rem;color:var(--txt);margin-bottom:3px;font-weight:500;}
+.gr{display:flex;align-items:center;gap:6px;margin-bottom:3px;}
+.gd{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.gn{width:96px;font-size:.62rem;color:var(--txt2);flex-shrink:0;}
+.gt{flex:1;height:8px;background:var(--bg3);border-radius:99px;overflow:hidden;}
+.gf{height:100%;border-radius:99px;transition:width .4s;}
+.gp{font-size:.65rem;font-weight:600;min-width:30px;text-align:right;color:var(--txt);}
+
+/* Verbatim cards */
+.vg{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;}
+.vc{background:var(--bg2);border-left-width:3px;border-left-style:solid;border-radius:0 10px 10px 0;padding:.8rem .9rem;border-top:1px solid var(--bdr);border-right:1px solid var(--bdr);border-bottom:1px solid var(--bdr);}
+.vt{font-size:.82rem;font-style:italic;line-height:1.65;margin-bottom:.45rem;color:var(--txt);}
+.vtgs{display:flex;gap:3px;flex-wrap:wrap;}
+.tag{padding:2px 8px;border-radius:99px;font-size:.6rem;}
+.tsc{font-weight:600;}
+.ti{background:rgba(139,92,246,.12);color:var(--purpleL);}
+
+/* Sort buttons */
+.vsrt{display:flex;align-items:center;gap:6px;margin-bottom:.8rem;flex-wrap:wrap;}
+.srtb{padding:3px 10px;border-radius:99px;font-size:.68rem;border:1.5px solid var(--bdr2);background:transparent;color:var(--txt2);transition:all .12s;}
+.srtb:hover{border-color:var(--gold);color:var(--gold);}
+.srtb.on{border-color:var(--gold);background:var(--gold3);color:var(--gold);font-weight:600;}
+
+/* Too small warning */
+.ts{background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.3);border-radius:8px;padding:.45rem .9rem;margin-bottom:.4rem;font-size:.72rem;color:var(--orange);display:flex;gap:6px;align-items:center;}
+
+/* Compare cards */
+.cg{display:grid;gap:.8rem;}
+.cc{background:var(--bg2);border-radius:12px;padding:1rem;border-width:2px;border-style:solid;}
+.ch2{display:flex;align-items:center;gap:7px;margin-bottom:.8rem;}
+.cd{width:11px;height:11px;border-radius:50%;flex-shrink:0;}
+.ccl{font-weight:600;font-size:.84rem;color:var(--txt);}
+.cn2{font-size:.62rem;color:var(--txt2);margin-left:auto;}
+.ckr{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--bdr);}
+.ckl{font-size:.67rem;color:var(--txt2);}
+.ckv{font-weight:700;font-size:.88rem;}
+.empty{text-align:center;padding:3rem;color:var(--txt2);font-size:.84rem;}
+
+/* MODAL */
+#mod{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:8888;align-items:center;justify-content:center;padding:1rem;}
+#mod.open{display:flex;}
+#mbox{background:var(--bg2);border:1px solid var(--bdr2);border-radius:16px;overflow:hidden;max-width:520px;width:100%;max-height:90vh;display:flex;flex-direction:column;}
+#mhdr{background:var(--bg);padding:.8rem 1.1rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bdr);}
+#mimg{overflow-y:auto;flex:1;}
+#mimg img{width:100%;display:block;}
+#mfoot{padding:.9rem 1.1rem;background:var(--bg2);flex-shrink:0;display:flex;flex-direction:column;gap:.6rem;}
+#mdl{display:flex;align-items:center;justify-content:center;gap:.5rem;padding:.65rem 1rem;background:var(--gold);color:#0a0a0f;border-radius:9px;font-size:.82rem;font-weight:700;text-decoration:none;}
+.mtip{display:flex;align-items:flex-start;gap:.5rem;padding:.5rem .7rem;background:var(--bg3);border-radius:8px;border:1px solid var(--bdr);font-size:.72rem;color:var(--txt2);line-height:1.5;}
+
+/* Landscape */
+@keyframes roth{from{transform:rotate(0deg)}to{transform:rotate(-90deg)}}
+#lsp{display:none;position:fixed;inset:0;background:var(--bg);color:var(--txt);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:1.2rem;padding:2rem;text-align:center;}
+@media(max-width:640px) and (orientation:portrait){#lsp{display:flex!important;}}
+@media(max-width:768px){.g2,.vg{grid-template-columns:1fr;}.g4{grid-template-columns:repeat(2,1fr);}.bl{min-width:100px;}}
 </style>
 </head>
 <body>
 
-<!-- LANDSCAPE -->
-<div class="lsp">
-  <div style="font-size:2.5rem;animation:rh 1.5s ease-in-out infinite alternate">📱</div>
-  <div style="font-size:1rem;font-weight:600">Passe en mode paysage</div>
-  <div style="font-size:.8rem;color:rgba(255,255,255,.5);max-width:260px;line-height:1.6">Ce dashboard est conçu pour une lecture horizontale.</div>
+<div id="lsp"><div style="font-size:2.5rem;animation:roth 1.5s ease-in-out infinite alternate">&#128241;</div><div style="font-size:1rem;font-weight:600">Passe en mode paysage</div><div style="font-size:.8rem;color:rgba(255,255,255,.5);max-width:260px;line-height:1.6">Ce dashboard est concu pour une lecture horizontale.</div></div>
+<div id="mod" onclick="closeMod()">
+<div id="mbox" onclick="event.stopPropagation()">
+<div id="mhdr">
+<span style="font-family:Georgia,serif;font-size:.88rem;color:white">
+<span style="color:#e63946;font-weight:700">Hello</span><span style="font-weight:700">Scoring</span>
+<span style="font-size:.65rem;color:rgba(255,255,255,.4);margin-left:6px">Export image</span>
+</span>
+<button onclick="closeMod()" style="background:rgba(255,255,255,.1);border:none;color:white;width:26px;height:26px;border-radius:5px;font-size:.9rem;">&#10005;</button>
+</div>
+<div id="mimg"><img id="mimgel" src="" alt="Export"></div>
+<div id="mfoot">
+<a id="mdl" href="" download="helloscore-export.png">&#11015; Telecharger</a>
+<div class="mtip"><span style="font-size:1rem;flex-shrink:0">&#128241;</span>
+<div><strong style="color:#0e0f12">iPhone / iPad</strong> &mdash; appuie longuement sur l'image, puis <strong>Enregistrer dans Photos</strong>.</div>
+</div>
+</div>
+</div>
 </div>
 
-<!-- EXPORT MODAL -->
-<div id="modal">
-  <div id="modal-inner" onclick="event.stopPropagation()">
-    <div id="modal-hdr">
-      <span style="font-family:Georgia,serif;font-size:.88rem;color:white"><span style="color:#e63946;font-weight:700">Hello</span><span style="font-weight:700">Scoring</span> <span style="font-size:.65rem;color:rgba(255,255,255,.4);margin-left:6px">Export image</span></span>
-      <button onclick="closeModal()" style="background:rgba(255,255,255,.1);border:none;color:white;width:26px;height:26px;border-radius:5px;font-size:.9rem;display:flex;align-items:center;justify-content:center;">✕</button>
-    </div>
-    <div id="modal-img"><img id="export-img-el" src="" alt="Export"></div>
-    <div id="modal-foot">
-      <a id="modal-dl-link" href="" download="helloscore-export.png" id="modal-dl">⬇ Télécharger l'image</a>
-      <div id="modal-tip"><span style="font-size:1rem;flex-shrink:0">📱</span><div><strong style="color:#0e0f12">Sur iPhone / iPad</strong> — si le téléchargement ne fonctionne pas, appuie longuement sur l'image ci-dessus puis sélectionne <strong>« Enregistrer dans Photos »</strong>.</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- HEADER -->
 <div id="hdr">
-  <div style="display:flex;align-items:center;gap:.7rem;min-width:0">
-    <button onclick="toggleSide()" style="background:rgba(255,255,255,.1);border:none;color:white;width:26px;height:26px;border-radius:5px;font-size:.7rem;display:flex;align-items:center;justify-content:center;" id="side-btn">◀</button>
-    <span class="brand"><span class="r">Hello</span><span class="w">Scoring</span></span>
-    <span class="sub-hdr">La mer en hiver · Shaga · 50 répondants</span>
-  </div>
-  <div class="mode-btns">
-    <button class="mode-btn active" id="btn-explore" onclick="setMode('explore')">🔍 Exploration</button>
-    <button class="mode-btn" id="btn-compare" onclick="setMode('compare')">⚖ Comparaison</button>
-  </div>
+<div style="display:flex;align-items:center;gap:.7rem;min-width:0">
+<button id="sidebtn" style="background:rgba(255,255,255,.1);border:none;color:white;width:26px;height:26px;border-radius:5px;font-size:.7rem;">&#9664;</button>
+<span class="brand"><span class="r">Hello</span><span class="w">Scoring</span></span>
+<span class="subhdr">La mer en hiver &middot; Shaga &middot; 50 repondants</span>
+</div>
+<div class="mbtns">
+<button class="mbtn on" id="bex"><span class="mico">&#128269;</span><span>Exploration</span><span class="msub">Filtrer les donnees</span></button>
+<button class="mbtn" id="bcm"><span class="mico">&#9878;</span><span>Comparaison</span><span class="msub">Comparer des cibles</span></button>
+</div>
 </div>
 
-<!-- LAYOUT -->
-<div id="layout">
-
-  <!-- SIDEBAR -->
-  <div id="side">
-    <!-- Chapitres -->
-    <div class="side-top">
-      <div class="slbl">Chapitres</div>
-      <button class="chap-btn active" id="chap-notes"    onclick="setChapter('notes')"><span style="opacity:.6;width:13px;text-align:center">★</span> Notes &amp; Distribution <span class="chap-dot" id="dot-notes"></span></button>
-      <button class="chap-btn"        id="chap-emotions" onclick="setChapter('emotions')"><span style="opacity:.6;width:13px;text-align:center">♡</span> Émotions <span class="chap-dot" id="dot-emotions"></span></button>
-      <button class="chap-btn"        id="chap-actions"  onclick="setChapter('actions')"><span style="opacity:.6;width:13px;text-align:center">→</span> Intentions d'usage <span class="chap-dot" id="dot-actions"></span></button>
-      <button class="chap-btn"        id="chap-segments" onclick="setChapter('segments')"><span style="opacity:.6;width:13px;text-align:center">◈</span> Segments <span class="chap-dot" id="dot-segments"></span></button>
-      <button class="chap-btn"        id="chap-verbatims"onclick="setChapter('verbatims')"><span style="opacity:.6;width:13px;text-align:center">❝</span> Verbatims <span class="chap-dot" id="dot-verbatims"></span></button>
-    </div>
-    <!-- Bottom: filters or compare -->
-    <div class="side-bot" id="side-bot"></div>
-  </div>
-
-  <!-- MAIN -->
-  <div id="main">
-    <div id="main-inner">
-      <div class="ch-header" id="ch-header"></div>
-      <div id="filter-recap"></div>
-      <div id="comment-area"></div>
-      <div id="content"></div>
-    </div>
-  </div>
+<div id="lay">
+<div id="side">
+<div class="stop">
+<div class="slbl">Chapitres</div>
+<button class="cbtn on" id="chn"><span style="opacity:.6;width:14px;text-align:center">&#9733;</span>Notes &amp; Distribution<span class="dot" id="dn"></span></button>
+<button class="cbtn" id="che"><span style="opacity:.6;width:14px;text-align:center">&#9825;</span>Emotions<span class="dot" id="de"></span></button>
+<button class="cbtn" id="cha"><span style="opacity:.6;width:14px;text-align:center">&#8594;</span>Intentions d'usage<span class="dot" id="da"></span></button>
+<button class="cbtn" id="chs"><span style="opacity:.6;width:14px;text-align:center">&#9672;</span>Segments<span class="dot" id="ds"></span></button>
+<button class="cbtn" id="chv"><span style="opacity:.6;width:14px;text-align:center">&#10075;</span>Verbatims<span class="dot" id="dv"></span></button>
+</div>
+<div class="sbot" id="sbot"></div>
+</div>
+<div id="main">
+<div class="chdr" id="chdr"></div>
+<div id="frecap"></div>
+<div id="carea"></div>
+<div id="content"></div>
+</div>
 </div>
 
 <script>
-// ═══════════════════════════════
-// DATA
-// ═══════════════════════════════
-const RAW=[
-  {id:1, age:"25–34",genre:"Femme",      rel:"Fan",          hab:"Écoute presque tout",sc:9, pt:9, emo:["Énergie","Frisson","Nostalgie"],      act:["Partagerait","Playlist","Concert"],  vb:"L'entrée par le refrain c'est un vrai pari — et ça marche. On est dedans en 5 secondes."},
-  {id:2, age:"18–24",genre:"Homme",      rel:"Fan",          hab:"Écoute presque tout",sc:10,pt:9, emo:["Euphorie","Énergie","Groove"],        act:["Partagerait","Playlist"],            vb:"Ce morceau me fait penser à du Lescop mais avec plus d'énergie. C'est une vraie identité."},
-  {id:3, age:"25–34",genre:"Femme",      rel:"Fan",          hab:"Écoute presque tout",sc:9, pt:10,emo:["Frisson","Intimité","Nostalgie"],     act:["Partagerait","Playlist","Concert"],  vb:"La prod est superbe. L'alternance refrain épuré / couplets organiques donne une vraie respiration."},
-  {id:4, age:"35–44",genre:"Homme",      rel:"Fan",          hab:"Écoute presque tout",sc:9, pt:9, emo:["Énergie","Groove","Frisson"],         act:["Partagerait","Concert"],             vb:"Potentiel radio évident. Le refrain est immédiatement mémorisable."},
-  {id:5, age:"25–34",genre:"Non-binaire",rel:"Fan",          hab:"Écoute presque tout",sc:8, pt:9, emo:["Mélancolie","Intimité","Nostalgie"],  act:["Partagerait","Playlist"],            vb:"Une mélancolie douce, jamais larmoyante. Ça raconte quelque chose de vrai."},
-  {id:6, age:"18–24",genre:"Femme",      rel:"Fan",          hab:"Écoute presque tout",sc:9, pt:8, emo:["Énergie","Euphorie"],                act:["Partagerait","Playlist","Concert"],  vb:"Je stream tout ce qu'il sort. Celui-là c'est son meilleur depuis longtemps."},
-  {id:7, age:"35–44",genre:"Femme",      rel:"Fan",          hab:"Écoute presque tout",sc:9, pt:9, emo:["Nostalgie","Mélancolie","Frisson"],   act:["Partagerait","Playlist"],            vb:"La ligne de basse m'a immédiatement attrapé. C'est ancré physiquement."},
-  {id:8, age:"25–34",genre:"Homme",      rel:"Fan",          hab:"Écoute presque tout",sc:10,pt:10,emo:["Euphorie","Énergie","Groove"],        act:["Partagerait","Playlist","Concert"],  vb:"Objectivement son meilleur titre. La structure est parfaite."},
-  {id:9, age:"25–34",genre:"Femme",      rel:"Connais bien", hab:"Plusieurs morceaux", sc:8, pt:8, emo:["Nostalgie","Mélancolie"],            act:["Partagerait","Playlist"],            vb:"Je connaissais déjà son univers mais là il pousse encore plus loin. Très beau."},
-  {id:10,age:"35–44",genre:"Homme",      rel:"Connais bien", hab:"Plusieurs morceaux", sc:8, pt:8, emo:["Énergie","Groove"],                 act:["Partagerait","Playlist"],            vb:"Le refrain reste en tête longtemps après l'écoute. C'est le signe d'un bon titre."},
-  {id:11,age:"25–34",genre:"Femme",      rel:"Connais bien", hab:"Plusieurs morceaux", sc:9, pt:9, emo:["Frisson","Intimité"],               act:["Partagerait","Playlist","Fond"],     vb:"Quelque chose de très personnel dans cette chanson. On sent qu'il s'y est mis vraiment."},
-  {id:12,age:"45–54",genre:"Homme",      rel:"Connais bien", hab:"Plusieurs morceaux", sc:7, pt:8, emo:["Nostalgie","Légèreté"],             act:["Playlist","Fond"],                  vb:"Très réussi. Un cran au-dessus de ses précédents titres je trouve."},
-  {id:13,age:"35–44",genre:"Femme",      rel:"Connais bien", hab:"Plusieurs morceaux", sc:8, pt:8, emo:["Mélancolie","Intimité","Nostalgie"], act:["Partagerait","Playlist"],            vb:"L'univers visuel que ça évoque est très fort. Mer, froid, intimité hivernale."},
-  {id:14,age:"25–34",genre:"Homme",      rel:"Connais bien", hab:"Plusieurs morceaux", sc:8, pt:9, emo:["Énergie","Frisson"],               act:["Partagerait","Playlist"],            vb:"Ce titre peut toucher un public large. Je le vois bien en playlist Spotify editorial."},
-  {id:15,age:"18–24",genre:"Femme",      rel:"Connais bien", hab:"Plusieurs morceaux", sc:7, pt:8, emo:["Légèreté","Énergie"],               act:["Partagerait","Playlist"],            vb:"J'adore la prod. Moderne sans être froide."},
-  {id:16,age:"35–44",genre:"Homme",      rel:"Connais bien", hab:"Quelques titres",    sc:8, pt:8, emo:["Nostalgie","Groove"],               act:["Partagerait","Fond"],               vb:"Cohérent avec ce qu'il fait mais c'est une vraie évolution. Plus affirmé."},
-  {id:17,age:"25–34",genre:"Femme",      rel:"Connais bien", hab:"Plusieurs morceaux", sc:9, pt:9, emo:["Frisson","Énergie","Nostalgie"],    act:["Partagerait","Playlist","Concert"],  vb:"Punchline finale — je l'ai chantée toute la journée. C'est le critère ultime."},
-  {id:18,age:"45–54",genre:"Femme",      rel:"Connais bien", hab:"Plusieurs morceaux", sc:7, pt:7, emo:["Mélancolie","Légèreté"],            act:["Playlist","Fond"],                  vb:"Beau titre. Un passage au milieu décroche un peu mais l'ensemble est très bien."},
-  {id:19,age:"25–34",genre:"Homme",      rel:"Connais bien", hab:"Plusieurs morceaux", sc:8, pt:8, emo:["Énergie","Groove","Frisson"],       act:["Partagerait","Playlist"],            vb:"La basse est incroyable. On sent le corps qui réagit physiquement à l'écoute."},
-  {id:20,age:"35–44",genre:"Femme",      rel:"Connais bien", hab:"Quelques titres",    sc:8, pt:9, emo:["Nostalgie","Intimité"],             act:["Partagerait","Playlist","Fond"],     vb:"Titre parfait pour les soirées d'hiver. Il a trouvé une vraie niche émotionnelle."},
-  {id:21,age:"18–24",genre:"Homme",      rel:"Connais bien", hab:"Plusieurs morceaux", sc:7, pt:8, emo:["Légèreté","Groove"],               act:["Partagerait","Playlist"],            vb:"Accrocheur dès les premières secondes. Difficile de ne pas bouger la tête."},
-  {id:22,age:"25–34",genre:"Femme",      rel:"Connais bien", hab:"Plusieurs morceaux", sc:8, pt:8, emo:["Mélancolie","Frisson","Nostalgie"], act:["Partagerait","Playlist"],            vb:"L'écriture est vraiment soignée. Chaque mot est à sa place."},
-  {id:23,age:"25–34",genre:"Femme",      rel:"Connais un peu",hab:"Quelques titres",   sc:8, pt:8, emo:["Nostalgie","Légèreté"],             act:["Partagerait","Playlist"],            vb:"Je ne le suivais pas vraiment mais ce titre me donne envie d'explorer sa discographie."},
-  {id:24,age:"35–44",genre:"Homme",      rel:"Connais un peu",hab:"Quelques titres",   sc:7, pt:8, emo:["Énergie","Groove"],                act:["Partagerait","Playlist"],            vb:"Format parfait pour la radio. Court, accrocheur, refrain immédiat."},
-  {id:25,age:"18–24",genre:"Femme",      rel:"Connais un peu",hab:"Plusieurs morceaux",sc:7, pt:7, emo:["Légèreté","Nostalgie"],             act:["Playlist","Fond"],                  vb:"Joli morceau. L'univers hivernal est bien rendu dans la prod."},
-  {id:26,age:"45–54",genre:"Homme",      rel:"Connais un peu",hab:"Quelques titres",   sc:7, pt:7, emo:["Nostalgie","Mélancolie"],           act:["Fond"],                             vb:"Bien construit. Pas révolutionnaire mais solide et agréable."},
-  {id:27,age:"25–34",genre:"Femme",      rel:"Connais un peu",hab:"Plusieurs morceaux",sc:8, pt:8, emo:["Frisson","Intimité","Mélancolie"],  act:["Partagerait","Playlist"],            vb:"La voix est très bien travaillée. Elle transporte l'émotion sans en faire trop."},
-  {id:28,age:"35–44",genre:"Homme",      rel:"Connais un peu",hab:"Quelques titres",   sc:6, pt:7, emo:["Légèreté","Détachement"],           act:["Fond"],                             vb:"C'est bien mais ça ne me touche pas particulièrement. Peut-être pas ma cible."},
-  {id:29,age:"25–34",genre:"Homme",      rel:"Connais un peu",hab:"Quelques titres",   sc:7, pt:8, emo:["Énergie","Groove"],                act:["Partagerait","Playlist"],            vb:"Le beat est vraiment efficace. Ça donne envie de monter le volume."},
-  {id:30,age:"18–24",genre:"Femme",      rel:"Connais un peu",hab:"Plusieurs morceaux",sc:8, pt:8, emo:["Nostalgie","Légèreté","Frisson"],   act:["Partagerait","Playlist"],            vb:"Cette phrase sur la doudoune — je l'ai retenue immédiatement. Trop parlante."},
-  {id:31,age:"35–44",genre:"Femme",      rel:"Connais un peu",hab:"Quelques titres",   sc:7, pt:7, emo:["Mélancolie","Intimité"],            act:["Playlist","Fond"],                  vb:"Très bel univers. Un peu trop introspectif pour moi mais objectivement réussi."},
-  {id:32,age:"45–54",genre:"Femme",      rel:"Connais un peu",hab:"Quelques titres",   sc:6, pt:7, emo:["Nostalgie","Légèreté"],             act:["Fond"],                             vb:"Agréable à écouter. Pas mon genre de prédilection mais le titre est bien fait."},
-  {id:33,age:"25–34",genre:"Homme",      rel:"Connais un peu",hab:"Plusieurs morceaux",sc:8, pt:9, emo:["Énergie","Frisson","Groove"],       act:["Partagerait","Playlist"],            vb:"Ce titre a un potentiel commercial évident. Très accessible sans être banal."},
-  {id:34,age:"35–44",genre:"Femme",      rel:"Connais un peu",hab:"Quelques titres",   sc:7, pt:8, emo:["Nostalgie","Mélancolie"],           act:["Partagerait","Playlist"],            vb:"Je l'ai écouté plusieurs fois de suite. C'est un bon signe."},
-  {id:35,age:"25–34",genre:"Homme",      rel:"Connais un peu",hab:"Quelques titres",   sc:6, pt:7, emo:["Détachement","Légèreté"],           act:["Aucune action"],                    vb:"Bien construit mais le passage central perd un peu d'élan par rapport au refrain."},
-  {id:36,age:"18–24",genre:"Femme",      rel:"Connais un peu",hab:"Plusieurs morceaux",sc:8, pt:8, emo:["Énergie","Nostalgie"],              act:["Partagerait","Playlist"],            vb:"L'intro est redoutable. On est accroché avant même d'avoir compris ce qui se passe."},
-  {id:37,age:"45–54",genre:"Homme",      rel:"Connais un peu",hab:"Quelques titres",   sc:7, pt:7, emo:["Nostalgie","Groove"],               act:["Fond"],                             vb:"Bonne écriture. Le format chanson est bien maîtrisé."},
-  {id:38,age:"35–44",genre:"Homme",      rel:"Connais un peu",hab:"Plusieurs morceaux",sc:7, pt:8, emo:["Frisson","Énergie"],               act:["Partagerait","Playlist"],            vb:"Références à la scène française indé. C'est assumé et ça fonctionne."},
-  {id:39,age:"25–34",genre:"Femme",      rel:"Connais un peu",hab:"Quelques titres",   sc:7, pt:7, emo:["Légèreté","Mélancolie"],            act:["Playlist"],                         vb:"Joli morceau d'ambiance. Parfait pour les soirées calmes."},
-  {id:40,age:"25–34",genre:"Femme",      rel:"Découverte",    hab:"Quelques titres",   sc:8, pt:9, emo:["Nostalgie","Frisson"],              act:["Partagerait","Playlist"],            vb:"Je ne le connaissais pas du tout mais ce titre me donne très envie d'aller plus loin."},
-  {id:41,age:"35–44",genre:"Homme",      rel:"Découverte",    hab:"Quelques titres",   sc:7, pt:8, emo:["Légèreté","Groove"],               act:["Partagerait","Playlist"],            vb:"Très accessible pour une première écoute. Accrocheur sans être commercial à outrance."},
-  {id:42,age:"18–24",genre:"Femme",      rel:"Découverte",    hab:"Quelques titres",   sc:7, pt:8, emo:["Énergie","Nostalgie"],              act:["Partagerait","Playlist"],            vb:"Cette phrase sur la mer en doudoune — je ne sais pas pourquoi mais je l'ai retenue."},
-  {id:43,age:"45–54",genre:"Homme",      rel:"Découverte",    hab:"Quelques titres",   sc:6, pt:7, emo:["Nostalgie","Détachement"],          act:["Fond"],                             vb:"Pas mon univers habituel mais le titre est bien fait. La prod est moderne."},
-  {id:44,age:"35–44",genre:"Femme",      rel:"Découverte",    hab:"Quelques titres",   sc:8, pt:8, emo:["Intimité","Mélancolie","Nostalgie"],act:["Partagerait","Playlist","Fond"],     vb:"Découverte vraiment agréable. Un artiste à suivre selon moi."},
-  {id:45,age:"25–34",genre:"Homme",      rel:"Découverte",    hab:"Quelques titres",   sc:7, pt:8, emo:["Frisson","Énergie"],               act:["Partagerait","Playlist"],            vb:"Première impression très positive. Le son est propre et original."},
-  {id:46,age:"55+",  genre:"Femme",      rel:"Découverte",    hab:"Quelques titres",   sc:6, pt:7, emo:["Légèreté","Nostalgie"],             act:["Fond"],                             vb:"Agréable. Je ne suis pas la cible mais le titre est bien construit."},
-  {id:47,age:"18–24",genre:"Homme",      rel:"Découverte",    hab:"Quelques titres",   sc:7, pt:8, emo:["Groove","Énergie"],                act:["Partagerait","Playlist"],            vb:"Le beat est vraiment bon. J'aurais pas deviné que c'était français."},
-  {id:48,age:"35–44",genre:"Femme",      rel:"Découverte",    hab:"Quelques titres",   sc:8, pt:9, emo:["Nostalgie","Frisson","Légèreté"],   act:["Partagerait","Playlist"],            vb:"Très belle découverte. L'univers hivernal crée une vraie atmosphère."},
-  {id:49,age:"55+",  genre:"Homme",      rel:"Découverte",    hab:"Quelques titres",   sc:6, pt:6, emo:["Détachement","Nostalgie"],          act:["Aucune action"],                    vb:"Bien fait mais pas vraiment pour moi. Je comprends l'attrait pour un public plus jeune."},
-  {id:50,age:"45–54",genre:"Femme",      rel:"Découverte",    hab:"Quelques titres",   sc:7, pt:8, emo:["Intimité","Mélancolie"],            act:["Partagerait","Playlist"],            vb:"Très touchant. La sincérité de l'écriture se sent immédiatement."}
+var RAW=[
+{id:1,age:"25-34",genre:"Femme",rel:"Fan",hab:"Ecoute presque tout",sc:9,pt:9,emo:["Energie","Frisson","Nostalgie"],act:["Partagerait","Playlist","Concert"],vb:"L'entree par le refrain c'est un vrai pari - et ca marche. On est dedans en 5 secondes."},
+{id:2,age:"18-24",genre:"Homme",rel:"Fan",hab:"Ecoute presque tout",sc:10,pt:9,emo:["Euphorie","Energie","Groove"],act:["Partagerait","Playlist"],vb:"Ce morceau me fait penser a du Lescop mais avec plus d'energie. C'est une vraie identite."},
+{id:3,age:"25-34",genre:"Femme",rel:"Fan",hab:"Ecoute presque tout",sc:9,pt:10,emo:["Frisson","Intimite","Nostalgie"],act:["Partagerait","Playlist","Concert"],vb:"La prod est superbe. L'alternance refrain epure et couplets organiques donne une vraie respiration."},
+{id:4,age:"35-44",genre:"Homme",rel:"Fan",hab:"Ecoute presque tout",sc:9,pt:9,emo:["Energie","Groove","Frisson"],act:["Partagerait","Concert"],vb:"Potentiel radio evident. Le refrain est immediatement memorisable."},
+{id:5,age:"25-34",genre:"Non-binaire",rel:"Fan",hab:"Ecoute presque tout",sc:8,pt:9,emo:["Melancolie","Intimite","Nostalgie"],act:["Partagerait","Playlist"],vb:"Une melancolie douce, jamais larmoyante. Ca raconte quelque chose de vrai."},
+{id:6,age:"18-24",genre:"Femme",rel:"Fan",hab:"Ecoute presque tout",sc:9,pt:8,emo:["Energie","Euphorie"],act:["Partagerait","Playlist","Concert"],vb:"Je stream tout ce qu'il sort. Celui-la c'est son meilleur depuis longtemps."},
+{id:7,age:"35-44",genre:"Femme",rel:"Fan",hab:"Ecoute presque tout",sc:9,pt:9,emo:["Nostalgie","Melancolie","Frisson"],act:["Partagerait","Playlist"],vb:"La ligne de basse m'a immediatement attrape. C'est ancre physiquement."},
+{id:8,age:"25-34",genre:"Homme",rel:"Fan",hab:"Ecoute presque tout",sc:10,pt:10,emo:["Euphorie","Energie","Groove"],act:["Partagerait","Playlist","Concert"],vb:"Objectivement son meilleur titre. La structure est parfaite."},
+{id:9,age:"25-34",genre:"Femme",rel:"Connais bien",hab:"Plusieurs morceaux",sc:8,pt:8,emo:["Nostalgie","Melancolie"],act:["Partagerait","Playlist"],vb:"Je connaissais deja son univers mais la il pousse encore plus loin. Tres beau."},
+{id:10,age:"35-44",genre:"Homme",rel:"Connais bien",hab:"Plusieurs morceaux",sc:8,pt:8,emo:["Energie","Groove"],act:["Partagerait","Playlist"],vb:"Le refrain reste en tete longtemps apres l'ecoute. C'est le signe d'un bon titre."},
+{id:11,age:"25-34",genre:"Femme",rel:"Connais bien",hab:"Plusieurs morceaux",sc:9,pt:9,emo:["Frisson","Intimite"],act:["Partagerait","Playlist","Fond"],vb:"Quelque chose de tres personnel dans cette chanson. On sent qu'il s'y est mis vraiment."},
+{id:12,age:"45-54",genre:"Homme",rel:"Connais bien",hab:"Plusieurs morceaux",sc:7,pt:8,emo:["Nostalgie","Legerete"],act:["Playlist","Fond"],vb:"Tres reussi. Un cran au-dessus de ses precedents titres je trouve."},
+{id:13,age:"35-44",genre:"Femme",rel:"Connais bien",hab:"Plusieurs morceaux",sc:8,pt:8,emo:["Melancolie","Intimite","Nostalgie"],act:["Partagerait","Playlist"],vb:"L'univers visuel que ca evoque est tres fort. Mer, froid, intimite hivernale."},
+{id:14,age:"25-34",genre:"Homme",rel:"Connais bien",hab:"Plusieurs morceaux",sc:8,pt:9,emo:["Energie","Frisson"],act:["Partagerait","Playlist"],vb:"Ce titre peut toucher un public large. Je le vois bien en playlist Spotify editorial."},
+{id:15,age:"18-24",genre:"Femme",rel:"Connais bien",hab:"Plusieurs morceaux",sc:7,pt:8,emo:["Legerete","Energie"],act:["Partagerait","Playlist"],vb:"J'adore la prod. Moderne sans etre froide."},
+{id:16,age:"35-44",genre:"Homme",rel:"Connais bien",hab:"Quelques titres",sc:8,pt:8,emo:["Nostalgie","Groove"],act:["Partagerait","Fond"],vb:"Coherent avec ce qu'il fait mais c'est une vraie evolution. Plus affirme."},
+{id:17,age:"25-34",genre:"Femme",rel:"Connais bien",hab:"Plusieurs morceaux",sc:9,pt:9,emo:["Frisson","Energie","Nostalgie"],act:["Partagerait","Playlist","Concert"],vb:"Punchline finale - je l'ai chantee toute la journee. C'est le critere ultime."},
+{id:18,age:"45-54",genre:"Femme",rel:"Connais bien",hab:"Plusieurs morceaux",sc:7,pt:7,emo:["Melancolie","Legerete"],act:["Playlist","Fond"],vb:"Beau titre. Un passage au milieu decroche un peu mais l'ensemble est tres bien."},
+{id:19,age:"25-34",genre:"Homme",rel:"Connais bien",hab:"Plusieurs morceaux",sc:8,pt:8,emo:["Energie","Groove","Frisson"],act:["Partagerait","Playlist"],vb:"La basse est incroyable. On sent le corps qui reagit physiquement a l'ecoute."},
+{id:20,age:"35-44",genre:"Femme",rel:"Connais bien",hab:"Quelques titres",sc:8,pt:9,emo:["Nostalgie","Intimite"],act:["Partagerait","Playlist","Fond"],vb:"Titre parfait pour les soirees d'hiver. Il a trouve une vraie niche emotionnelle."},
+{id:21,age:"18-24",genre:"Homme",rel:"Connais bien",hab:"Plusieurs morceaux",sc:7,pt:8,emo:["Legerete","Groove"],act:["Partagerait","Playlist"],vb:"Accrocheur des les premieres secondes. Difficile de ne pas bouger la tete."},
+{id:22,age:"25-34",genre:"Femme",rel:"Connais bien",hab:"Plusieurs morceaux",sc:8,pt:8,emo:["Melancolie","Frisson","Nostalgie"],act:["Partagerait","Playlist"],vb:"L'ecriture est vraiment soignee. Chaque mot est a sa place."},
+{id:23,age:"25-34",genre:"Femme",rel:"Connais un peu",hab:"Quelques titres",sc:8,pt:8,emo:["Nostalgie","Legerete"],act:["Partagerait","Playlist"],vb:"Je ne le suivais pas vraiment mais ce titre me donne envie d'explorer sa discographie."},
+{id:24,age:"35-44",genre:"Homme",rel:"Connais un peu",hab:"Quelques titres",sc:7,pt:8,emo:["Energie","Groove"],act:["Partagerait","Playlist"],vb:"Format parfait pour la radio. Court, accrocheur, refrain immediat."},
+{id:25,age:"18-24",genre:"Femme",rel:"Connais un peu",hab:"Plusieurs morceaux",sc:7,pt:7,emo:["Legerete","Nostalgie"],act:["Playlist","Fond"],vb:"Joli morceau. L'univers hivernal est bien rendu dans la prod."},
+{id:26,age:"45-54",genre:"Homme",rel:"Connais un peu",hab:"Quelques titres",sc:7,pt:7,emo:["Nostalgie","Melancolie"],act:["Fond"],vb:"Bien construit. Pas revolutionnaire mais solide et agreable."},
+{id:27,age:"25-34",genre:"Femme",rel:"Connais un peu",hab:"Plusieurs morceaux",sc:8,pt:8,emo:["Frisson","Intimite","Melancolie"],act:["Partagerait","Playlist"],vb:"La voix est tres bien travaillee. Elle transporte l'emotion sans en faire trop."},
+{id:28,age:"35-44",genre:"Homme",rel:"Connais un peu",hab:"Quelques titres",sc:6,pt:7,emo:["Legerete","Detachement"],act:["Fond"],vb:"C'est bien mais ca ne me touche pas particulierement. Peut-etre pas ma cible."},
+{id:29,age:"25-34",genre:"Homme",rel:"Connais un peu",hab:"Quelques titres",sc:7,pt:8,emo:["Energie","Groove"],act:["Partagerait","Playlist"],vb:"Le beat est vraiment efficace. Ca donne envie de monter le volume."},
+{id:30,age:"18-24",genre:"Femme",rel:"Connais un peu",hab:"Plusieurs morceaux",sc:8,pt:8,emo:["Nostalgie","Legerete","Frisson"],act:["Partagerait","Playlist"],vb:"Cette phrase sur la doudoune - je l'ai retenue immediatement. Trop parlante."},
+{id:31,age:"35-44",genre:"Femme",rel:"Connais un peu",hab:"Quelques titres",sc:7,pt:7,emo:["Melancolie","Intimite"],act:["Playlist","Fond"],vb:"Tres bel univers. Un peu trop introspectif pour moi mais objectivement reussi."},
+{id:32,age:"45-54",genre:"Femme",rel:"Connais un peu",hab:"Quelques titres",sc:6,pt:7,emo:["Nostalgie","Legerete"],act:["Fond"],vb:"Agreable a ecouter. Pas mon genre de predilection mais le titre est bien fait."},
+{id:33,age:"25-34",genre:"Homme",rel:"Connais un peu",hab:"Plusieurs morceaux",sc:8,pt:9,emo:["Energie","Frisson","Groove"],act:["Partagerait","Playlist"],vb:"Ce titre a un potentiel commercial evident. Tres accessible sans etre banal."},
+{id:34,age:"35-44",genre:"Femme",rel:"Connais un peu",hab:"Quelques titres",sc:7,pt:8,emo:["Nostalgie","Melancolie"],act:["Partagerait","Playlist"],vb:"Je l'ai ecoute plusieurs fois de suite. C'est un bon signe."},
+{id:35,age:"25-34",genre:"Homme",rel:"Connais un peu",hab:"Quelques titres",sc:6,pt:7,emo:["Detachement","Legerete"],act:["Aucune action"],vb:"Bien construit mais le passage central perd un peu d'elan par rapport au refrain."},
+{id:36,age:"18-24",genre:"Femme",rel:"Connais un peu",hab:"Plusieurs morceaux",sc:8,pt:8,emo:["Energie","Nostalgie"],act:["Partagerait","Playlist"],vb:"L'intro est redoutable. On est accroche avant meme d'avoir compris ce qui se passe."},
+{id:37,age:"45-54",genre:"Homme",rel:"Connais un peu",hab:"Quelques titres",sc:7,pt:7,emo:["Nostalgie","Groove"],act:["Fond"],vb:"Bonne ecriture. Le format chanson est bien maitrise."},
+{id:38,age:"35-44",genre:"Homme",rel:"Connais un peu",hab:"Plusieurs morceaux",sc:7,pt:8,emo:["Frisson","Energie"],act:["Partagerait","Playlist"],vb:"References a la scene francaise inde. C'est assume et ca fonctionne."},
+{id:39,age:"25-34",genre:"Femme",rel:"Connais un peu",hab:"Quelques titres",sc:7,pt:7,emo:["Legerete","Melancolie"],act:["Playlist"],vb:"Joli morceau d'ambiance. Parfait pour les soirees calmes."},
+{id:40,age:"25-34",genre:"Femme",rel:"Decouverte",hab:"Quelques titres",sc:8,pt:9,emo:["Nostalgie","Frisson"],act:["Partagerait","Playlist"],vb:"Je ne le connaissais pas du tout mais ce titre me donne tres envie d'aller plus loin."},
+{id:41,age:"35-44",genre:"Homme",rel:"Decouverte",hab:"Quelques titres",sc:7,pt:8,emo:["Legerete","Groove"],act:["Partagerait","Playlist"],vb:"Tres accessible pour une premiere ecoute. Accrocheur sans etre commercial a outrance."},
+{id:42,age:"18-24",genre:"Femme",rel:"Decouverte",hab:"Quelques titres",sc:7,pt:8,emo:["Energie","Nostalgie"],act:["Partagerait","Playlist"],vb:"Cette phrase sur la mer en doudoune - je ne sais pas pourquoi mais je l'ai retenue."},
+{id:43,age:"45-54",genre:"Homme",rel:"Decouverte",hab:"Quelques titres",sc:6,pt:7,emo:["Nostalgie","Detachement"],act:["Fond"],vb:"Pas mon univers habituel mais le titre est bien fait. La prod est moderne."},
+{id:44,age:"35-44",genre:"Femme",rel:"Decouverte",hab:"Quelques titres",sc:8,pt:8,emo:["Intimite","Melancolie","Nostalgie"],act:["Partagerait","Playlist","Fond"],vb:"Decouverte vraiment agreable. Un artiste a suivre selon moi."},
+{id:45,age:"25-34",genre:"Homme",rel:"Decouverte",hab:"Quelques titres",sc:7,pt:8,emo:["Frisson","Energie"],act:["Partagerait","Playlist"],vb:"Premiere impression tres positive. Le son est propre et original."},
+{id:46,age:"55+",genre:"Femme",rel:"Decouverte",hab:"Quelques titres",sc:6,pt:7,emo:["Legerete","Nostalgie"],act:["Fond"],vb:"Agreable. Je ne suis pas la cible mais le titre est bien construit."},
+{id:47,age:"18-24",genre:"Homme",rel:"Decouverte",hab:"Quelques titres",sc:7,pt:8,emo:["Groove","Energie"],act:["Partagerait","Playlist"],vb:"Le beat est vraiment bon. J'aurais pas devine que c'etait francais."},
+{id:48,age:"35-44",genre:"Femme",rel:"Decouverte",hab:"Quelques titres",sc:8,pt:9,emo:["Nostalgie","Frisson","Legerete"],act:["Partagerait","Playlist"],vb:"Tres belle decouverte. L'univers hivernal cree une vraie atmosphere."},
+{id:49,age:"55+",genre:"Homme",rel:"Decouverte",hab:"Quelques titres",sc:6,pt:6,emo:["Detachement","Nostalgie"],act:["Aucune action"],vb:"Bien fait mais pas vraiment pour moi. Je comprends l'attrait pour un public plus jeune."},
+{id:50,age:"45-54",genre:"Femme",rel:"Decouverte",hab:"Quelques titres",sc:7,pt:8,emo:["Intimite","Melancolie"],act:["Partagerait","Playlist"],vb:"Tres touchant. La sincerite de l'ecriture se sent immediatement."}
 ];
 
-const EMOS=["Nostalgie","Énergie","Mélancolie","Frisson","Légèreté","Intimité","Groove","Euphorie","Détachement"];
-const ACTS=["Partagerait","Playlist","Fond","Concert","Aucune action"];
-const ACTS_LB=["Partagerait","Ajouterait en playlist","Mettrait en fond","Irait au concert","Aucune action"];
-const DIMS={age:["18–24","25–34","35–44","45–54","55+"],genre:["Femme","Homme","Non-binaire"],rel:["Fan","Connais bien","Connais un peu","Découverte"],hab:["Écoute presque tout","Plusieurs morceaux","Quelques titres"]};
-const DIM_LBL={age:"Âge",genre:"Genre",rel:"Relation artiste",hab:"Habitudes d'écoute"};
-const CHAPS=[{id:"notes",lbl:"Notes & Distribution"},{id:"emotions",lbl:"Émotions"},{id:"actions",lbl:"Intentions d'usage"},{id:"segments",lbl:"Segments"},{id:"verbatims",lbl:"Verbatims"}];
-const CMP_PAL=["#e63946","#2d6a4f","#457b9d","#f4a261","#9b5de5"];
-const MIN_N=5;
+var EMOS=["Nostalgie","Energie","Melancolie","Frisson","Legerete","Intimite","Groove","Euphorie","Detachement"];
+var ACTS=["Partagerait","Playlist","Fond","Concert","Aucune action"];
+var ALBS=["Partagerait","Ajouterait en playlist","Mettrait en fond","Irait au concert","Aucune action"];
+var DIMS={age:["18-24","25-34","35-44","45-54","55+"],genre:["Femme","Homme","Non-binaire"],rel:["Fan","Connais bien","Connais un peu","Decouverte"],hab:["Ecoute presque tout","Plusieurs morceaux","Quelques titres"]};
+var DLBL={age:"Age",genre:"Genre",rel:"Relation",hab:"Habitudes"};
+var CIDS=["notes","emotions","actions","segments","verbatims"];
+var CLBLS={"notes":"Notes et Distribution","emotions":"Emotions","actions":"Intentions","segments":"Segments","verbatims":"Verbatims"};
+var PAL=["#c9a84c","#8b5cf6","#22c55e","#f97316","#e879f9"];
+var MIN_N=5;
+var DIMS_KEYS=["age","genre","rel","hab"];
 
-// ── helpers ──
-const avg=a=>a.length?a.reduce((s,x)=>s+x,0)/a.length:null;
-const pctOf=(n,t)=>t?Math.round(n/t*100):0;
-const scCol=s=>s>=8?"#2d6a4f":s>=6?"#c8880a":"#e63946";
-const scBg=s=>s>=8?"#e8f5ec":s>=6?"#fff8ed":"#fff0ee";
-const h=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+function avg(a){var s=0,i;for(i=0;i<a.length;i++)s+=a[i];return a.length?s/a.length:null;}
+function pct(n,t){return t?Math.round(n/t*100):0;}
+function scC(s){return s>=8?"#22c55e":s>=6?"#f97316":"#ef4444";}
+function scB(s){return s>=8?"rgba(34,197,94,.15)":s>=6?"rgba(249,115,22,.15)":"rgba(239,68,68,.15)";}
 
 function calcSt(rows){
-  if(!rows.length) return null;
-  const sc=rows.map(r=>r.sc),pt=rows.map(r=>r.pt);
-  return{
-    n:rows.length,
-    avgSc:(avg(sc)||0).toFixed(1),avgPt:(avg(pt)||0).toFixed(1),
-    pct6:pctOf(rows.filter(r=>r.sc>=6).length,rows.length),
-    pctSh:pctOf(rows.filter(r=>r.act.includes("Partagerait")).length,rows.length),
-    dist:Array.from({length:11},(_,i)=>({i,c:rows.filter(r=>r.sc===i).length})),
-    emos:EMOS.map(e=>({e,p:pctOf(rows.filter(r=>r.emo.includes(e)).length,rows.length)})),
-    acts:ACTS.map((a,i)=>({a,lb:ACTS_LB[i],p:pctOf(rows.filter(r=>r.act.includes(a)).length,rows.length)}))
-  };
+  if(!rows.length)return null;
+  var sc=[],pt=[],i,n6=0,nsh=0;
+  for(i=0;i<rows.length;i++){sc.push(rows[i].sc);pt.push(rows[i].pt);if(rows[i].sc>=6)n6++;if(rows[i].act.indexOf("Partagerait")>-1)nsh++;}
+  var dist=[],emos=[],acts=[],ei,ai,c,j;
+  for(i=0;i<=10;i++){c=0;for(j=0;j<rows.length;j++)if(rows[j].sc===i)c++;dist.push({i:i,c:c});}
+  for(ei=0;ei<EMOS.length;ei++){c=0;for(j=0;j<rows.length;j++)if(rows[j].emo.indexOf(EMOS[ei])>-1)c++;emos.push({e:EMOS[ei],p:pct(c,rows.length)});}
+  for(ai=0;ai<ACTS.length;ai++){c=0;for(j=0;j<rows.length;j++)if(rows[j].act.indexOf(ACTS[ai])>-1)c++;acts.push({a:ACTS[ai],lb:ALBS[ai],p:pct(c,rows.length)});}
+  return{n:rows.length,avgSc:(avg(sc)||0).toFixed(1),avgPt:(avg(pt)||0).toFixed(1),pct6:pct(n6,rows.length),pctSh:pct(nsh,rows.length),dist:dist,emos:emos,acts:acts};
 }
 
-// ── STATE ──
-let chapter="notes", mode="explore", sideOpen=true;
-let filters={age:"Tous",genre:"Tous",rel:"Tous",hab:"Tous"};
-let cmpDim="rel", cmpSel=[];
-let vbSort="default", inverted=false;
+var chap="notes",mode="explore",sideOpen=true;
+var flt={age:"Tous",genre:"Tous",rel:"Tous",hab:"Tous"};
+var cDim="rel",cSel=[],vSort="default",inverted=false;
 
-function getExplored(){
-  return RAW.filter(r=>{
-    for(const[k,v]of Object.entries(filters))if(v!=="Tous"&&r[k]!==v)return false;
-    return true;
-  });
+function getExp(){
+  var r=[],i,k,ok;
+  for(i=0;i<RAW.length;i++){
+    ok=true;
+    for(k=0;k<DIMS_KEYS.length;k++){if(flt[DIMS_KEYS[k]]!=="Tous"&&RAW[i][DIMS_KEYS[k]]!==flt[DIMS_KEYS[k]]){ok=false;break;}}
+    if(ok)r.push(RAW[i]);
+  }
+  return r;
 }
-function getCmpGroups(){
-  return cmpSel.map((val,i)=>({lbl:val,col:CMP_PAL[i%CMP_PAL.length],rows:RAW.filter(r=>r[cmpDim]===val)}));
+
+function getGrps(){
+  var g=[],rows,i,j;
+  for(i=0;i<cSel.length;i++){
+    rows=[];
+    for(j=0;j<RAW.length;j++)if(RAW[j][cDim]===cSel[i])rows.push(RAW[j]);
+    g.push({lbl:cSel[i],col:PAL[i%PAL.length],rows:rows});
+  }
+  return g;
 }
+
 function getComment(){
-  if(mode!=="compare") return null;
-  const v=getCmpGroups().filter(g=>g.rows.length>=MIN_N);
-  if(v.length<2) return null;
-  const s=v.map(g=>({lbl:g.lbl,st:calcSt(g.rows)}));
-  if(chapter==="notes"){
-    const best=s.reduce((a,b)=>+a.st.avgSc>+b.st.avgSc?a:b);
-    const worst=s.reduce((a,b)=>+a.st.avgSc<+b.st.avgSc?a:b);
-    const gap=(+best.st.avgSc-+worst.st.avgSc).toFixed(1);
-    if(+gap<0.5) return"Les notes sont homogènes entre les cibles (écart < 0,5 pt) — ce titre fonctionne de façon transversale.";
-    return`Signal clé : ${best.lbl} est la cible la plus enthousiaste (${best.st.avgSc}/10), devant ${worst.lbl} (${worst.st.avgSc}/10). Un écart de ${gap} pts est stratégiquement significatif.`;
+  if(mode!=="compare")return "";
+  var grps=getGrps(),v=[],i;
+  for(i=0;i<grps.length;i++)if(grps[i].rows.length>=MIN_N)v.push(grps[i]);
+  if(v.length<2)return "";
+  var s=[],best,worst,gap,topSh,lowSh;
+  for(i=0;i<v.length;i++)s.push({lbl:v[i].lbl,st:calcSt(v[i].rows)});
+  if(chap==="notes"){
+    best=s[0];worst=s[0];
+    for(i=1;i<s.length;i++){if(+s[i].st.avgSc>+best.st.avgSc)best=s[i];if(+s[i].st.avgSc<+worst.st.avgSc)worst=s[i];}
+    gap=(+best.st.avgSc-+worst.st.avgSc).toFixed(1);
+    if(+gap<0.5)return "Ce titre touche tout le monde de la meme facon - les notes sont quasi identiques quelle que soit la cible. C'est le signe d'une musique transversale, pas segmentee.";
+    return "Ton titre accroche vraiment les "+best.lbl+" : ils te donnent "+best.st.avgSc+"/10 en moyenne. L'ecart de "+gap+" pts avec les "+worst.lbl+" ("+worst.st.avgSc+"/10) montre que tu as une cible naturelle - c'est elle qu'il faut activer en priorite.";
   }
-  if(chapter==="emotions"){
-    const top=EMOS.map(e=>({e,diff:Math.max(...s.map(g=>(function(){var _f=g.st.emos.filter(function(x){return x.e===e;})[0];return _f?_f.p:0;})()))-Math.min(...s.map(g=>(function(){var _f=g.st.emos.filter(function(x){return x.e===e;})[0];return _f?_f.p:0;})()))})).sort((a,b)=>b.diff-a.diff)[0];
-    const dom=s.map(g=>({lbl:g.lbl,p:(function(){var _f=g.st.emos.filter(function(x){return x.e===top.e;})[0];return _f?_f.p:0;})()})).sort((a,b)=>b.p-a.p);
-    return`"${top.e}" est l'émotion qui discrimine le plus (écart ${top.diff} pts). Forte chez ${dom[0].lbl} (${dom[0].p}%), moins présente chez ${dom[dom.length-1].lbl} (${dom[dom.length-1].p}%).`;
+  if(chap==="emotions"){
+    var topE="",topD=0,mx,mn,ei,gi,fi,domLbl="",domP=0,lowLbl="",lowP=100;
+    for(ei=0;ei<EMOS.length;ei++){
+      mx=0;mn=100;
+      for(gi=0;gi<s.length;gi++){for(fi=0;fi<s[gi].st.emos.length;fi++){if(s[gi].st.emos[fi].e===EMOS[ei]){if(s[gi].st.emos[fi].p>mx){mx=s[gi].st.emos[fi].p;domLbl=s[gi].lbl;domP=mx;}if(s[gi].st.emos[fi].p<mn){mn=s[gi].st.emos[fi].p;lowLbl=s[gi].lbl;lowP=mn;}}}}
+      if(mx-mn>topD){topD=mx-mn;topE=EMOS[ei];domLbl=domLbl;lowLbl=lowLbl;}
+    }
+    return "L'emotion qui cree le plus de difference entre tes cibles, c'est la "+topE+". Elle est tres presente chez les "+domLbl+" mais beaucoup moins chez les "+lowLbl+". Autrement dit, ce titre ne provoque pas la meme chose selon qui l'ecoute.";
   }
-  if(chapter==="actions"){
-    const topSh=s.reduce((a,b)=>a.st.pctSh>b.st.pctSh?a:b);
-    const lowSh=s.reduce((a,b)=>a.st.pctSh<b.st.pctSh?a:b);
-    if(topSh.lbl===lowSh.lbl) return null;
-    return`Partage : ${lowSh.st.pctSh}% (${lowSh.lbl}) vs ${topSh.st.pctSh}% (${topSh.lbl}). ${topSh.lbl} est la cible la plus susceptible de générer de la diffusion organique.`;
+  if(chap==="actions"){
+    topSh=s[0];lowSh=s[0];
+    for(i=1;i<s.length;i++){if(s[i].st.pctSh>topSh.st.pctSh)topSh=s[i];if(s[i].st.pctSh<lowSh.st.pctSh)lowSh=s[i];}
+    if(topSh.lbl===lowSh.lbl)return "Les intentions sont similaires entre tes cibles - ton titre genere des comportements homogenes, quelle que soit la cible.";
+    return topSh.st.pctSh+"% des "+topSh.lbl+" disent qu'ils partageraient ce titre. C'est ta meilleure cible de diffusion. Les "+lowSh.lbl+" sont plus passifs ("+lowSh.st.pctSh+"%) - ils apprécient mais ne propagent pas autant.";
   }
-  if(chapter==="verbatims") return"Comparer les registres d'expression — les mots choisis révèlent des attentes implicites que les scores seuls ne capturent pas.";
-  return null;
+  if(chap==="verbatims")return "Lis les mots choisis par chaque groupe - pas seulement les notes. Souvent, les differences de vocabulaire revelent des attentes tres differentes que les chiffres ne capturent pas.";
+  if(chap==="segments")return "Chaque barre represente la note moyenne d'une cible. Plus la barre est longue, plus cette cible apprécie ton titre. Les barres oranges signalent des groupes trop petits pour etre statistiquement fiables.";
+  return "";
 }
 
-// ── RENDER HELPERS ──
-function barRow(label,pct,col,n,warn){
-  const w=Math.min(100,pct);
-  const wc=warn?' class="bar-lbl warn"':' class="bar-lbl"';
-  const wi=warn?'<span class="warn-ico">\u26a0</span>':'';
-  const bg=warn?'#f4a261':col;
-  const fc=warn?'#c87030':'#0e0f12';
-  const nh=n!=null?'<div class="bar-n">('+n+')</div>':'';
-  return '<div class="bar-row">'+
-    '<div'+wc+'>'+wi+'<span>'+h(label)+'</span></div>'+
-    '<div class="bar-track"><div class="bar-fill" style="width:'+w+'%;background:'+bg+'"></div></div>'+
-    '<div class="bar-val" style="color:'+fc+'">'+pct+'%</div>'+
-    nh+'</div>';
-}
-function groupBarRow(label,groups){
-  var rows=groups.map(function(g){
-    return '<div class="gbar-row">'+
-      '<div class="gbar-dot" style="background:'+g.col+'"></div>'+
-      '<div class="gbar-name">'+h(g.lbl)+'</div>'+
-      '<div class="gbar-track"><div class="gbar-fill" style="width:'+g.p+'%;background:'+g.col+'"></div></div>'+
-      '<div class="gbar-pct">'+g.p+'%</div>'+
-      '</div>';
-  }).join('');
-  return '<div class="gbar-wrap">'+
-    '<div class="gbar-label">'+h(label)+'</div>'+
-    rows+'</div>';
-}
-function distHtml(dist,col){
-  const mx=Math.max.apply(null, dist.map(function(d){return d.c;}).concat([1]));
-  return`<div class="dist-wrap">${dist.map(({i,c})=>{
-    const bh=c?Math.max(4,c/mx*65):3;
-    return`<div class="dist-col">
-      <div class="dist-n">${c||""}</div>
-      <div class="dist-bar" style="height:${bh}px;background:${c?col:"#f0ede8"};opacity:${c?0.6+c/mx*0.4:1}"></div>
-      <div class="dist-lbl">${i}</div>
-    </div>`;
-  }).join("")}</div>`;
-}
-function kpiHtml(v,sub,lbl,col){
-  return`<div class="kpi"><div class="kpi-val" style="color:${col}">${h(v)}<span style="font-size:.75rem;color:#ccc">${sub}</span></div><div class="kpi-lbl">${lbl}</div></div>`;
-}
-function tooSmall(lbl,n){
-  return '<div class="too-small"><span>⚠</span><span><strong>'+h(lbl)+'</strong> — '+n+' répondant'+(n>1?'s':'')+' seulement (minimum '+MIN_N+' recommandé)</span></div>';
-}
-function vbCard(r,col){
-  const sc=r.sc,bg=scBg(sc),fc=scCol(sc),bl=col||fc;
-  return`<div class="vb-card" style="border-left:3px solid ${bl}">
-    <div class="vb-text">« ${h(r.vb)} »</div>
-    <div class="vb-tags">
-      <span class="tag tag-sc" style="background:${bg};color:${fc}">★ ${sc}/10</span>
-      ${[r.age,r.genre,r.rel,r.emo[0]].map(t=>`<span class="tag tag-info">${h(t)}</span>`).join("")}
-    </div>
-  </div>`;
+function mkBar(lbl,p,col,n,warn){
+  var w=Math.min(100,p),bg=warn?"#f4a261":col,fc=warn?"#c87030":"#0e0f12";
+  var nh=n!=null?"<span class='bn'>("+n+")</span>":"";
+  return "<div class='br'><span class='bl"+(warn?" w":"")+"'>"+lbl+"</span>"+
+    "<div class='bt'><div class='bf' style='width:"+w+"%;background:"+bg+"'></div></div>"+
+    "<span class='bv' style='color:"+fc+"'>"+p+"%</span>"+nh+"</div>";
 }
 
-// ── SECTION RENDERERS ──
+function mkGBar(lbl,grps){
+  var h="<div class='gw'><div class='gl'>"+lbl+"</div>",i;
+  for(i=0;i<grps.length;i++){
+    h+="<div class='gr' title='"+grps[i].lbl+" : "+grps[i].p+"%'><div class='gd' style='background:"+grps[i].col+"'></div>"+
+      "<div class='gn'>"+grps[i].lbl+"</div>"+
+      "<div class='gt'><div class='gf' style='width:"+grps[i].p+"%;background:"+grps[i].col+"'></div></div>"+
+      "<div class='gp'>"+grps[i].p+"%</div></div>";
+  }
+  return h+"</div>";
+}
+
+function mkDist(dist,col){
+  var mx=1,i,bh,bg,op;
+  for(i=0;i<dist.length;i++)if(dist[i].c>mx)mx=dist[i].c;
+  var h="<div class='dw'>";
+  for(i=0;i<dist.length;i++){
+    bh=dist[i].c?Math.max(4,Math.round(dist[i].c/mx*65)):3;
+    bg=dist[i].c?col:"#f0ede8";
+    op=dist[i].c?(0.6+dist[i].c/mx*0.4):1;
+    h+="<div class='dc'><div class='dn'>"+(dist[i].c||"")+"</div>"+
+      "<div class='db' style='height:"+bh+"px;background:"+bg+";opacity:"+op+"'></div>"+
+      "<div class='dl'>"+dist[i].i+"</div></div>";
+  }
+  return h+"</div>";
+}
+
+function mkKpi(v,sub,lbl,col){
+  return "<div class='kpi'><div class='kv' style='color:"+col+"'>"+v+"<span style='font-size:.75rem;color:#ccc'>"+sub+"</span></div><div class='kl'>"+lbl+"</div></div>";
+}
+
+function mkTs(lbl,n){
+  return "<div class='ts'><span>&#9888;</span><span><strong>"+lbl+"</strong> - "+n+" repondant"+(n>1?"s":"")+" (min "+MIN_N+")</span></div>";
+}
+
+function mkVb(r,col){
+  var sc=r.sc,bg=scB(sc),fc=scC(sc),bl=col||fc,tags="",ti,i;
+  ti=[r.age,r.genre,r.rel,r.emo[0]];
+  for(i=0;i<ti.length;i++)tags+="<span class='tag ti'>"+ti[i]+"</span>";
+  return "<div class='vc' style='border-left-color:"+bl+"'>"+
+    "<div class='vt'>&laquo;&nbsp;"+r.vb+"&nbsp;&raquo;</div>"+
+    "<div class='vtgs'><span class='tag tsc' style='background:"+bg+";color:"+fc+"'>&#9733; "+sc+"/10</span>"+tags+"</div></div>";
+}
+
+function sortedVb(){
+  var exp=getExp(),a;
+  if(vSort==="asc"){a=exp.slice();a.sort(function(x,y){return x.sc-y.sc;});return a;}
+  if(vSort==="desc"){a=exp.slice();a.sort(function(x,y){return y.sc-x.sc;});return a;}
+  if(vSort==="random"){a=exp.slice();a.sort(function(){return Math.random()-0.5;});return a;}
+  return exp;
+}
+
+function validInvalid(grps){
+  var v=[],b=[],i;
+  for(i=0;i<grps.length;i++){if(grps[i].rows.length>=MIN_N)v.push(grps[i]);else if(grps[i].rows.length>0)b.push(grps[i]);}
+  return{v:v,b:b};
+}
+
 function renderNotes(){
-  var explored=getExplored();
-  var st=calcSt(explored);
-  if(!st) return '<div class="empty">Aucun répondant.</div>';
-  var html='<div class="grid4">';
-  html+=kpiHtml(st.avgSc,'/10','Note artistique','#e63946');
-  html+=kpiHtml(st.avgPt,'/10','Potentiel','#2d6a4f');
-  html+=kpiHtml(st.pct6+'%','','Notes ≥ 6','#c8880a');
-  html+=kpiHtml(st.pctSh+'%','','Partageraient','#457b9d');
-  html+='</div><div class="grid2">';
-  html+='<div class="card"><div class="card-title">Distribution des notes</div>'+distHtml(st.dist,'#e63946')+'</div>';
-  html+='<div class="card"><div class="card-title">Par relation à l’artiste</div>';
-  ['Fan','Connais bien','Connais un peu','Découverte'].forEach(function(rel){
-    var sub=explored.filter(function(r){return r.rel===rel;});
-    var a=sub.length?(avg(sub.map(function(r){return r.sc;}))||0).toFixed(1):'—';
-    var w=sub.length>0&&sub.length<MIN_N;
-    var pct=sub.length?Math.round(parseFloat(a)/10*100):0;
-    html+='<div class="bar-row">';
-    html+='<div class="bar-lbl'+(w?' warn':'')+'">'+(w?'<span class="warn-ico">⚠</span>':'')+h(rel)+'</div>';
-    html+='<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+(w?'#f4a261':'#e63946')+'"></div></div>';
-    html+='<div class="bar-val">'+a+'/10</div><div class="bar-n">('+sub.length+')</div></div>';
-  });
-  html+='</div></div>';
-  return html;
+  var exp=getExp(),st=calcSt(exp),i,sub,scs,a,w,p;
+  if(!st)return "<div class='empty'>Aucun repondant.</div>";
+  var h="<div class='g4'>"+mkKpi(st.avgSc,"/10","Note artistique","#e63946")+mkKpi(st.avgPt,"/10","Potentiel","#2d6a4f")+mkKpi(st.pct6+"%","","Notes 6+","#c8880a")+mkKpi(st.pctSh+"%","","Partageraient","#457b9d")+"</div>";
+  h+="<div class='g2'><div class='card'><div class='ctitle'>Distribution</div>"+mkDist(st.dist,"#e63946")+"</div>";
+  h+="<div class='card'><div class='ctitle'>Par relation artiste</div>";
+  var rels=["Fan","Connais bien","Connais un peu","Decouverte"];
+  for(i=0;i<rels.length;i++){
+    sub=[];for(var j=0;j<exp.length;j++)if(exp[j].rel===rels[i])sub.push(exp[j]);
+    scs=[];for(var j=0;j<sub.length;j++)scs.push(sub[j].sc);
+    a=sub.length?(avg(scs)||0).toFixed(1):"--";
+    w=sub.length>0&&sub.length<MIN_N;
+    p=sub.length?Math.round(parseFloat(a)/10*100):0;
+    h+="<div class='br'><span class='bl"+(w?" w":"")+"'>"+rels[i]+"</span>"+
+      "<div class='bt'><div class='bf' style='width:"+p+"%;background:"+(w?"#f4a261":"#e63946")+"'></div></div>"+
+      "<span class='bv'>"+a+"/10</span><span class='bn'>("+sub.length+")</span></div>";
+  }
+  return h+"</div></div>";
 }
+
 function renderNotesCmp(){
-  var grps=getCmpGroups();
-  var valid=grps.filter(function(g){return g.rows.length>=MIN_N;});
-  var bad=grps.filter(function(g){return g.rows.length>0&&g.rows.length<MIN_N;});
-  var cols=Math.max(valid.length,1);
-  var html=bad.map(function(g){return tooSmall(g.lbl,g.rows.length);}).join('');
-  html+='<div class="cmp-grid" style="grid-template-columns:repeat('+cols+',1fr)">';
-  valid.forEach(function(g){
-    var st=calcSt(g.rows);
-    html+='<div class="cmp-card" style="border-color:'+g.col+'">';
-    html+='<div class="cmp-card-hdr"><div class="cmp-card-dot" style="background:'+g.col+'"></div>';
-    html+='<span class="cmp-card-lbl">'+h(g.lbl)+'</span><span class="cmp-card-n">n='+g.rows.length+'</span></div>';
-    [[st.avgSc+'/10','Note artistique',g.col],[st.avgPt+'/10','Potentiel',g.col],[st.pct6+'%','Notes ≥ 6','#c8880a'],[st.pctSh+'%','Partageraient','#457b9d']].forEach(function(k){
-      html+='<div class="cmp-kpi-row"><span class="cmp-kpi-lbl">'+k[1]+'</span><span class="cmp-kpi-val" style="color:'+k[2]+'">'+k[0]+'</span></div>';
-    });
-    html+='<div style="margin-top:.65rem"><div class="card-title">Distribution</div>'+distHtml(st.dist,g.col)+'</div>';
-    html+='</div>';
-  });
-  html+='</div>';
-  return html;
+  var grps=getGrps(),vi=validInvalid(grps),v=vi.v,b=vi.b,h="",i,g,st,kpis,k;
+  for(i=0;i<b.length;i++)h+=mkTs(b[i].lbl,b[i].rows.length);
+  if(!inverted){
+    // Vue par cible : cartes cote a cote
+    h+="<div class='cg' style='grid-template-columns:repeat("+Math.max(v.length,1)+",1fr)'>";
+    for(i=0;i<v.length;i++){
+      g=v[i];st=calcSt(g.rows);
+      h+="<div class='cc' style='border-color:"+g.col+"'>";
+      h+="<div class='ch2'><div class='cd' style='background:"+g.col+"'></div><span class='ccl'>"+g.lbl+"</span><span class='cn2'>n="+g.rows.length+"</span></div>";
+      kpis=[[st.avgSc+"/10","Note",g.col],[st.avgPt+"/10","Potentiel",g.col],[st.pct6+"%","Notes 6+","var(--orange)"],[st.pctSh+"%","Partageraient","var(--purpleL)"]];
+      for(k=0;k<kpis.length;k++)h+="<div class='ckr'><span class='ckl'>"+kpis[k][1]+"</span><span class='ckv' style='color:"+kpis[k][2]+"'>"+kpis[k][0]+"</span></div>";
+      h+="<div style='margin-top:.65rem'><div class='ctitle'>Distribution</div>"+mkDist(st.dist,g.col)+"</div></div>";
+    }
+    h+="</div>";
+  } else {
+    // Vue par KPI : chaque metrique comparee entre toutes les cibles
+    var metrics=[["avgSc","Note artistique","#e63946"],["avgPt","Potentiel","#2d6a4f"],["pct6","Notes 6+","#c8880a"],["pctSh","Partageraient","#457b9d"]];
+    h+="<div class='card'><div class='ctitle'>Comparaison par indicateur</div>";
+    for(k=0;k<metrics.length;k++){
+      var mk=metrics[k][0],ml=metrics[k][1],mc=metrics[k][2];
+      h+="<div class='gw'><div class='gl' style='color:"+mc+";font-weight:600'>"+ml+"</div>";
+      for(i=0;i<v.length;i++){
+        g=v[i];st=calcSt(g.rows);
+        var val=st[mk],num=parseFloat(val),maxV=(mk==="avgSc"||mk==="avgPt")?10:100;
+        var barP=Math.round(num/(mk==="avgSc"||mk==="avgPt"?10:100)*100);
+        h+="<div class='gr'><div class='gd' style='background:"+g.col+"'></div>"+
+          "<div class='gn'>"+g.lbl+"</div>"+
+          "<div class='gt'><div class='gf' style='width:"+barP+"%;background:"+g.col+"'></div></div>"+
+          "<div class='gp'>"+val+(mk==="avgSc"||mk==="avgPt"?"/10":"%")+"</div></div>";
+      }
+      h+="</div>";
+    }
+    h+="</div>";
+  }
+  return h;
 }
-function renderEmotions(){
-  const explored=getExplored(); const st=calcSt(explored);
-  if(!st) return`<div class="empty">Aucun répondant.</div>`;
-  return`<div class="card"><div class="card-title">Émotions ressenties · choix multiples · ${explored.length} répondants</div>
-    ${st.emos.slice().sort(function(a,b){return b.p-a.p;}).map(({e,p})=>barRow(e,p,"#e63946",null,false)).join("")}
-  </div>`;
+
+function renderEmo(){
+  var exp=getExp(),st=calcSt(exp),sorted,i;
+  if(!st)return "<div class='empty'>Aucun repondant.</div>";
+  sorted=st.emos.slice();sorted.sort(function(a,b){return b.p-a.p;});
+  var h="<div class='card'><div class='ctitle'>Emotions - choix multiples - "+exp.length+" repondants</div>";
+  for(i=0;i<sorted.length;i++)h+=mkBar(sorted[i].e,sorted[i].p,"#e63946",null,false);
+  return h+"</div>";
 }
+
 function renderEmoCmp(){
-  var grps=getCmpGroups();
-  var valid=grps.filter(function(g){return g.rows.length>=MIN_N;});
-  var bad=grps.filter(function(g){return g.rows.length>0&&g.rows.length<MIN_N;});
-  var html=bad.map(function(g){return tooSmall(g.lbl,g.rows.length);}).join('');
+  var grps=getGrps(),vi=validInvalid(grps),v=vi.v,b=vi.b,h="",i,ei,g,c,j,gs,edata,fi;
+  for(i=0;i<b.length;i++)h+=mkTs(b[i].lbl,b[i].rows.length);
   if(!inverted){
-    html+='<div class="card"><div class="card-title">Par émotion — cibles</div>';
-    EMOS.forEach(function(e){
-      var groups=valid.map(function(g){return {lbl:g.lbl,col:g.col,p:pctOf(g.rows.filter(function(r){return r.emo.indexOf(e)>-1;}).length,g.rows.length)};});
-      html+=groupBarRow(e,groups);
-    });
-    html+='</div>';
+    h+="<div class='card'><div class='ctitle'>Par emotion - cibles</div>";
+    for(ei=0;ei<EMOS.length;ei++){
+      gs=[];
+      for(i=0;i<v.length;i++){c=0;for(j=0;j<v[i].rows.length;j++)if(v[i].rows[j].emo.indexOf(EMOS[ei])>-1)c++;gs.push({lbl:v[i].lbl,col:v[i].col,p:pct(c,v[i].rows.length)});}
+      h+=mkGBar(EMOS[ei],gs);
+    }
+    h+="</div>";
   } else {
-    html+='<div class="card"><div class="card-title">Par cible — émotions</div>';
-    valid.forEach(function(g){
-      html+='<div style="margin-bottom:.9rem"><div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">';
-      html+='<div style="width:9px;height:9px;border-radius:50%;background:'+g.col+'"></div>';
-      html+='<span style="font-weight:600;font-size:.78rem">'+h(g.lbl)+'</span>';
-      html+='<span style="font-size:.62rem;color:#888074">(n='+g.rows.length+')</span></div>';
-      var sorted=EMOS.map(function(e){return {e:e,p:pctOf(g.rows.filter(function(r){return r.emo.indexOf(e)>-1;}).length,g.rows.length)};}).sort(function(a,b){return b.p-a.p;});
-      sorted.forEach(function(x){html+=barRow(x.e,x.p,g.col,null,false);});
-      html+='</div>';
-    });
-    html+='</div>';
+    h+="<div class='card'><div class='ctitle'>Par cible - emotions</div>";
+    for(i=0;i<v.length;i++){
+      g=v[i];
+      h+="<div style='margin-bottom:.9rem'><div style='display:flex;align-items:center;gap:6px;margin-bottom:4px'>"+
+        "<div style='width:9px;height:9px;border-radius:50%;background:"+g.col+"'></div>"+
+        "<span style='font-weight:600;font-size:.78rem'>"+g.lbl+"</span>"+
+        "<span style='font-size:.62rem;color:#888074'>(n="+g.rows.length+")</span></div>";
+      edata=[];
+      for(fi=0;fi<EMOS.length;fi++){c=0;for(j=0;j<g.rows.length;j++)if(g.rows[j].emo.indexOf(EMOS[fi])>-1)c++;edata.push({e:EMOS[fi],p:pct(c,g.rows.length)});}
+      edata.sort(function(a,b){return b.p-a.p;});
+      for(fi=0;fi<edata.length;fi++)h+=mkBar(edata[fi].e,edata[fi].p,g.col,null,false);
+      h+="</div>";
+    }
+    h+="</div>";
   }
-  return html;
+  return h;
 }
-function renderActions(){
-  const explored=getExplored(); const st=calcSt(explored);
-  if(!st) return`<div class="empty">Aucun répondant.</div>`;
-  return`<div class="card"><div class="card-title">Intentions d'usage · choix multiples · ${explored.length} répondants</div>
-    ${st.acts.slice().sort(function(a,b){return b.p-a.p;}).map(({lb,p})=>barRow(lb,p,"#0e0f12",null,false)).join("")}
-  </div>`;
+
+function renderAct(){
+  var exp=getExp(),st=calcSt(exp),sorted,i;
+  if(!st)return "<div class='empty'>Aucun repondant.</div>";
+  sorted=st.acts.slice();sorted.sort(function(a,b){return b.p-a.p;});
+  var h="<div class='card'><div class='ctitle'>Intentions - choix multiples - "+exp.length+" repondants</div>";
+  for(i=0;i<sorted.length;i++)h+=mkBar(sorted[i].lb,sorted[i].p,"#0e0f12",null,false);
+  return h+"</div>";
 }
+
 function renderActCmp(){
-  var grps=getCmpGroups();
-  var valid=grps.filter(function(g){return g.rows.length>=MIN_N;});
-  var bad=grps.filter(function(g){return g.rows.length>0&&g.rows.length<MIN_N;});
-  var html=bad.map(function(g){return tooSmall(g.lbl,g.rows.length);}).join('');
+  var grps=getGrps(),vi=validInvalid(grps),v=vi.v,b=vi.b,h="",i,ai,g,c,j,gs;
+  for(i=0;i<b.length;i++)h+=mkTs(b[i].lbl,b[i].rows.length);
   if(!inverted){
-    html+='<div class="card"><div class="card-title">Par intention — cibles</div>';
-    ACTS.forEach(function(a,idx){
-      var groups=valid.map(function(g){return {lbl:g.lbl,col:g.col,p:pctOf(g.rows.filter(function(r){return r.act.indexOf(a)>-1;}).length,g.rows.length)};});
-      html+=groupBarRow(ACTS_LB[idx],groups);
-    });
-    html+='</div>';
+    h+="<div class='card'><div class='ctitle'>Par intention - cibles</div>";
+    for(ai=0;ai<ACTS.length;ai++){
+      gs=[];
+      for(i=0;i<v.length;i++){c=0;for(j=0;j<v[i].rows.length;j++)if(v[i].rows[j].act.indexOf(ACTS[ai])>-1)c++;gs.push({lbl:v[i].lbl,col:v[i].col,p:pct(c,v[i].rows.length)});}
+      h+=mkGBar(ALBS[ai],gs);
+    }
+    h+="</div>";
   } else {
-    html+='<div class="card"><div class="card-title">Par cible — intentions</div>';
-    valid.forEach(function(g){
-      html+='<div style="margin-bottom:.9rem"><div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">';
-      html+='<div style="width:9px;height:9px;border-radius:50%;background:'+g.col+'"></div>';
-      html+='<span style="font-weight:600;font-size:.78rem">'+h(g.lbl)+'</span>';
-      html+='<span style="font-size:.62rem;color:#888074">(n='+g.rows.length+')</span></div>';
-      ACTS.forEach(function(a,idx){
-        var p=pctOf(g.rows.filter(function(r){return r.act.indexOf(a)>-1;}).length,g.rows.length);
-        html+=barRow(ACTS_LB[idx],p,g.col,null,false);
-      });
-      html+='</div>';
-    });
-    html+='</div>';
+    h+="<div class='card'><div class='ctitle'>Par cible - intentions</div>";
+    for(i=0;i<v.length;i++){
+      g=v[i];
+      h+="<div style='margin-bottom:.9rem'><div style='display:flex;align-items:center;gap:6px;margin-bottom:4px'>"+
+        "<div style='width:9px;height:9px;border-radius:50%;background:"+g.col+"'></div>"+
+        "<span style='font-weight:600;font-size:.78rem'>"+g.lbl+"</span>"+
+        "<span style='font-size:.62rem;color:#888074'>(n="+g.rows.length+")</span></div>";
+      for(ai=0;ai<ACTS.length;ai++){c=0;for(j=0;j<g.rows.length;j++)if(g.rows[j].act.indexOf(ACTS[ai])>-1)c++;h+=mkBar(ALBS[ai],pct(c,g.rows.length),g.col,null,false);}
+      h+="</div>";
+    }
+    h+="</div>";
   }
-  return html;
+  return h;
 }
-function renderSegments(){
-  var explored=getExplored();
-  var html='<div class="grid2">';
-  Object.entries(DIMS).forEach(function(entry){
-    var dim=entry[0], opts=entry[1];
-    html+='<div class="card"><div class="card-title">'+DIM_LBL[dim]+'</div>';
-    opts.forEach(function(opt){
-      var sub=explored.filter(function(r){return r[dim]===opt;});
-      var a=sub.length?(avg(sub.map(function(r){return r.sc;}))||0).toFixed(1):'—';
-      var w=sub.length>0&&sub.length<MIN_N;
-      var pct=sub.length?Math.round(parseFloat(a)/10*100):0;
-      html+='<div class="bar-row">';
-      html+='<div class="bar-lbl'+(w?' warn':'')+'">'+(w?'<span class="warn-ico">⚠</span>':'')+h(opt)+'</div>';
-      html+='<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+(w?'#f4a261':'#457b9d')+'"></div></div>';
-      html+='<div class="bar-val">'+a+'/10</div><div class="bar-n">('+sub.length+')</div></div>';
-    });
-    html+='</div>';
-  });
-  html+='</div>';
-  return html;
+
+function renderSeg(){
+  var exp=getExp(),h="<div class='g2'>",di,oi,sub,scs,a,w,p,j;
+  for(di=0;di<DIMS_KEYS.length;di++){
+    var dim=DIMS_KEYS[di],opts=DIMS[dim];
+    h+="<div class='card'><div class='ctitle'>"+DLBL[dim]+"</div>";
+    for(oi=0;oi<opts.length;oi++){
+      sub=[];for(j=0;j<exp.length;j++)if(exp[j][dim]===opts[oi])sub.push(exp[j]);
+      scs=[];for(j=0;j<sub.length;j++)scs.push(sub[j].sc);
+      a=sub.length?(avg(scs)||0).toFixed(1):"--";
+      w=sub.length>0&&sub.length<MIN_N;
+      p=sub.length?Math.round(parseFloat(a)/10*100):0;
+      h+="<div class='br'><span class='bl"+(w?" w":"")+"'>"+opts[oi]+"</span>"+
+        "<div class='bt'><div class='bf' style='width:"+p+"%;background:"+(w?"#f4a261":"#457b9d")+"'></div></div>"+
+        "<span class='bv'>"+a+"/10</span><span class='bn'>("+sub.length+")</span></div>";
+    }
+    h+="</div>";
+  }
+  return h+"</div>";
 }
-function getSortedVb(){
-  const explored=getExplored();
-  if(vbSort==="asc") return explored.slice().sort(function(a,b){return a.sc-b.sc;});
-  if(vbSort==="desc") return explored.slice().sort(function(a,b){return b.sc-a.sc;});
-  if(vbSort==="random") return explored.slice().sort(function(){return Math.random()-0.5;});
-  return explored;
+
+function renderVb(){
+  var rows=sortedVb(),shown,h,i;
+  if(!rows.length)return "<div class='empty'>Aucun repondant.</div>";
+  shown=rows.slice(0,14);
+  var opts=[["default","Par defaut"],["desc","Score v"],["asc","Score ^"],["random","Aleatoire"]];
+  h="<div class='vsrt'><span style='font-size:.7rem;color:#888074'>Tri :</span>";
+  for(i=0;i<opts.length;i++){
+    h+="<button class='srtb"+(vSort===opts[i][0]?" on":"")+"' data-sort='"+opts[i][0]+"'>"+opts[i][1]+"</button>";
+  }
+  h+="</div><div class='vg'>";
+  for(i=0;i<shown.length;i++)h+=mkVb(shown[i],null);
+  h+="</div>";
+  if(rows.length>14)h+="<div style='text-align:center;margin-top:.6rem;font-size:.72rem;color:#888074'>"+(rows.length-14)+" verbatim(s) supplementaires</div>";
+  return h;
 }
-function renderVerbatims(){
-  var rows=getSortedVb();
-  if(!rows.length) return '<div class="empty">Aucun répondant.</div>';
-  var shown=rows.slice(0,14);
-  var sortOpts=[['default','Par défaut'],['desc','Score ↓'],['asc','Score ↑'],['random','Aléatoire']];
-  var sb='<div class="vb-sort"><span style="font-size:.7rem;color:#888074">Tri :</span>';
-  sortOpts.forEach(function(x){
-    sb+='<button class="sort-btn'+(vbSort===x[0]?' active':'')+'" onclick="setVbSort(\'' +x[0]+'\')">'
-      +x[1]+'</button>';
-  });
-  sb+='</div>';
-  var cards='<div class="vb-grid">'+shown.map(function(r){return vbCard(r,null);}).join('')+'</div>';
-  var more=rows.length>14?'<div style="text-align:center;margin-top:.6rem;font-size:.72rem;color:#888074">'+(rows.length-14)+' verbatim(s) supplémentaire(s)</div>':'';
-  return sb+cards+more;
-}
+
 function renderVbCmp(){
-  var grps=getCmpGroups();
-  var valid=grps.filter(function(g){return g.rows.length>=MIN_N;});
-  var bad=grps.filter(function(g){return g.rows.length>0&&g.rows.length<MIN_N;});
-  var cols=Math.max(valid.length,1);
-  var html=bad.map(function(g){return tooSmall(g.lbl,g.rows.length);}).join('');
-  html+='<div class="cmp-grid" style="grid-template-columns:repeat('+cols+',1fr)">';
-  valid.forEach(function(g){
-    html+='<div><div style="display:flex;align-items:center;gap:5px;margin-bottom:.5rem">';
-    html+='<div style="width:9px;height:9px;border-radius:50%;background:'+g.col+'"></div>';
-    html+='<span style="font-weight:600;font-size:.8rem">'+h(g.lbl)+'</span>';
-    html+='<span style="font-size:.62rem;color:#888074">(n='+g.rows.length+')</span></div>';
-    html+=g.rows.slice(0,4).map(function(r){return vbCard(r,g.col);}).join('');
-    html+='</div>';
-  });
-  html+='</div>';
-  return html;
-}
-// ── CHAPTER DOTS ──
-function updateDots(){
-  CHAPS.forEach(c=>{
-    const dot=document.getElementById("dot-"+c.id);
-    if(dot) dot.className="chap-dot"+(Object.values(filters).some(v=>v!=="Tous")?" vis":"");
-  });
-}
-
-// ── FULL RENDER ──
-function render(){
-  renderSidebar();
-  renderChHeader();
-  renderFilterRecap();
-  renderComment();
-  renderContent();
-  updateDots();
-  // Update chapter buttons
-  CHAPS.forEach(c=>{
-    const btn=document.getElementById("chap-"+c.id);
-    if(btn) btn.className="chap-btn"+(chapter===c.id?" active":"");
-  });
-  // Update mode buttons
-  document.getElementById("btn-explore").className="mode-btn"+(mode==="explore"?" active":"");
-  document.getElementById("btn-compare").className="mode-btn"+(mode==="compare"?" active":"");
+  var grps=getGrps(),vi=validInvalid(grps),v=vi.v,b=vi.b,h="",i,g,j;
+  for(i=0;i<b.length;i++)h+=mkTs(b[i].lbl,b[i].rows.length);
+  if(!inverted){
+    // Vue groupee : colonnes par cible
+    h+="<div class='cg' style='grid-template-columns:repeat("+Math.max(v.length,1)+",1fr)'>";
+    for(i=0;i<v.length;i++){
+      g=v[i];
+      h+="<div><div style='display:flex;align-items:center;gap:5px;margin-bottom:.5rem'>"+
+        "<div style='width:9px;height:9px;border-radius:50%;background:"+g.col+"'></div>"+
+        "<span style='font-weight:600;font-size:.8rem'>"+g.lbl+"</span>"+
+        "<span style='font-size:.62rem;color:#888074'>(n="+g.rows.length+")</span></div>";
+      var shown=g.rows.slice(0,4);
+      for(j=0;j<shown.length;j++)h+=mkVb(shown[j],g.col);
+      h+="</div>";
+    }
+    h+="</div>";
+  } else {
+    // Vue alternee : verbatims melanges avec badge cible
+    var all=[];
+    for(i=0;i<v.length;i++){var shown=v[i].rows.slice(0,3);for(j=0;j<shown.length;j++)all.push({r:shown[j],col:v[i].col,lbl:v[i].lbl});}
+    h+="<div class='vg'>";
+    for(i=0;i<all.length;i++){
+      var vr=all[i].r,vc2=all[i].col;
+      h+="<div class='vc' style='border-left-color:"+vc2+"'>"+
+        "<div style='font-size:.6rem;font-weight:600;color:"+vc2+";margin-bottom:4px'>"+all[i].lbl+"</div>"+
+        "<div class='vt'>&laquo;&nbsp;"+vr.vb+"&nbsp;&raquo;</div>"+
+        "<div class='vtgs'><span class='tag tsc' style='background:"+scB(vr.sc)+";color:"+scC(vr.sc)+"'>&#9733; "+vr.sc+"/10</span>"+
+        "<span class='tag ti'>"+vr.age+"</span><span class='tag ti'>"+vr.genre+"</span></div></div>";
+    }
+    h+="</div>";
+  }
+  return h;
 }
 
-// ── ACTIONS ──
-function setChapter(c){chapter=c;inverted=false;render();}
+function renderSide(){
+  var el=document.getElementById("sbot"),h="",af=0,i,k,allV,allSel,n,sel,si,sm,em,col,tc;
+  for(k=0;k<DIMS_KEYS.length;k++)if(flt[DIMS_KEYS[k]]!=="Tous")af++;
+  if(mode==="explore"){
+    h+="<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:5px'>";
+    h+="<div class='slbl' style='margin:0'>Filtres</div>";
+    if(af>0)h+="<button class='fclr' id='resetflt'>Effacer</button>";
+    h+="</div>";
+    for(k=0;k<DIMS_KEYS.length;k++){
+      var dim=DIMS_KEYS[k],opts=DIMS[dim];
+      h+="<div style='margin-bottom:.75rem'><div class='slbl' style='color:"+(flt[dim]!=="Tous"?"#c87030":"#aaa")+"'>"+DLBL[dim]+"</div>";
+      var all=["Tous"].concat(opts);
+      for(i=0;i<all.length;i++)h+="<button class='fbtn"+(flt[dim]===all[i]?" on":"")+"' data-dim='"+dim+"' data-val='"+all[i]+"'>"+all[i]+"</button>";
+      h+="</div>";
+    }
+    n=getExp().length;
+    h+="<div class='nbadge'><span class='rv'>"+n+"</span> repondant"+(n>1?"s":"")+"</div>";
+  } else {
+    allV=DIMS[cDim];allSel=true;
+    for(i=0;i<allV.length;i++)if(cSel.indexOf(allV[i])<0){allSel=false;break;}
+    h+="<div class='slbl'>Dimension</div>";
+    for(k=0;k<DIMS_KEYS.length;k++)h+="<button class='dbtn"+(cDim===DIMS_KEYS[k]?" on":"")+"' data-cdim='"+DIMS_KEYS[k]+"'>"+DLBL[DIMS_KEYS[k]]+"</button>";
+    h+="<div class='slbl' style='margin-top:10px;display:flex;align-items:center;justify-content:space-between'>"+
+      "<span>Cibles ("+cSel.length+"/"+allV.length+")</span>"+
+      "<button class='tatog' id='toggleall'>"+(allSel?"Tout oter":"Tout sel.")+"</button></div>";
+    if(cSel.length>=2)h+="<button id='clearcmp' style='font-size:.6rem;color:#e63946;background:none;border:none;text-decoration:underline;margin-bottom:5px;cursor:pointer;display:block'>Effacer</button>";
+    for(i=0;i<allV.length;i++){
+      n=0;for(var j=0;j<RAW.length;j++)if(RAW[j][cDim]===allV[i])n++;
+      sel=cSel.indexOf(allV[i])>-1;
+      si=cSel.indexOf(allV[i]);
+      sm=n<MIN_N&&n>0;
+      em=n===0;
+      col=sel?PAL[si%PAL.length]:"transparent";
+      tc=sel?"white":(em?"#ddd":(sm?"#c87030":"#555"));
+      h+="<button class='vbtn"+(em?" disabled":"")+"' data-cval='"+allV[i]+"'"+
+        " style='background:"+col+";color:"+tc+";opacity:"+(em?0.4:1)+";cursor:"+(em?"not-allowed":"pointer")+"'"+
+        (em?" disabled":"")+">"+
+        "<span>"+(sm&&!sel?"&#9888; ":"")+allV[i]+"</span>"+
+        "<span style='font-size:.58rem;opacity:.7'>"+(em?"0":(sm?"< "+MIN_N:n))+"</span></button>";
+    }
+    if(cSel.length>0){
+      h+="<div class='selleg'>";
+      for(i=0;i<cSel.length;i++)h+="<div class='sli'><div class='sld' style='background:"+PAL[i%PAL.length]+"'></div>"+cSel[i]+"</div>";
+      h+="</div>";
+    }
+  }
+  el.innerHTML=h;
+  bindSideEvents();
+}
+
+function bindSideEvents(){
+  var el=document.getElementById("sbot"),btns,i;
+  btns=el.querySelectorAll(".fbtn");
+  for(i=0;i<btns.length;i++)(function(b){b.addEventListener("click",function(){setFlt(b.getAttribute("data-dim"),b.getAttribute("data-val"));});})(btns[i]);
+  btns=el.querySelectorAll(".dbtn");
+  for(i=0;i<btns.length;i++)(function(b){b.addEventListener("click",function(){setCDim(b.getAttribute("data-cdim"));});})(btns[i]);
+  btns=el.querySelectorAll(".vbtn:not(.disabled)");
+  for(i=0;i<btns.length;i++)(function(b){b.addEventListener("click",function(){toggleCmp(b.getAttribute("data-cval"));});})(btns[i]);
+  var rf=document.getElementById("resetflt");if(rf)rf.addEventListener("click",resetFlt);
+  var ta=document.getElementById("toggleall");if(ta)ta.addEventListener("click",toggleAll);
+  var cc=document.getElementById("clearcmp");if(cc)cc.addEventListener("click",clearCmp);
+}
+
+function renderChdr(){
+  var el=document.getElementById("chdr"),lbl=CLBLS[chap]||chap,i;
+  var grps=getGrps();
+  var showTog=mode==="compare"&&grps.length>=2;
+  var togLabels={"notes":["Par KPI","Par cible"],"emotions":["Par emotion","Par cible"],"actions":["Par intention","Par cible"],"segments":["Par segment","Par cible"],"verbatims":["Groupes","Par cible"]};
+  var la=(togLabels[chap]||["Vue A","Vue B"])[0];
+  var h="<span class='chtitle'>"+lbl+"</span>";
+  if(mode==="compare"&&cSel.length)for(i=0;i<cSel.length;i++)h+="<span class='cbadge' style='background:"+PAL[i%PAL.length]+"'>"+cSel[i]+"</span>";
+  h+="<div class='ctrls'>";
+  if(showTog)h+="<div class='vtog'>"+
+    "<button class='vtbtn"+(inverted?"":" on")+"' id='vtb1'>"+la+"</button>"+
+    "<button class='vtbtn"+(inverted?" on":"")+"' id='vtb2'>Par cible</button></div>";
+  h+="<button class='expbtn' id='expbtn'>&#128247;&nbsp;Export PNG</button></div>";
+  el.innerHTML=h;
+  var b1=document.getElementById("vtb1"),b2=document.getElementById("vtb2"),eb=document.getElementById("expbtn");
+  if(b1)b1.addEventListener("click",function(){setInv(false);});
+  if(b2)b2.addEventListener("click",function(){setInv(true);});
+  if(eb)eb.addEventListener("click",doExp);
+}
+
+function renderFrecap(){
+  var el=document.getElementById("frecap"),parts=[],k,n;
+  if(mode!=="explore"){el.innerHTML="";return;}
+  for(k=0;k<DIMS_KEYS.length;k++)if(flt[DIMS_KEYS[k]]!=="Tous")parts.push(flt[DIMS_KEYS[k]]);
+  if(!parts.length){el.innerHTML="";return;}
+  n=getExp().length;
+  var h="<div class='frecap'><span style='font-size:.65rem;color:#c87030;font-weight:600'>Vue filtree &middot;</span>";
+  for(var i=0;i<parts.length;i++)h+="<span class='ftag'>"+parts[i]+"</span>";
+  h+="<span style='font-size:.65rem;color:#c87030'>"+n+" repondant"+(n>1?"s":"")+"</span>"+
+    "<button class='fclr' id='frecapclear'>Effacer</button></div>";
+  el.innerHTML=h;
+  var fc=document.getElementById("frecapclear");if(fc)fc.addEventListener("click",resetFlt);
+}
+
+function renderComment(){
+  var c=getComment(),el=document.getElementById("carea");
+  el.innerHTML=c?"<div class='cbox'><div><span class='echo-name'>&#9835; Echo dit</span>"+c+"</div></div>":"";
+}
+
+function renderContent(){
+  var el=document.getElementById("content"),grps=getGrps(),btns,i;
+  if(mode==="compare"&&!grps.length){el.innerHTML="<div class='empty'>Selectionne au moins 2 cibles pour demarrer la comparaison.</div>";return;}
+  if(mode==="explore"){
+    if(chap==="notes")el.innerHTML=renderNotes();
+    else if(chap==="emotions")el.innerHTML=renderEmo();
+    else if(chap==="actions")el.innerHTML=renderAct();
+    else if(chap==="segments")el.innerHTML=renderSeg();
+    else if(chap==="verbatims")el.innerHTML=renderVb();
+  } else {
+    if(chap==="notes")el.innerHTML=renderNotesCmp();
+    else if(chap==="emotions")el.innerHTML=renderEmoCmp();
+    else if(chap==="actions")el.innerHTML=renderActCmp();
+    else if(chap==="segments")el.innerHTML="<div class='card'><p style='font-size:.82rem;color:#888074;line-height:1.6'>En mode Comparaison, les cibles sont les segments selectionnes. Utilise Exploration pour les sous-segments.</p></div>";
+    else if(chap==="verbatims")el.innerHTML=renderVbCmp();
+  }
+  btns=el.querySelectorAll(".srtb");
+  for(i=0;i<btns.length;i++)(function(b){b.addEventListener("click",function(){setVSort(b.getAttribute("data-sort"));});})(btns[i]);
+}
+
+function updateUI(){
+  var ids=["notes","emotions","actions","segments","verbatims"],pfx={"notes":"chn","emotions":"che","actions":"cha","segments":"chs","verbatims":"chv"},dpfx={"notes":"dn","emotions":"de","actions":"da","segments":"ds","verbatims":"dv"},i,af=0,k,btn,dot;
+  for(k=0;k<DIMS_KEYS.length;k++)if(flt[DIMS_KEYS[k]]!=="Tous")af++;
+  for(i=0;i<ids.length;i++){
+    btn=document.getElementById(pfx[ids[i]]);dot=document.getElementById(dpfx[ids[i]]);
+    if(btn)btn.className="cbtn"+(chap===ids[i]?" on":"");
+    if(dot)dot.className="dot"+(af>0?" vis":"");
+  }
+  document.getElementById("bex").className="mbtn"+(mode==="explore"?" on":"");
+  document.getElementById("bcm").className="mbtn"+(mode==="compare"?" on":"");
+}
+
+function render(){renderSide();renderChdr();renderFrecap();renderComment();renderContent();updateUI();}
+
+function setChap(c){chap=c;inverted=false;render();}
 function setMode(m){mode=m;inverted=false;render();}
 function toggleSide(){
   sideOpen=!sideOpen;
-  document.getElementById("side").classList.toggle("closed",!sideOpen);
-  document.getElementById("side-btn").textContent=sideOpen?"◀":"▶";
+  var s=document.getElementById("side"),b=document.getElementById("sidebtn");
+  s.className=sideOpen?"":"shut";
+  b.innerHTML=sideOpen?"&#9664;":"&#9654;";
 }
-function setFilter(dim,val){filters[dim]=val;render();}
-function resetFilters(){filters={age:"Tous",genre:"Tous",rel:"Tous",hab:"Tous"};render();}
-function setCmpDim(d){cmpDim=d;cmpSel=[];render();}
-function toggleCmp(val){
-  const i=cmpSel.indexOf(val);
-  if(i>-1) cmpSel.splice(i,1); else cmpSel.push(val);
-  render();
-}
-function toggleAll(){
-  const all=DIMS[cmpDim];
-  cmpSel=all.every(v=>cmpSel.includes(v))?[]:all.slice();
-  render();
-}
-function clearCmp(){cmpSel=[];render();}
-function setVbSort(s){vbSort=s;render();}
-function setInverted(v){inverted=v;render();}
+function setFlt(dim,val){flt[dim]=val;render();}
+function resetFlt(){flt={age:"Tous",genre:"Tous",rel:"Tous",hab:"Tous"};render();}
+function setCDim(d){cDim=d;cSel=[];render();}
+function toggleCmp(val){var i=cSel.indexOf(val);if(i>-1)cSel.splice(i,1);else cSel.push(val);render();}
+function toggleAll(){var all=DIMS[cDim],allSel=true,i;for(i=0;i<all.length;i++)if(cSel.indexOf(all[i])<0){allSel=false;break;}cSel=allSel?[]:all.slice();render();}
+function clearCmp(){cSel=[];render();}
+function setVSort(s){vSort=s;render();}
+function setInv(v){inverted=v;render();}
+function closeMod(){document.getElementById("mod").className="";}
 
-// ── EXPORT ──
-function doExport(){
-  const btn=document.getElementById("exp-btn");
-  if(!btn||btn.disabled) return;
-  btn.disabled=true;btn.textContent="⏳ Export…";
-  setTimeout(()=>{
+function doExp(){
+  var btn=document.getElementById("expbtn");
+  if(!btn||btn.disabled)return;
+  btn.disabled=true;btn.innerHTML="...";
+  setTimeout(function(){
     try{
-      const canvas=document.createElement("canvas");
-      const W=900,PAD=40;
-      const explored=getExplored();
-      const st=calcSt(mode==="explore"?explored:RAW);
-      const grps=getCmpGroups();
-      const valid=grps.filter(g=>g.rows.length>=MIN_N);
-      const comment=getComment();
-      let rows=0;
-      if(chapter==="notes")    rows=7;
-      if(chapter==="emotions") rows=EMOS.length*(!inverted?1.6:valid.length*EMOS.length*.15);
-      if(chapter==="actions")  rows=ACTS.length*(!inverted?1.5:valid.length*ACTS.length*.15);
-      if(chapter==="segments") rows=12;
-      if(chapter==="verbatims")rows=8;
-      const H=Math.max(420,180+Math.ceil(rows)*34+(comment?70:0));
-      canvas.width=W*2;canvas.height=H*2;
-      const c=canvas.getContext("2d");
-      c.scale(2,2);
-      // BG
-      c.fillStyle="#f4f3ef";c.fillRect(0,0,W,H);
-      // Header
-      c.fillStyle="#0e0f12";c.fillRect(0,0,W,50);
-      c.font="bold 15px Georgia,serif";c.fillStyle="#e63946";c.fillText("Hello",PAD,33);
-      const hw=c.measureText("Hello").width;
-      c.fillStyle="white";c.fillText("Scoring",PAD+hw,33);
-      c.font="10px sans-serif";c.fillStyle="rgba(255,255,255,.4)";
-      c.fillText("La mer en hiver · Shaga · "+(function(){var _c=CHAPS.filter(function(x){return x.id===chapter;})[0];return _c?_c.lbl:"";})(),PAD+hw+c.measureText("Scoring").width+14,33);
-      const now=new Date().toLocaleDateString("fr-FR",{day:"2-digit",month:"long",year:"numeric"});
-      c.textAlign="right";c.fillText(now,W-PAD,33);c.textAlign="left";
-      // Title
-      let y=50+PAD;
-      c.font="bold 20px Georgia,serif";c.fillStyle="#0e0f12";
-      c.fillText((function(){var _c=CHAPS.filter(function(x){return x.id===chapter;})[0];return _c?_c.lbl:"";})(),PAD,y);y+=6;
-      if(mode==="compare"&&cmpSel.length){
-        let bx=PAD;
-        cmpSel.forEach((v,i)=>{
-          const col=CMP_PAL[i%CMP_PAL.length];
-          c.font="bold 8px sans-serif";
-          const tw=c.measureText(v).width+14;
-          c.fillStyle=col;rr(c,bx,y,tw,16,8);
-          c.fillStyle="white";c.fillText(v,bx+7,y+11);bx+=tw+5;
-          c.font="bold 20px Georgia,serif";
-        });y+=26;
-      }else{y+=14;}
-      if(comment){
-        c.fillStyle="#0e0f12";rr(c,PAD,y,W-PAD*2,48,8);
-        c.font="10px sans-serif";c.fillStyle="white";
-        wt(c,"◆  "+comment,PAD+10,y+14,W-PAD*2-20,13);y+=60;
+      var c=document.createElement("canvas"),W=880,PAD=36,H=460,lbl=CLBLS[chap]||chap;
+      c.width=W*2;c.height=H*2;
+      var ctx=c.getContext("2d");ctx.scale(2,2);
+      ctx.fillStyle="#f4f3ef";ctx.fillRect(0,0,W,H);
+      ctx.fillStyle="#0e0f12";ctx.fillRect(0,0,W,46);
+      ctx.font="bold 13px Georgia,serif";ctx.fillStyle="#e63946";ctx.fillText("Hello",PAD,28);
+      var hw=ctx.measureText("Hello").width;
+      ctx.fillStyle="white";ctx.fillText("Scoring",PAD+hw,28);
+      ctx.font="9px sans-serif";ctx.fillStyle="rgba(255,255,255,.4)";
+      ctx.fillText("La mer en hiver - Shaga - "+lbl,PAD+hw+ctx.measureText("Scoring").width+12,28);
+      var nd=new Date(),mths=["jan","fev","mar","avr","mai","jun","jul","aou","sep","oct","nov","dec"];
+      var now=nd.getDate()+" "+mths[nd.getMonth()]+" "+nd.getFullYear();
+      ctx.textAlign="right";ctx.fillText(now,W-PAD,28);ctx.textAlign="left";
+      var y=46+PAD;
+      ctx.font="bold 17px Georgia,serif";ctx.fillStyle="#0e0f12";ctx.fillText(lbl,PAD,y);y+=18;
+      var exp=getExp(),st=calcSt(mode==="explore"?exp:RAW);
+      if(chap==="notes"&&st){
+        var kpis=[[st.avgSc+"/10","Note","#e63946"],[st.avgPt+"/10","Potentiel","#2d6a4f"],[st.pct6+"%","Notes 6+","#c8880a"],[st.pctSh+"%","Partageraient","#457b9d"]];
+        var kw=(W-PAD*2)/4,ki,kx;
+        for(ki=0;ki<kpis.length;ki++){kx=PAD+ki*kw;ctx.fillStyle="white";ctx.beginPath();ctx.roundRect(kx+2,y,kw-5,46,7);ctx.fill();ctx.font="bold 19px Georgia,serif";ctx.fillStyle=kpis[ki][2];ctx.fillText(kpis[ki][0],kx+9,y+26);ctx.font="7px sans-serif";ctx.fillStyle="#888";ctx.fillText(kpis[ki][1].toUpperCase(),kx+9,y+39);}
+        y+=58;
       }
-      const BX=PAD+148,BW=W-PAD*2-148-55;
-      const dBar=(lbl,pct,col,yy,warn)=>{
-        c.font=(warn?"italic ":"")+"10px sans-serif";c.fillStyle=warn?"#c87030":"#555";
-        c.fillText((warn?"⚠ ":"")+lbl,PAD,yy+8);
-        c.fillStyle="#f0ede8";rr(c,BX,yy,BW,9,4);
-        if(pct>0){c.fillStyle=warn?"#f4a261":col;rr(c,BX,yy,BW*pct/100,9,4);}
-        c.font="bold 10px sans-serif";c.fillStyle="#0e0f12";
-        c.textAlign="right";c.fillText(pct+"%",W-PAD,yy+8);c.textAlign="left";
-        return yy+22;
-      };
-      const dGBar=(lbl,groups,yy)=>{
-        c.font="10px sans-serif";c.fillStyle="#444";c.fillText(lbl,PAD,yy+7);yy+=12;
-        groups.forEach(g=>{
-          c.fillStyle=g.col;c.beginPath();c.arc(BX-7,yy+4,3.5,0,Math.PI*2);c.fill();
-          c.fillStyle="#888";c.font="8px sans-serif";c.fillText(g.lbl,BX,yy+7);
-          const lw=c.measureText(g.lbl).width+7;
-          c.fillStyle="#f0ede8";rr(c,BX+lw,yy,BW-lw,7,3);
-          if(g.p>0){c.fillStyle=g.col;rr(c,BX+lw,yy,Math.max(0,(BW-lw)*g.p/100),7,3);}
-          c.font="bold 8px sans-serif";c.fillStyle="#0e0f12";
-          c.textAlign="right";c.fillText(g.p+"%",W-PAD,yy+7);c.textAlign="left";
-          yy+=11;
-        });return yy+3;
-      };
-      if(chapter==="notes"&&st){
-        const kpis=[{v:st.avgSc+"/10",l:"Note artistique",col:"#e63946"},{v:st.avgPt+"/10",l:"Potentiel",col:"#2d6a4f"},{v:st.pct6+"%",l:"Notes ≥ 6",col:"#c8880a"},{v:st.pctSh+"%",l:"Partageraient",col:"#457b9d"}];
-        const kw=(W-PAD*2)/4;
-        kpis.forEach(({v,l,col},i)=>{
-          const kx=PAD+i*kw;c.fillStyle="white";rr(c,kx+2,y,kw-6,50,8);
-          c.font="bold 22px Georgia,serif";c.fillStyle=col;c.fillText(v,kx+10,y+30);
-          c.font="8px sans-serif";c.fillStyle="#888";c.fillText(l.toUpperCase(),kx+10,y+44);
-        });y+=64;
-        c.font="bold 8px sans-serif";c.fillStyle="#888";c.fillText("DISTRIBUTION DES NOTES",PAD,y);y+=8;
-        var dist2=st.dist,mx=Math.max.apply(null,dist2.map(function(d){return d.c;}).concat([1])),bw=(W-PAD*2)/11,mh=44;
-        dist2.forEach(function(dd,idx){var i=dd.i,c=dd.c;
-          const d=cv!==undefined?cv:dist[idx].c;
-          const bx=PAD+idx*bw,bh=d?Math.max(3,d/mx*mh):2;
-          c.fillStyle=d?"#e63946":"#f0ede8";c.globalAlpha=d?0.6+d/mx*0.4:1;
-          c.fillRect(bx+2,y+mh-bh,bw-4,bh);c.globalAlpha=1;
-          c.font="7px sans-serif";c.fillStyle="#aaa";c.textAlign="center";c.fillText(i,bx+bw/2,y+mh+10);c.textAlign="left";
-          if(d){c.font="bold 7px sans-serif";c.fillStyle="#333";c.textAlign="center";c.fillText(d,bx+bw/2,y+mh-bh-2);c.textAlign="left";}
-        });y+=mh+18;
-      }
-      if(chapter==="emotions"){
-        if(mode==="explore"&&st){
-          st.emos.slice().sort(function(a,b){return b.p-a.p;}).forEach(({e,p})=>{y=dBar(e,p,"#e63946",y,false);});
-        }else if(!inverted){
-          EMOS.forEach(e=>{y=dGBar(e,valid.map(g=>({lbl:g.lbl,col:g.col,p:pctOf(g.rows.filter(r=>r.emo.includes(e)).length,g.rows.length)})),y);});
-        }else{
-          valid.forEach(g=>{c.font="bold 11px sans-serif";c.fillStyle=g.col;c.fillText("● "+g.lbl,PAD,y);y+=14;
-            [...EMOS.map(e=>({e,p:pctOf(g.rows.filter(r=>r.emo.includes(e)).length,g.rows.length)}))].sort((a,b)=>b.p-a.p).forEach(({e,p})=>{y=dBar(e,p,g.col,y,false);});y+=6;});
-        }
-      }
-      if(chapter==="actions"){
-        if(mode==="explore"&&st){
-          st.acts.slice().sort(function(a,b){return b.p-a.p;}).forEach(({lb,p})=>{y=dBar(lb,p,"#0e0f12",y,false);});
-        }else if(!inverted){
-          ACTS.forEach((a,idx)=>{y=dGBar(ACTS_LB[idx],valid.map(g=>({lbl:g.lbl,col:g.col,p:pctOf(g.rows.filter(r=>r.act.includes(a)).length,g.rows.length)})),y);});
-        }else{
-          valid.forEach(g=>{c.font="bold 11px sans-serif";c.fillStyle=g.col;c.fillText("● "+g.lbl,PAD,y);y+=14;
-            ACTS.forEach((a,idx)=>{const p=pctOf(g.rows.filter(r=>r.act.includes(a)).length,g.rows.length);y=dBar(ACTS_LB[idx],p,g.col,y,false);});y+=6;});
-        }
-      }
-      if(chapter==="verbatims"){
-        const vbs=mode==="explore"?getSortedVb().slice(0,6):(function(){var _res=[];valid.forEach(function(g){g.rows.slice(0,3).forEach(function(r){var _o=Object.assign({},r);_o._col=g.col;_res.push(_o);});});return _res;})();
-        vbs.forEach(r=>{
-          const fc=scCol(r.sc),bl=r._col||fc;
-          c.fillStyle="white";rr(c,PAD,y,W-PAD*2,40,6);c.fillStyle=bl;c.fillRect(PAD,y,3,40);
-          c.font="italic 9px sans-serif";c.fillStyle="#0e0f12";
-          wt(c,"« "+r.vb+" »",PAD+8,y+12,W-PAD*2-16,12,2);
-          c.fillStyle=scBg(r.sc);rr(c,PAD+8,y+26,34,10,5);
-          c.font="bold 7px sans-serif";c.fillStyle=fc;c.fillText("★ "+r.sc+"/10",PAD+11,y+33);
-          let tx=PAD+46;
-          [r.age,r.genre,r.rel].forEach(t=>{const tw=c.measureText(t).width+9;c.fillStyle="#eef2f6";rr(c,tx,y+26,tw,10,5);c.fillStyle="#457b9d";c.font="7px sans-serif";c.fillText(t,tx+4,y+33);tx+=tw+3;});
-          y+=48;
-        });
-      }
-      // Footer
-      c.fillStyle="#0e0f12";c.fillRect(0,H-26,W,26);
-      c.font="8px sans-serif";c.fillStyle="rgba(255,255,255,.4)";c.textAlign="center";
-      c.fillText("HelloScoring · La mer en hiver · Shaga · 50 répondants · "+now,W/2,H-9);c.textAlign="left";
-      const dataUrl=canvas.toDataURL("image/png");
-      document.getElementById("export-img-el").src=dataUrl;
-      document.getElementById("modal-dl-link").href=dataUrl;
-      document.getElementById("modal-dl-link").download="helloscore-"+(function(){var _c=CHAPS.filter(function(x){return x.id===chapter;})[0];return (_c?_c.lbl:chapter).replace(/[^a-z0-9]/gi,"-").toLowerCase();})()+ "-"+Date.now()+".png";
-      document.getElementById("modal").classList.add("open");
-    }catch(e){alert("Export impossible : "+e.message);}
-    btn.disabled=false;btn.textContent="📷 Exporter";
+      var BX=PAD+130,BW=W-PAD*2-130-45;
+      var emos2,ai2;
+      if(chap==="emotions"&&mode==="explore"&&st){emos2=st.emos.slice();emos2.sort(function(a,b){return b.p-a.p;});for(var ei=0;ei<emos2.length;ei++){ctx.font="9px sans-serif";ctx.fillStyle="#555";ctx.fillText(emos2[ei].e,PAD,y+7);ctx.fillStyle="#f0ede8";ctx.beginPath();ctx.roundRect(BX,y,BW,8,4);ctx.fill();if(emos2[ei].p>0){ctx.fillStyle="#e63946";ctx.beginPath();ctx.roundRect(BX,y,BW*emos2[ei].p/100,8,4);ctx.fill();}ctx.font="bold 9px sans-serif";ctx.fillStyle="#0e0f12";ctx.textAlign="right";ctx.fillText(emos2[ei].p+"%",W-PAD,y+7);ctx.textAlign="left";y+=20;}}
+      if(chap==="actions"&&mode==="explore"&&st){var acts2=st.acts.slice();acts2.sort(function(a,b){return b.p-a.p;});for(ai2=0;ai2<acts2.length;ai2++){ctx.font="9px sans-serif";ctx.fillStyle="#555";ctx.fillText(acts2[ai2].lb,PAD,y+7);ctx.fillStyle="#f0ede8";ctx.beginPath();ctx.roundRect(BX,y,BW,8,4);ctx.fill();if(acts2[ai2].p>0){ctx.fillStyle="#0e0f12";ctx.beginPath();ctx.roundRect(BX,y,BW*acts2[ai2].p/100,8,4);ctx.fill();}ctx.font="bold 9px sans-serif";ctx.textAlign="right";ctx.fillText(acts2[ai2].p+"%",W-PAD,y+7);ctx.textAlign="left";y+=20;}}
+      if(chap==="verbatims"){var vbs=sortedVb().slice(0,5),vi2;for(vi2=0;vi2<vbs.length;vi2++){var r=vbs[vi2],fc=scC(r.sc),bl=fc;ctx.fillStyle="white";ctx.beginPath();ctx.roundRect(PAD,y,W-PAD*2,36,5);ctx.fill();ctx.fillStyle=bl;ctx.fillRect(PAD,y,3,36);ctx.font="italic 8px sans-serif";ctx.fillStyle="#0e0f12";var t=r.vb.slice(0,85)+(r.vb.length>85?"...":"");ctx.fillText(t,PAD+7,y+13);ctx.fillStyle=scB(r.sc);ctx.beginPath();ctx.roundRect(PAD+7,y+20,30,9,4);ctx.fill();ctx.font="bold 6px sans-serif";ctx.fillStyle=fc;ctx.fillText("* "+r.sc+"/10",PAD+10,y+27);y+=42;}}
+      ctx.fillStyle="#0e0f12";ctx.fillRect(0,H-22,W,22);
+      ctx.font="7px sans-serif";ctx.fillStyle="rgba(255,255,255,.4)";ctx.textAlign="center";
+      ctx.fillText("HelloScoring - La mer en hiver - Shaga - 50 repondants - "+now,W/2,H-7);
+      ctx.textAlign="left";
+      var dataUrl=c.toDataURL("image/png");
+      document.getElementById("mimgel").src=dataUrl;
+      document.getElementById("mdl").href=dataUrl;
+      document.getElementById("mdl").download="helloscore-"+lbl.replace(/[^a-z0-9]/gi,"-").toLowerCase()+"-"+Date.now()+".png";
+      document.getElementById("mod").className="open";
+    }catch(ex){alert("Export impossible: "+ex.message);}
+    btn.disabled=false;btn.innerHTML="&#128247; Exporter";
   },50);
 }
-function closeModal(){document.getElementById("modal").classList.remove("open");}
-document.getElementById("modal").addEventListener("click",closeModal);
 
-function rr(c,x,y,w,h,r){
-  c.beginPath();c.moveTo(x+r,y);c.lineTo(x+w-r,y);c.quadraticCurveTo(x+w,y,x+w,y+r);
-  c.lineTo(x+w,y+h-r);c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
-  c.lineTo(x+r,y+h);c.quadraticCurveTo(x,y+h,x,y+h-r);
-  c.lineTo(x,y+r);c.quadraticCurveTo(x,y,x+r,y);c.closePath();c.fill();
-}
-function wt(c,text,x,y,maxW,lh,ml=3){
-  const words=text.split(" ");let line="",l=0;
-  for(let n=0;n<words.length;n++){
-    const test=line+(line?" ":"")+words[n];
-    if(c.measureText(test).width>maxW&&line){
-      c.fillText(line,x,y);y+=lh;line=words[n];l++;
-      if(l>=ml-1){line+=words.slice(n+1).join(" ");break;}
-    }else line=test;
-  }c.fillText(line,x,y);
-}
+document.getElementById("sidebtn").addEventListener("click",toggleSide);
+document.getElementById("bex").addEventListener("click",function(){setMode("explore");});
+document.getElementById("bcm").addEventListener("click",function(){setMode("compare");});
+document.getElementById("chn").addEventListener("click",function(){setChap("notes");});
+document.getElementById("che").addEventListener("click",function(){setChap("emotions");});
+document.getElementById("cha").addEventListener("click",function(){setChap("actions");});
+document.getElementById("chs").addEventListener("click",function(){setChap("segments");});
+document.getElementById("chv").addEventListener("click",function(){setChap("verbatims");});
 
-// INIT
 render();
 </script>
 </body>
