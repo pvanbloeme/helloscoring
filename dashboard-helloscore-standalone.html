@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>HelloScoring — Dashboard · La mer en hiver · Shaga</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',system-ui,sans-serif;background:#f4f3ef;color:#0e0f12;height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+button{cursor:pointer;font-family:inherit;}
+/* LANDSCAPE */
+.lsp{display:none;position:fixed;inset:0;background:#0e0f12;color:white;z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:1.2rem;padding:2rem;text-align:center;}
+@media(max-width:640px) and (orientation:portrait){.lsp{display:flex!important;}}
+@keyframes rh{from{transform:rotate(0)}to{transform:rotate(-90deg)}}
+/* HEADER */
+#hdr{background:#0e0f12;color:white;padding:.65rem 1.2rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:1rem;}
+.brand{font-family:Georgia,serif;font-size:.95rem;white-space:nowrap;}
+.brand .r{color:#e63946;font-weight:700;}
+.brand .w{font-weight:700;}
+.sub-hdr{font-size:.62rem;color:rgba(255,255,255,.35);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mode-btns{display:flex;gap:.4rem;flex-shrink:0;}
+.mode-btn{padding:.28rem .75rem;border-radius:5px;border:none;color:white;font-size:.68rem;font-weight:400;background:rgba(255,255,255,.1);transition:all .15s;white-space:nowrap;}
+.mode-btn.active{background:#e63946;font-weight:600;}
+/* LAYOUT */
+#layout{display:flex;flex:1;overflow:hidden;}
+/* SIDEBAR */
+#side{width:190px;background:white;border-right:1px solid #e0ddd6;display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;transition:width .2s;}
+#side.closed{width:0;}
+.side-top{padding:.75rem .85rem;border-bottom:2px solid #f0ede8;flex-shrink:0;}
+.side-bot{flex:1;padding:.75rem .85rem;overflow-y:auto;}
+.slbl{font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#aaa;margin-bottom:5px;}
+.slbl.active-dim{color:#c87030;}
+.chap-btn{width:100%;text-align:left;padding:.38rem .55rem;border-radius:7px;border:none;font-size:.76rem;display:flex;align-items:center;gap:6px;margin-bottom:1px;transition:all .12s;background:transparent;color:#444;}
+.chap-btn.active{background:#fff0ed;color:#e63946;font-weight:600;}
+.chap-dot{width:6px;height:6px;border-radius:50%;background:#e63946;flex-shrink:0;display:none;}
+.chap-dot.vis{display:block;}
+.filter-btn{display:block;width:100%;text-align:left;padding:2px 5px;border-radius:4px;border:none;font-size:.71rem;margin-bottom:1px;background:transparent;color:#555;transition:all .1s;}
+.filter-btn.active{background:#e63946;color:white;}
+.dim-lbl{font-size:.58rem;font-weight:700;color:#aaa;margin-bottom:3px;text-transform:uppercase;letter-spacing:.08em;}
+.dim-lbl.on{color:#c87030;}
+.dim-sep{border-top:1.5px solid #f0ede8;padding-top:.75rem;margin-top:.5rem;}
+.cmp-dim-btn{display:block;width:100%;text-align:left;padding:3px 5px;border-radius:4px;border:none;font-size:.71rem;margin-bottom:1px;background:transparent;color:#555;transition:all .1s;}
+.cmp-dim-btn.active{background:#0e0f12;color:white;}
+.cmp-val-btn{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;padding:3px 5px;border-radius:4px;border:none;font-size:.71rem;margin-bottom:1px;transition:all .1s;background:transparent;color:#555;}
+.cmp-val-btn.disabled{opacity:.4;cursor:not-allowed;}
+.toggle-all-btn{font-size:.58rem;color:#457b9d;background:none;border:1px solid #457b9d;border-radius:3px;padding:1px 5px;white-space:nowrap;}
+.sel-legend{margin-top:8px;padding:.4rem .5rem;background:#f4f3ef;border-radius:6px;}
+.sel-legend-item{display:flex;align-items:center;gap:5px;font-size:.62rem;color:#555;margin-bottom:2px;}
+.sel-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.n-badge{padding:.35rem .5rem;background:#f4f3ef;border-radius:6px;font-size:.68rem;color:#666;text-align:center;margin-top:4px;}
+.n-badge .rv{font-weight:700;color:#e63946;}
+/* MAIN */
+#main{flex:1;overflow-y:auto;padding:1rem 1.2rem;}
+#main-inner{max-width:900px;}
+.ch-header{display:flex;align-items:center;gap:.7rem;margin-bottom:.7rem;flex-wrap:wrap;}
+.ch-title{font-family:Georgia,serif;font-size:1.2rem;font-weight:700;}
+.cmp-badge{color:white;padding:1px 8px;border-radius:99px;font-size:.6rem;font-weight:600;}
+.ch-controls{margin-left:auto;display:flex;gap:.5rem;align-items:center;}
+.view-toggle{display:flex;align-items:center;gap:0;background:#f0ede8;border-radius:8px;padding:2px;}
+.view-btn{padding:.25rem .65rem;border-radius:6px;border:none;font-size:.65rem;font-weight:400;background:transparent;color:#888074;transition:all .15s;white-space:nowrap;}
+.view-btn.active{background:white;color:#0e0f12;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.12);}
+.export-btn{display:flex;align-items:center;gap:4px;padding:.28rem .65rem;border-radius:7px;border:1.5px solid #e0ddd6;background:white;color:#555;font-size:.68rem;font-weight:500;transition:all .15s;}
+.export-btn:hover{border-color:#e63946;color:#e63946;}
+/* FILTER RECAP */
+.flt-recap{display:flex;align-items:center;gap:6px;padding:.45rem .7rem;background:#fff8ed;border:1px solid #f4a261;border-radius:8px;margin-bottom:.8rem;flex-wrap:wrap;}
+.flt-lbl{font-size:.65rem;color:#c87030;font-weight:600;}
+.flt-tag{background:#f4a261;color:white;padding:1px 7px;border-radius:99px;font-size:.62rem;font-weight:600;}
+.flt-n{font-size:.65rem;color:#c87030;margin-left:2px;}
+.flt-clear{margin-left:auto;font-size:.62rem;color:#c87030;background:none;border:none;text-decoration:underline;}
+/* COMMENT */
+.comment-box{background:#0e0f12;color:white;border-radius:9px;padding:.65rem .85rem;margin-bottom:.8rem;font-size:.78rem;line-height:1.65;display:flex;gap:.5rem;align-items:flex-start;}
+.comment-box .dot{color:#e63946;flex-shrink:0;margin-top:1px;}
+/* CARDS */
+.card{background:white;border:1px solid #e0ddd6;border-radius:10px;padding:1rem;}
+.card-title{font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#999;margin-bottom:8px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:.65rem;margin-bottom:.8rem;}
+/* KPI */
+.kpi{background:white;border:1px solid #e0ddd6;border-radius:10px;padding:.8rem .9rem;}
+.kpi-val{font-family:Georgia,serif;font-size:1.85rem;font-weight:700;line-height:1;}
+.kpi-lbl{font-size:.6rem;text-transform:uppercase;letter-spacing:.08em;color:#888074;margin-top:3px;}
+/* DIST */
+.dist-wrap{display:flex;align-items:flex-end;gap:3px;height:76px;}
+.dist-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.dist-bar{width:100%;border-radius:2px 2px 0 0;min-height:2px;transition:height .4s;}
+.dist-n{font-size:.5rem;color:#333;font-weight:600;min-height:8px;}
+.dist-lbl{font-size:.48rem;color:#aaa;}
+/* BAR */
+.bar-row{display:flex;align-items:center;gap:6px;margin-bottom:.4rem;}
+.bar-lbl{font-size:.74rem;color:#555;min-width:148px;flex-shrink:0;line-height:1.3;display:flex;align-items:center;gap:4px;}
+.bar-lbl.warn{color:#c87030;}
+.warn-ico{color:#f4a261;font-size:.7rem;}
+.bar-track{flex:1;height:8px;background:#f0ede8;border-radius:99px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:99px;transition:width .4s;}
+.bar-val{font-size:.7rem;font-weight:700;min-width:32px;text-align:right;}
+.bar-n{font-size:.6rem;color:#888074;min-width:22px;}
+/* GROUP BAR (compare) */
+.gbar-wrap{margin-bottom:.55rem;}
+.gbar-label{font-size:.74rem;color:#444;margin-bottom:2px;}
+.gbar-row{display:flex;align-items:center;gap:5px;margin-bottom:2px;}
+.gbar-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.gbar-name{width:90px;font-size:.6rem;color:#888074;flex-shrink:0;}
+.gbar-track{flex:1;height:7px;background:#f0ede8;border-radius:99px;overflow:hidden;}
+.gbar-fill{height:100%;border-radius:99px;transition:width .4s;}
+.gbar-pct{font-size:.64rem;font-weight:600;min-width:28px;text-align:right;}
+/* VERBATIM */
+.vb-grid{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;}
+.vb-card{background:white;border:1px solid #e0ddd6;border-radius:0 9px 9px 0;padding:.75rem .85rem;}
+.vb-text{font-size:.82rem;font-style:italic;line-height:1.6;margin-bottom:.4rem;}
+.vb-tags{display:flex;gap:3px;flex-wrap:wrap;}
+.tag{padding:1px 7px;border-radius:99px;font-size:.6rem;font-weight:500;}
+.tag-sc{font-weight:600;}
+.tag-info{background:#eef2f6;color:#457b9d;}
+/* VB sort */
+.vb-sort{display:flex;align-items:center;gap:6px;margin-bottom:.7rem;flex-wrap:wrap;}
+.sort-btn{padding:2px 9px;border-radius:99px;font-size:.68rem;border:1.5px solid #e0ddd6;background:white;color:#555;transition:all .12s;}
+.sort-btn.active{border-color:#e63946;background:#e63946;color:white;}
+/* CMP NOTES */
+.cmp-grid{display:grid;gap:.7rem;}
+.cmp-card{background:white;border-radius:10px;padding:.9rem;border-width:2px;border-style:solid;}
+.cmp-card-hdr{display:flex;align-items:center;gap:6px;margin-bottom:.75rem;}
+.cmp-card-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.cmp-card-lbl{font-weight:600;font-size:.82rem;}
+.cmp-card-n{font-size:.62rem;color:#888074;margin-left:auto;}
+.cmp-kpi-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid #f0ede8;}
+.cmp-kpi-lbl{font-size:.67rem;color:#888074;}
+.cmp-kpi-val{font-weight:700;font-size:.85rem;}
+/* TOO SMALL */
+.too-small{background:#fff8ed;border:1px solid #f4a261;border-radius:7px;padding:.4rem .8rem;margin-bottom:.4rem;font-size:.72rem;color:#b07030;display:flex;gap:6px;align-items:center;}
+/* EMPTY */
+.empty{text-align:center;padding:3rem;color:#888074;font-size:.82rem;}
+/* SEGMENTS */
+.seg-note{font-size:.82rem;color:#888074;line-height:1.6;}
+/* MODAL */
+#modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:8888;align-items:center;justify-content:center;padding:1rem;}
+#modal.open{display:flex;}
+#modal-inner{background:white;border-radius:16px;overflow:hidden;max-width:520px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.5);max-height:90vh;display:flex;flex-direction:column;}
+#modal-hdr{background:#0e0f12;padding:.8rem 1.1rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+#modal-img{overflow-y:auto;flex:1;}
+#modal-img img{width:100%;display:block;}
+#modal-foot{padding:.9rem 1.1rem;background:#f4f3ef;flex-shrink:0;display:flex;flex-direction:column;gap:.6rem;}
+#modal-dl{display:flex;align-items:center;justify-content:center;gap:.5rem;padding:.65rem 1rem;background:#e63946;color:white;border-radius:9px;font-size:.82rem;font-weight:600;text-decoration:none;text-align:center;}
+#modal-tip{display:flex;align-items:flex-start;gap:.5rem;padding:.5rem .7rem;background:white;border-radius:8px;border:1px solid #e0ddd6;font-size:.72rem;color:#666;line-height:1.5;}
+@media(max-width:768px){
+  .grid2,.vb-grid{grid-template-columns:1fr;}
+  .grid4{grid-template-columns:repeat(2,1fr);}
+  .bar-lbl{min-width:100px;}
+}
+</style>
+</head>
+<body>
+
+<!-- LANDSCAPE -->
+<div class="lsp">
+  <div style="font-size:2.5rem;animation:rh 1.5s ease-in-out infinite alternate">📱</div>
+  <div style="font-size:1rem;font-weight:600">Passe en mode paysage</div>
+  <div style="font-size:.8rem;color:rgba(255,255,255,.5);max-width:260px;line-height:1.6">Ce dashboard est conçu pour une lecture horizontale.</div>
+</div>
+
+<!-- EXPORT MODAL -->
+<div id="modal">
+  <div id="modal-inner" onclick="event.stopPropagation()">
+    <div id="modal-hdr">
+      <span style="font-family:Georgia,serif;font-size:.88rem;color:white"><span style="color:#e63946;font-weight:700">Hello</span><span style="font-weight:700">Scoring</span> <span style="font-size:.65rem;color:rgba(255,255,255,.4);margin-left:6px">Export image</span></span>
+      <button onclick="closeModal()" style="background:rgba(255,255,255,.1);border:none;color:white;width:26px;height:26px;border-radius:5px;font-size:.9rem;display:flex;align-items:center;justify-content:center;">✕</button>
+    </div>
+    <div id="modal-img"><img id="export-img-el" src="" alt="Export"></div>
+    <div id="modal-foot">
+      <a id="modal-dl-link" href="" download="helloscore-export.png" id="modal-dl">⬇ Télécharger l'image</a>
+      <div id="modal-tip"><span style="font-size:1rem;flex-shrink:0">📱</span><div><strong style="color:#0e0f12">Sur iPhone / iPad</strong> — si le téléchargement ne fonctionne pas, appuie longuement sur l'image ci-dessus puis sélectionne <strong>« Enregistrer dans Photos »</strong>.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div id="hdr">
+  <div style="display:flex;align-items:center;gap:.7rem;min-width:0">
+    <button onclick="toggleSide()" style="background:rgba(255,255,255,.1);border:none;color:white;width:26px;height:26px;border-radius:5px;font-size:.7rem;display:flex;align-items:center;justify-content:center;" id="side-btn">◀</button>
+    <span class="brand"><span class="r">Hello</span><span class="w">Scoring</span></span>
+    <span class="sub-hdr">La mer en hiver · Shaga · 50 répondants</span>
+  </div>
+  <div class="mode-btns">
+    <button class="mode-btn active" id="btn-explore" onclick="setMode('explore')">🔍 Exploration</button>
+    <button class="mode-btn" id="btn-compare" onclick="setMode('compare')">⚖ Comparaison</button>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div id="layout">
+
+  <!-- SIDEBAR -->
+  <div id="side">
+    <!-- Chapitres -->
+    <div class="side-top">
+      <div class="slbl">Chapitres</div>
+      <button class="chap-btn active" id="chap-notes"    onclick="setChapter('notes')"><span style="opacity:.6;width:13px;text-align:center">★</span> Notes &amp; Distribution <span class="chap-dot" id="dot-notes"></span></button>
+      <button class="chap-btn"        id="chap-emotions" onclick="setChapter('emotions')"><span style="opacity:.6;width:13px;text-align:center">♡</span> Émotions <span class="chap-dot" id="dot-emotions"></span></button>
+      <button class="chap-btn"        id="chap-actions"  onclick="setChapter('actions')"><span style="opacity:.6;width:13px;text-align:center">→</span> Intentions d'usage <span class="chap-dot" id="dot-actions"></span></button>
+      <button class="chap-btn"        id="chap-segments" onclick="setChapter('segments')"><span style="opacity:.6;width:13px;text-align:center">◈</span> Segments <span class="chap-dot" id="dot-segments"></span></button>
+      <button class="chap-btn"        id="chap-verbatims"onclick="setChapter('verbatims')"><span style="opacity:.6;width:13px;text-align:center">❝</span> Verbatims <span class="chap-dot" id="dot-verbatims"></span></button>
+    </div>
+    <!-- Bottom: filters or compare -->
+    <div class="side-bot" id="side-bot"></div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="main">
+    <div id="main-inner">
+      <div class="ch-header" id="ch-header"></div>
+      <div id="filter-recap"></div>
+      <div id="comment-area"></div>
+      <div id="content"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════
+// DATA
+// ═══════════════════════════════
+const RAW=[
+  {id:1, age:"25–34",genre:"Femme",      rel:"Fan",          hab:"Écoute presque tout",sc:9, pt:9, emo:["Énergie","Frisson","Nostalgie"],      act:["Partagerait","Playlist","Concert"],  vb:"L'entrée par le refrain c'est un vrai pari — et ça marche. On est dedans en 5 secondes."},
+  {id:2, age:"18–24",genre:"Homme",      rel:"Fan",          hab:"Écoute presque tout",sc:10,pt:9, emo:["Euphorie","Énergie","Groove"],        act:["Partagerait","Playlist"],            vb:"Ce morceau me fait penser à du Lescop mais avec plus d'énergie. C'est une vraie identité."},
+  {id:3, age:"25–34",genre:"Femme",      rel:"Fan",          hab:"Écoute presque tout",sc:9, pt:10,emo:["Frisson","Intimité","Nostalgie"],     act:["Partagerait","Playlist","Concert"],  vb:"La prod est superbe. L'alternance refrain épuré / couplets organiques donne une vraie respiration."},
+  {id:4, age:"35–44",genre:"Homme",      rel:"Fan",          hab:"Écoute presque tout",sc:9, pt:9, emo:["Énergie","Groove","Frisson"],         act:["Partagerait","Concert"],             vb:"Potentiel radio évident. Le refrain est immédiatement mémorisable."},
+  {id:5, age:"25–34",genre:"Non-binaire",rel:"Fan",          hab:"Écoute presque tout",sc:8, pt:9, emo:["Mélancolie","Intimité","Nostalgie"],  act:["Partagerait","Playlist"],            vb:"Une mélancolie douce, jamais larmoyante. Ça raconte quelque chose de vrai."},
+  {id:6, age:"18–24",genre:"Femme",      rel:"Fan",          hab:"Écoute presque tout",sc:9, pt:8, emo:["Énergie","Euphorie"],                act:["Partagerait","Playlist","Concert"],  vb:"Je stream tout ce qu'il sort. Celui-là c'est son meilleur depuis longtemps."},
+  {id:7, age:"35–44",genre:"Femme",      rel:"Fan",          hab:"Écoute presque tout",sc:9, pt:9, emo:["Nostalgie","Mélancolie","Frisson"],   act:["Partagerait","Playlist"],            vb:"La ligne de basse m'a immédiatement attrapé. C'est ancré physiquement."},
+  {id:8, age:"25–34",genre:"Homme",      rel:"Fan",          hab:"Écoute presque tout",sc:10,pt:10,emo:["Euphorie","Énergie","Groove"],        act:["Partagerait","Playlist","Concert"],  vb:"Objectivement son meilleur titre. La structure est parfaite."},
+  {id:9, age:"25–34",genre:"Femme",      rel:"Connais bien", hab:"Plusieurs morceaux", sc:8, pt:8, emo:["Nostalgie","Mélancolie"],            act:["Partagerait","Playlist"],            vb:"Je connaissais déjà son univers mais là il pousse encore plus loin. Très beau."},
+  {id:10,age:"35–44",genre:"Homme",      rel:"Connais bien", hab:"Plusieurs morceaux", sc:8, pt:8, emo:["Énergie","Groove"],                 act:["Partagerait","Playlist"],            vb:"Le refrain reste en tête longtemps après l'écoute. C'est le signe d'un bon titre."},
+  {id:11,age:"25–34",genre:"Femme",      rel:"Connais bien", hab:"Plusieurs morceaux", sc:9, pt:9, emo:["Frisson","Intimité"],               act:["Partagerait","Playlist","Fond"],     vb:"Quelque chose de très personnel dans cette chanson. On sent qu'il s'y est mis vraiment."},
+  {id:12,age:"45–54",genre:"Homme",      rel:"Connais bien", hab:"Plusieurs morceaux", sc:7, pt:8, emo:["Nostalgie","Légèreté"],             act:["Playlist","Fond"],                  vb:"Très réussi. Un cran au-dessus de ses précédents titres je trouve."},
+  {id:13,age:"35–44",genre:"Femme",      rel:"Connais bien", hab:"Plusieurs morceaux", sc:8, pt:8, emo:["Mélancolie","Intimité","Nostalgie"], act:["Partagerait","Playlist"],            vb:"L'univers visuel que ça évoque est très fort. Mer, froid, intimité hivernale."},
+  {id:14,age:"25–34",genre:"Homme",      rel:"Connais bien", hab:"Plusieurs morceaux", sc:8, pt:9, emo:["Énergie","Frisson"],               act:["Partagerait","Playlist"],            vb:"Ce titre peut toucher un public large. Je le vois bien en playlist Spotify editorial."},
+  {id:15,age:"18–24",genre:"Femme",      rel:"Connais bien", hab:"Plusieurs morceaux", sc:7, pt:8, emo:["Légèreté","Énergie"],               act:["Partagerait","Playlist"],            vb:"J'adore la prod. Moderne sans être froide."},
+  {id:16,age:"35–44",genre:"Homme",      rel:"Connais bien", hab:"Quelques titres",    sc:8, pt:8, emo:["Nostalgie","Groove"],               act:["Partagerait","Fond"],               vb:"Cohérent avec ce qu'il fait mais c'est une vraie évolution. Plus affirmé."},
+  {id:17,age:"25–34",genre:"Femme",      rel:"Connais bien", hab:"Plusieurs morceaux", sc:9, pt:9, emo:["Frisson","Énergie","Nostalgie"],    act:["Partagerait","Playlist","Concert"],  vb:"Punchline finale — je l'ai chantée toute la journée. C'est le critère ultime."},
+  {id:18,age:"45–54",genre:"Femme",      rel:"Connais bien", hab:"Plusieurs morceaux", sc:7, pt:7, emo:["Mélancolie","Légèreté"],            act:["Playlist","Fond"],                  vb:"Beau titre. Un passage au milieu décroche un peu mais l'ensemble est très bien."},
+  {id:19,age:"25–34",genre:"Homme",      rel:"Connais bien", hab:"Plusieurs morceaux", sc:8, pt:8, emo:["Énergie","Groove","Frisson"],       act:["Partagerait","Playlist"],            vb:"La basse est incroyable. On sent le corps qui réagit physiquement à l'écoute."},
+  {id:20,age:"35–44",genre:"Femme",      rel:"Connais bien", hab:"Quelques titres",    sc:8, pt:9, emo:["Nostalgie","Intimité"],             act:["Partagerait","Playlist","Fond"],     vb:"Titre parfait pour les soirées d'hiver. Il a trouvé une vraie niche émotionnelle."},
+  {id:21,age:"18–24",genre:"Homme",      rel:"Connais bien", hab:"Plusieurs morceaux", sc:7, pt:8, emo:["Légèreté","Groove"],               act:["Partagerait","Playlist"],            vb:"Accrocheur dès les premières secondes. Difficile de ne pas bouger la tête."},
+  {id:22,age:"25–34",genre:"Femme",      rel:"Connais bien", hab:"Plusieurs morceaux", sc:8, pt:8, emo:["Mélancolie","Frisson","Nostalgie"], act:["Partagerait","Playlist"],            vb:"L'écriture est vraiment soignée. Chaque mot est à sa place."},
+  {id:23,age:"25–34",genre:"Femme",      rel:"Connais un peu",hab:"Quelques titres",   sc:8, pt:8, emo:["Nostalgie","Légèreté"],             act:["Partagerait","Playlist"],            vb:"Je ne le suivais pas vraiment mais ce titre me donne envie d'explorer sa discographie."},
+  {id:24,age:"35–44",genre:"Homme",      rel:"Connais un peu",hab:"Quelques titres",   sc:7, pt:8, emo:["Énergie","Groove"],                act:["Partagerait","Playlist"],            vb:"Format parfait pour la radio. Court, accrocheur, refrain immédiat."},
+  {id:25,age:"18–24",genre:"Femme",      rel:"Connais un peu",hab:"Plusieurs morceaux",sc:7, pt:7, emo:["Légèreté","Nostalgie"],             act:["Playlist","Fond"],                  vb:"Joli morceau. L'univers hivernal est bien rendu dans la prod."},
+  {id:26,age:"45–54",genre:"Homme",      rel:"Connais un peu",hab:"Quelques titres",   sc:7, pt:7, emo:["Nostalgie","Mélancolie"],           act:["Fond"],                             vb:"Bien construit. Pas révolutionnaire mais solide et agréable."},
+  {id:27,age:"25–34",genre:"Femme",      rel:"Connais un peu",hab:"Plusieurs morceaux",sc:8, pt:8, emo:["Frisson","Intimité","Mélancolie"],  act:["Partagerait","Playlist"],            vb:"La voix est très bien travaillée. Elle transporte l'émotion sans en faire trop."},
+  {id:28,age:"35–44",genre:"Homme",      rel:"Connais un peu",hab:"Quelques titres",   sc:6, pt:7, emo:["Légèreté","Détachement"],           act:["Fond"],                             vb:"C'est bien mais ça ne me touche pas particulièrement. Peut-être pas ma cible."},
+  {id:29,age:"25–34",genre:"Homme",      rel:"Connais un peu",hab:"Quelques titres",   sc:7, pt:8, emo:["Énergie","Groove"],                act:["Partagerait","Playlist"],            vb:"Le beat est vraiment efficace. Ça donne envie de monter le volume."},
+  {id:30,age:"18–24",genre:"Femme",      rel:"Connais un peu",hab:"Plusieurs morceaux",sc:8, pt:8, emo:["Nostalgie","Légèreté","Frisson"],   act:["Partagerait","Playlist"],            vb:"Cette phrase sur la doudoune — je l'ai retenue immédiatement. Trop parlante."},
+  {id:31,age:"35–44",genre:"Femme",      rel:"Connais un peu",hab:"Quelques titres",   sc:7, pt:7, emo:["Mélancolie","Intimité"],            act:["Playlist","Fond"],                  vb:"Très bel univers. Un peu trop introspectif pour moi mais objectivement réussi."},
+  {id:32,age:"45–54",genre:"Femme",      rel:"Connais un peu",hab:"Quelques titres",   sc:6, pt:7, emo:["Nostalgie","Légèreté"],             act:["Fond"],                             vb:"Agréable à écouter. Pas mon genre de prédilection mais le titre est bien fait."},
+  {id:33,age:"25–34",genre:"Homme",      rel:"Connais un peu",hab:"Plusieurs morceaux",sc:8, pt:9, emo:["Énergie","Frisson","Groove"],       act:["Partagerait","Playlist"],            vb:"Ce titre a un potentiel commercial évident. Très accessible sans être banal."},
+  {id:34,age:"35–44",genre:"Femme",      rel:"Connais un peu",hab:"Quelques titres",   sc:7, pt:8, emo:["Nostalgie","Mélancolie"],           act:["Partagerait","Playlist"],            vb:"Je l'ai écouté plusieurs fois de suite. C'est un bon signe."},
+  {id:35,age:"25–34",genre:"Homme",      rel:"Connais un peu",hab:"Quelques titres",   sc:6, pt:7, emo:["Détachement","Légèreté"],           act:["Aucune action"],                    vb:"Bien construit mais le passage central perd un peu d'élan par rapport au refrain."},
+  {id:36,age:"18–24",genre:"Femme",      rel:"Connais un peu",hab:"Plusieurs morceaux",sc:8, pt:8, emo:["Énergie","Nostalgie"],              act:["Partagerait","Playlist"],            vb:"L'intro est redoutable. On est accroché avant même d'avoir compris ce qui se passe."},
+  {id:37,age:"45–54",genre:"Homme",      rel:"Connais un peu",hab:"Quelques titres",   sc:7, pt:7, emo:["Nostalgie","Groove"],               act:["Fond"],                             vb:"Bonne écriture. Le format chanson est bien maîtrisé."},
+  {id:38,age:"35–44",genre:"Homme",      rel:"Connais un peu",hab:"Plusieurs morceaux",sc:7, pt:8, emo:["Frisson","Énergie"],               act:["Partagerait","Playlist"],            vb:"Références à la scène française indé. C'est assumé et ça fonctionne."},
+  {id:39,age:"25–34",genre:"Femme",      rel:"Connais un peu",hab:"Quelques titres",   sc:7, pt:7, emo:["Légèreté","Mélancolie"],            act:["Playlist"],                         vb:"Joli morceau d'ambiance. Parfait pour les soirées calmes."},
+  {id:40,age:"25–34",genre:"Femme",      rel:"Découverte",    hab:"Quelques titres",   sc:8, pt:9, emo:["Nostalgie","Frisson"],              act:["Partagerait","Playlist"],            vb:"Je ne le connaissais pas du tout mais ce titre me donne très envie d'aller plus loin."},
+  {id:41,age:"35–44",genre:"Homme",      rel:"Découverte",    hab:"Quelques titres",   sc:7, pt:8, emo:["Légèreté","Groove"],               act:["Partagerait","Playlist"],            vb:"Très accessible pour une première écoute. Accrocheur sans être commercial à outrance."},
+  {id:42,age:"18–24",genre:"Femme",      rel:"Découverte",    hab:"Quelques titres",   sc:7, pt:8, emo:["Énergie","Nostalgie"],              act:["Partagerait","Playlist"],            vb:"Cette phrase sur la mer en doudoune — je ne sais pas pourquoi mais je l'ai retenue."},
+  {id:43,age:"45–54",genre:"Homme",      rel:"Découverte",    hab:"Quelques titres",   sc:6, pt:7, emo:["Nostalgie","Détachement"],          act:["Fond"],                             vb:"Pas mon univers habituel mais le titre est bien fait. La prod est moderne."},
+  {id:44,age:"35–44",genre:"Femme",      rel:"Découverte",    hab:"Quelques titres",   sc:8, pt:8, emo:["Intimité","Mélancolie","Nostalgie"],act:["Partagerait","Playlist","Fond"],     vb:"Découverte vraiment agréable. Un artiste à suivre selon moi."},
+  {id:45,age:"25–34",genre:"Homme",      rel:"Découverte",    hab:"Quelques titres",   sc:7, pt:8, emo:["Frisson","Énergie"],               act:["Partagerait","Playlist"],            vb:"Première impression très positive. Le son est propre et original."},
+  {id:46,age:"55+",  genre:"Femme",      rel:"Découverte",    hab:"Quelques titres",   sc:6, pt:7, emo:["Légèreté","Nostalgie"],             act:["Fond"],                             vb:"Agréable. Je ne suis pas la cible mais le titre est bien construit."},
+  {id:47,age:"18–24",genre:"Homme",      rel:"Découverte",    hab:"Quelques titres",   sc:7, pt:8, emo:["Groove","Énergie"],                act:["Partagerait","Playlist"],            vb:"Le beat est vraiment bon. J'aurais pas deviné que c'était français."},
+  {id:48,age:"35–44",genre:"Femme",      rel:"Découverte",    hab:"Quelques titres",   sc:8, pt:9, emo:["Nostalgie","Frisson","Légèreté"],   act:["Partagerait","Playlist"],            vb:"Très belle découverte. L'univers hivernal crée une vraie atmosphère."},
+  {id:49,age:"55+",  genre:"Homme",      rel:"Découverte",    hab:"Quelques titres",   sc:6, pt:6, emo:["Détachement","Nostalgie"],          act:["Aucune action"],                    vb:"Bien fait mais pas vraiment pour moi. Je comprends l'attrait pour un public plus jeune."},
+  {id:50,age:"45–54",genre:"Femme",      rel:"Découverte",    hab:"Quelques titres",   sc:7, pt:8, emo:["Intimité","Mélancolie"],            act:["Partagerait","Playlist"],            vb:"Très touchant. La sincérité de l'écriture se sent immédiatement."}
+];
+
+const EMOS=["Nostalgie","Énergie","Mélancolie","Frisson","Légèreté","Intimité","Groove","Euphorie","Détachement"];
+const ACTS=["Partagerait","Playlist","Fond","Concert","Aucune action"];
+const ACTS_LB=["Partagerait","Ajouterait en playlist","Mettrait en fond","Irait au concert","Aucune action"];
+const DIMS={age:["18–24","25–34","35–44","45–54","55+"],genre:["Femme","Homme","Non-binaire"],rel:["Fan","Connais bien","Connais un peu","Découverte"],hab:["Écoute presque tout","Plusieurs morceaux","Quelques titres"]};
+const DIM_LBL={age:"Âge",genre:"Genre",rel:"Relation artiste",hab:"Habitudes d'écoute"};
+const CHAPS=[{id:"notes",lbl:"Notes & Distribution"},{id:"emotions",lbl:"Émotions"},{id:"actions",lbl:"Intentions d'usage"},{id:"segments",lbl:"Segments"},{id:"verbatims",lbl:"Verbatims"}];
+const CMP_PAL=["#e63946","#2d6a4f","#457b9d","#f4a261","#9b5de5"];
+const MIN_N=5;
+
+// ── helpers ──
+const avg=a=>a.length?a.reduce((s,x)=>s+x,0)/a.length:null;
+const pctOf=(n,t)=>t?Math.round(n/t*100):0;
+const scCol=s=>s>=8?"#2d6a4f":s>=6?"#c8880a":"#e63946";
+const scBg=s=>s>=8?"#e8f5ec":s>=6?"#fff8ed":"#fff0ee";
+const h=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+
+function calcSt(rows){
+  if(!rows.length) return null;
+  const sc=rows.map(r=>r.sc),pt=rows.map(r=>r.pt);
+  return{
+    n:rows.length,
+    avgSc:(avg(sc)||0).toFixed(1),avgPt:(avg(pt)||0).toFixed(1),
+    pct6:pctOf(rows.filter(r=>r.sc>=6).length,rows.length),
+    pctSh:pctOf(rows.filter(r=>r.act.includes("Partagerait")).length,rows.length),
+    dist:Array.from({length:11},(_,i)=>({i,c:rows.filter(r=>r.sc===i).length})),
+    emos:EMOS.map(e=>({e,p:pctOf(rows.filter(r=>r.emo.includes(e)).length,rows.length)})),
+    acts:ACTS.map((a,i)=>({a,lb:ACTS_LB[i],p:pctOf(rows.filter(r=>r.act.includes(a)).length,rows.length)}))
+  };
+}
+
+// ── STATE ──
+let chapter="notes", mode="explore", sideOpen=true;
+let filters={age:"Tous",genre:"Tous",rel:"Tous",hab:"Tous"};
+let cmpDim="rel", cmpSel=[];
+let vbSort="default", inverted=false;
+
+function getExplored(){
+  return RAW.filter(r=>{
+    for(const[k,v]of Object.entries(filters))if(v!=="Tous"&&r[k]!==v)return false;
+    return true;
+  });
+}
+function getCmpGroups(){
+  return cmpSel.map((val,i)=>({lbl:val,col:CMP_PAL[i%CMP_PAL.length],rows:RAW.filter(r=>r[cmpDim]===val)}));
+}
+function getComment(){
+  if(mode!=="compare") return null;
+  const v=getCmpGroups().filter(g=>g.rows.length>=MIN_N);
+  if(v.length<2) return null;
+  const s=v.map(g=>({lbl:g.lbl,st:calcSt(g.rows)}));
+  if(chapter==="notes"){
+    const best=s.reduce((a,b)=>+a.st.avgSc>+b.st.avgSc?a:b);
+    const worst=s.reduce((a,b)=>+a.st.avgSc<+b.st.avgSc?a:b);
+    const gap=(+best.st.avgSc-+worst.st.avgSc).toFixed(1);
+    if(+gap<0.5) return"Les notes sont homogènes entre les cibles (écart < 0,5 pt) — ce titre fonctionne de façon transversale.";
+    return`Signal clé : ${best.lbl} est la cible la plus enthousiaste (${best.st.avgSc}/10), devant ${worst.lbl} (${worst.st.avgSc}/10). Un écart de ${gap} pts est stratégiquement significatif.`;
+  }
+  if(chapter==="emotions"){
+    const top=EMOS.map(e=>({e,diff:Math.max(...s.map(g=>(function(){var _f=g.st.emos.filter(function(x){return x.e===e;})[0];return _f?_f.p:0;})()))-Math.min(...s.map(g=>(function(){var _f=g.st.emos.filter(function(x){return x.e===e;})[0];return _f?_f.p:0;})()))})).sort((a,b)=>b.diff-a.diff)[0];
+    const dom=s.map(g=>({lbl:g.lbl,p:(function(){var _f=g.st.emos.filter(function(x){return x.e===top.e;})[0];return _f?_f.p:0;})()})).sort((a,b)=>b.p-a.p);
+    return`"${top.e}" est l'émotion qui discrimine le plus (écart ${top.diff} pts). Forte chez ${dom[0].lbl} (${dom[0].p}%), moins présente chez ${dom[dom.length-1].lbl} (${dom[dom.length-1].p}%).`;
+  }
+  if(chapter==="actions"){
+    const topSh=s.reduce((a,b)=>a.st.pctSh>b.st.pctSh?a:b);
+    const lowSh=s.reduce((a,b)=>a.st.pctSh<b.st.pctSh?a:b);
+    if(topSh.lbl===lowSh.lbl) return null;
+    return`Partage : ${lowSh.st.pctSh}% (${lowSh.lbl}) vs ${topSh.st.pctSh}% (${topSh.lbl}). ${topSh.lbl} est la cible la plus susceptible de générer de la diffusion organique.`;
+  }
+  if(chapter==="verbatims") return"Comparer les registres d'expression — les mots choisis révèlent des attentes implicites que les scores seuls ne capturent pas.";
+  return null;
+}
+
+// ── RENDER HELPERS ──
+function barRow(label,pct,col,n,warn){
+  const w=Math.min(100,pct);
+  const wc=warn?' class="bar-lbl warn"':' class="bar-lbl"';
+  const wi=warn?'<span class="warn-ico">\u26a0</span>':'';
+  const bg=warn?'#f4a261':col;
+  const fc=warn?'#c87030':'#0e0f12';
+  const nh=n!=null?'<div class="bar-n">('+n+')</div>':'';
+  return '<div class="bar-row">'+
+    '<div'+wc+'>'+wi+'<span>'+h(label)+'</span></div>'+
+    '<div class="bar-track"><div class="bar-fill" style="width:'+w+'%;background:'+bg+'"></div></div>'+
+    '<div class="bar-val" style="color:'+fc+'">'+pct+'%</div>'+
+    nh+'</div>';
+}
+function groupBarRow(label,groups){
+  var rows=groups.map(function(g){
+    return '<div class="gbar-row">'+
+      '<div class="gbar-dot" style="background:'+g.col+'"></div>'+
+      '<div class="gbar-name">'+h(g.lbl)+'</div>'+
+      '<div class="gbar-track"><div class="gbar-fill" style="width:'+g.p+'%;background:'+g.col+'"></div></div>'+
+      '<div class="gbar-pct">'+g.p+'%</div>'+
+      '</div>';
+  }).join('');
+  return '<div class="gbar-wrap">'+
+    '<div class="gbar-label">'+h(label)+'</div>'+
+    rows+'</div>';
+}
+function distHtml(dist,col){
+  const mx=Math.max.apply(null, dist.map(function(d){return d.c;}).concat([1]));
+  return`<div class="dist-wrap">${dist.map(({i,c})=>{
+    const bh=c?Math.max(4,c/mx*65):3;
+    return`<div class="dist-col">
+      <div class="dist-n">${c||""}</div>
+      <div class="dist-bar" style="height:${bh}px;background:${c?col:"#f0ede8"};opacity:${c?0.6+c/mx*0.4:1}"></div>
+      <div class="dist-lbl">${i}</div>
+    </div>`;
+  }).join("")}</div>`;
+}
+function kpiHtml(v,sub,lbl,col){
+  return`<div class="kpi"><div class="kpi-val" style="color:${col}">${h(v)}<span style="font-size:.75rem;color:#ccc">${sub}</span></div><div class="kpi-lbl">${lbl}</div></div>`;
+}
+function tooSmall(lbl,n){
+  return '<div class="too-small"><span>⚠</span><span><strong>'+h(lbl)+'</strong> — '+n+' répondant'+(n>1?'s':'')+' seulement (minimum '+MIN_N+' recommandé)</span></div>';
+}
+function vbCard(r,col){
+  const sc=r.sc,bg=scBg(sc),fc=scCol(sc),bl=col||fc;
+  return`<div class="vb-card" style="border-left:3px solid ${bl}">
+    <div class="vb-text">« ${h(r.vb)} »</div>
+    <div class="vb-tags">
+      <span class="tag tag-sc" style="background:${bg};color:${fc}">★ ${sc}/10</span>
+      ${[r.age,r.genre,r.rel,r.emo[0]].map(t=>`<span class="tag tag-info">${h(t)}</span>`).join("")}
+    </div>
+  </div>`;
+}
+
+// ── SECTION RENDERERS ──
+function renderNotes(){
+  var explored=getExplored();
+  var st=calcSt(explored);
+  if(!st) return '<div class="empty">Aucun répondant.</div>';
+  var html='<div class="grid4">';
+  html+=kpiHtml(st.avgSc,'/10','Note artistique','#e63946');
+  html+=kpiHtml(st.avgPt,'/10','Potentiel','#2d6a4f');
+  html+=kpiHtml(st.pct6+'%','','Notes ≥ 6','#c8880a');
+  html+=kpiHtml(st.pctSh+'%','','Partageraient','#457b9d');
+  html+='</div><div class="grid2">';
+  html+='<div class="card"><div class="card-title">Distribution des notes</div>'+distHtml(st.dist,'#e63946')+'</div>';
+  html+='<div class="card"><div class="card-title">Par relation à l’artiste</div>';
+  ['Fan','Connais bien','Connais un peu','Découverte'].forEach(function(rel){
+    var sub=explored.filter(function(r){return r.rel===rel;});
+    var a=sub.length?(avg(sub.map(function(r){return r.sc;}))||0).toFixed(1):'—';
+    var w=sub.length>0&&sub.length<MIN_N;
+    var pct=sub.length?Math.round(parseFloat(a)/10*100):0;
+    html+='<div class="bar-row">';
+    html+='<div class="bar-lbl'+(w?' warn':'')+'">'+(w?'<span class="warn-ico">⚠</span>':'')+h(rel)+'</div>';
+    html+='<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+(w?'#f4a261':'#e63946')+'"></div></div>';
+    html+='<div class="bar-val">'+a+'/10</div><div class="bar-n">('+sub.length+')</div></div>';
+  });
+  html+='</div></div>';
+  return html;
+}
+function renderNotesCmp(){
+  var grps=getCmpGroups();
+  var valid=grps.filter(function(g){return g.rows.length>=MIN_N;});
+  var bad=grps.filter(function(g){return g.rows.length>0&&g.rows.length<MIN_N;});
+  var cols=Math.max(valid.length,1);
+  var html=bad.map(function(g){return tooSmall(g.lbl,g.rows.length);}).join('');
+  html+='<div class="cmp-grid" style="grid-template-columns:repeat('+cols+',1fr)">';
+  valid.forEach(function(g){
+    var st=calcSt(g.rows);
+    html+='<div class="cmp-card" style="border-color:'+g.col+'">';
+    html+='<div class="cmp-card-hdr"><div class="cmp-card-dot" style="background:'+g.col+'"></div>';
+    html+='<span class="cmp-card-lbl">'+h(g.lbl)+'</span><span class="cmp-card-n">n='+g.rows.length+'</span></div>';
+    [[st.avgSc+'/10','Note artistique',g.col],[st.avgPt+'/10','Potentiel',g.col],[st.pct6+'%','Notes ≥ 6','#c8880a'],[st.pctSh+'%','Partageraient','#457b9d']].forEach(function(k){
+      html+='<div class="cmp-kpi-row"><span class="cmp-kpi-lbl">'+k[1]+'</span><span class="cmp-kpi-val" style="color:'+k[2]+'">'+k[0]+'</span></div>';
+    });
+    html+='<div style="margin-top:.65rem"><div class="card-title">Distribution</div>'+distHtml(st.dist,g.col)+'</div>';
+    html+='</div>';
+  });
+  html+='</div>';
+  return html;
+}
+function renderEmotions(){
+  const explored=getExplored(); const st=calcSt(explored);
+  if(!st) return`<div class="empty">Aucun répondant.</div>`;
+  return`<div class="card"><div class="card-title">Émotions ressenties · choix multiples · ${explored.length} répondants</div>
+    ${st.emos.slice().sort(function(a,b){return b.p-a.p;}).map(({e,p})=>barRow(e,p,"#e63946",null,false)).join("")}
+  </div>`;
+}
+function renderEmoCmp(){
+  var grps=getCmpGroups();
+  var valid=grps.filter(function(g){return g.rows.length>=MIN_N;});
+  var bad=grps.filter(function(g){return g.rows.length>0&&g.rows.length<MIN_N;});
+  var html=bad.map(function(g){return tooSmall(g.lbl,g.rows.length);}).join('');
+  if(!inverted){
+    html+='<div class="card"><div class="card-title">Par émotion — cibles</div>';
+    EMOS.forEach(function(e){
+      var groups=valid.map(function(g){return {lbl:g.lbl,col:g.col,p:pctOf(g.rows.filter(function(r){return r.emo.indexOf(e)>-1;}).length,g.rows.length)};});
+      html+=groupBarRow(e,groups);
+    });
+    html+='</div>';
+  } else {
+    html+='<div class="card"><div class="card-title">Par cible — émotions</div>';
+    valid.forEach(function(g){
+      html+='<div style="margin-bottom:.9rem"><div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">';
+      html+='<div style="width:9px;height:9px;border-radius:50%;background:'+g.col+'"></div>';
+      html+='<span style="font-weight:600;font-size:.78rem">'+h(g.lbl)+'</span>';
+      html+='<span style="font-size:.62rem;color:#888074">(n='+g.rows.length+')</span></div>';
+      var sorted=EMOS.map(function(e){return {e:e,p:pctOf(g.rows.filter(function(r){return r.emo.indexOf(e)>-1;}).length,g.rows.length)};}).sort(function(a,b){return b.p-a.p;});
+      sorted.forEach(function(x){html+=barRow(x.e,x.p,g.col,null,false);});
+      html+='</div>';
+    });
+    html+='</div>';
+  }
+  return html;
+}
+function renderActions(){
+  const explored=getExplored(); const st=calcSt(explored);
+  if(!st) return`<div class="empty">Aucun répondant.</div>`;
+  return`<div class="card"><div class="card-title">Intentions d'usage · choix multiples · ${explored.length} répondants</div>
+    ${st.acts.slice().sort(function(a,b){return b.p-a.p;}).map(({lb,p})=>barRow(lb,p,"#0e0f12",null,false)).join("")}
+  </div>`;
+}
+function renderActCmp(){
+  var grps=getCmpGroups();
+  var valid=grps.filter(function(g){return g.rows.length>=MIN_N;});
+  var bad=grps.filter(function(g){return g.rows.length>0&&g.rows.length<MIN_N;});
+  var html=bad.map(function(g){return tooSmall(g.lbl,g.rows.length);}).join('');
+  if(!inverted){
+    html+='<div class="card"><div class="card-title">Par intention — cibles</div>';
+    ACTS.forEach(function(a,idx){
+      var groups=valid.map(function(g){return {lbl:g.lbl,col:g.col,p:pctOf(g.rows.filter(function(r){return r.act.indexOf(a)>-1;}).length,g.rows.length)};});
+      html+=groupBarRow(ACTS_LB[idx],groups);
+    });
+    html+='</div>';
+  } else {
+    html+='<div class="card"><div class="card-title">Par cible — intentions</div>';
+    valid.forEach(function(g){
+      html+='<div style="margin-bottom:.9rem"><div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">';
+      html+='<div style="width:9px;height:9px;border-radius:50%;background:'+g.col+'"></div>';
+      html+='<span style="font-weight:600;font-size:.78rem">'+h(g.lbl)+'</span>';
+      html+='<span style="font-size:.62rem;color:#888074">(n='+g.rows.length+')</span></div>';
+      ACTS.forEach(function(a,idx){
+        var p=pctOf(g.rows.filter(function(r){return r.act.indexOf(a)>-1;}).length,g.rows.length);
+        html+=barRow(ACTS_LB[idx],p,g.col,null,false);
+      });
+      html+='</div>';
+    });
+    html+='</div>';
+  }
+  return html;
+}
+function renderSegments(){
+  var explored=getExplored();
+  var html='<div class="grid2">';
+  Object.entries(DIMS).forEach(function(entry){
+    var dim=entry[0], opts=entry[1];
+    html+='<div class="card"><div class="card-title">'+DIM_LBL[dim]+'</div>';
+    opts.forEach(function(opt){
+      var sub=explored.filter(function(r){return r[dim]===opt;});
+      var a=sub.length?(avg(sub.map(function(r){return r.sc;}))||0).toFixed(1):'—';
+      var w=sub.length>0&&sub.length<MIN_N;
+      var pct=sub.length?Math.round(parseFloat(a)/10*100):0;
+      html+='<div class="bar-row">';
+      html+='<div class="bar-lbl'+(w?' warn':'')+'">'+(w?'<span class="warn-ico">⚠</span>':'')+h(opt)+'</div>';
+      html+='<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+(w?'#f4a261':'#457b9d')+'"></div></div>';
+      html+='<div class="bar-val">'+a+'/10</div><div class="bar-n">('+sub.length+')</div></div>';
+    });
+    html+='</div>';
+  });
+  html+='</div>';
+  return html;
+}
+function getSortedVb(){
+  const explored=getExplored();
+  if(vbSort==="asc") return explored.slice().sort(function(a,b){return a.sc-b.sc;});
+  if(vbSort==="desc") return explored.slice().sort(function(a,b){return b.sc-a.sc;});
+  if(vbSort==="random") return explored.slice().sort(function(){return Math.random()-0.5;});
+  return explored;
+}
+function renderVerbatims(){
+  var rows=getSortedVb();
+  if(!rows.length) return '<div class="empty">Aucun répondant.</div>';
+  var shown=rows.slice(0,14);
+  var sortOpts=[['default','Par défaut'],['desc','Score ↓'],['asc','Score ↑'],['random','Aléatoire']];
+  var sb='<div class="vb-sort"><span style="font-size:.7rem;color:#888074">Tri :</span>';
+  sortOpts.forEach(function(x){
+    sb+='<button class="sort-btn'+(vbSort===x[0]?' active':'')+'" onclick="setVbSort(\'' +x[0]+'\')">'
+      +x[1]+'</button>';
+  });
+  sb+='</div>';
+  var cards='<div class="vb-grid">'+shown.map(function(r){return vbCard(r,null);}).join('')+'</div>';
+  var more=rows.length>14?'<div style="text-align:center;margin-top:.6rem;font-size:.72rem;color:#888074">'+(rows.length-14)+' verbatim(s) supplémentaire(s)</div>':'';
+  return sb+cards+more;
+}
+function renderVbCmp(){
+  var grps=getCmpGroups();
+  var valid=grps.filter(function(g){return g.rows.length>=MIN_N;});
+  var bad=grps.filter(function(g){return g.rows.length>0&&g.rows.length<MIN_N;});
+  var cols=Math.max(valid.length,1);
+  var html=bad.map(function(g){return tooSmall(g.lbl,g.rows.length);}).join('');
+  html+='<div class="cmp-grid" style="grid-template-columns:repeat('+cols+',1fr)">';
+  valid.forEach(function(g){
+    html+='<div><div style="display:flex;align-items:center;gap:5px;margin-bottom:.5rem">';
+    html+='<div style="width:9px;height:9px;border-radius:50%;background:'+g.col+'"></div>';
+    html+='<span style="font-weight:600;font-size:.8rem">'+h(g.lbl)+'</span>';
+    html+='<span style="font-size:.62rem;color:#888074">(n='+g.rows.length+')</span></div>';
+    html+=g.rows.slice(0,4).map(function(r){return vbCard(r,g.col);}).join('');
+    html+='</div>';
+  });
+  html+='</div>';
+  return html;
+}
+// ── CHAPTER DOTS ──
+function updateDots(){
+  CHAPS.forEach(c=>{
+    const dot=document.getElementById("dot-"+c.id);
+    if(dot) dot.className="chap-dot"+(Object.values(filters).some(v=>v!=="Tous")?" vis":"");
+  });
+}
+
+// ── FULL RENDER ──
+function render(){
+  renderSidebar();
+  renderChHeader();
+  renderFilterRecap();
+  renderComment();
+  renderContent();
+  updateDots();
+  // Update chapter buttons
+  CHAPS.forEach(c=>{
+    const btn=document.getElementById("chap-"+c.id);
+    if(btn) btn.className="chap-btn"+(chapter===c.id?" active":"");
+  });
+  // Update mode buttons
+  document.getElementById("btn-explore").className="mode-btn"+(mode==="explore"?" active":"");
+  document.getElementById("btn-compare").className="mode-btn"+(mode==="compare"?" active":"");
+}
+
+// ── ACTIONS ──
+function setChapter(c){chapter=c;inverted=false;render();}
+function setMode(m){mode=m;inverted=false;render();}
+function toggleSide(){
+  sideOpen=!sideOpen;
+  document.getElementById("side").classList.toggle("closed",!sideOpen);
+  document.getElementById("side-btn").textContent=sideOpen?"◀":"▶";
+}
+function setFilter(dim,val){filters[dim]=val;render();}
+function resetFilters(){filters={age:"Tous",genre:"Tous",rel:"Tous",hab:"Tous"};render();}
+function setCmpDim(d){cmpDim=d;cmpSel=[];render();}
+function toggleCmp(val){
+  const i=cmpSel.indexOf(val);
+  if(i>-1) cmpSel.splice(i,1); else cmpSel.push(val);
+  render();
+}
+function toggleAll(){
+  const all=DIMS[cmpDim];
+  cmpSel=all.every(v=>cmpSel.includes(v))?[]:all.slice();
+  render();
+}
+function clearCmp(){cmpSel=[];render();}
+function setVbSort(s){vbSort=s;render();}
+function setInverted(v){inverted=v;render();}
+
+// ── EXPORT ──
+function doExport(){
+  const btn=document.getElementById("exp-btn");
+  if(!btn||btn.disabled) return;
+  btn.disabled=true;btn.textContent="⏳ Export…";
+  setTimeout(()=>{
+    try{
+      const canvas=document.createElement("canvas");
+      const W=900,PAD=40;
+      const explored=getExplored();
+      const st=calcSt(mode==="explore"?explored:RAW);
+      const grps=getCmpGroups();
+      const valid=grps.filter(g=>g.rows.length>=MIN_N);
+      const comment=getComment();
+      let rows=0;
+      if(chapter==="notes")    rows=7;
+      if(chapter==="emotions") rows=EMOS.length*(!inverted?1.6:valid.length*EMOS.length*.15);
+      if(chapter==="actions")  rows=ACTS.length*(!inverted?1.5:valid.length*ACTS.length*.15);
+      if(chapter==="segments") rows=12;
+      if(chapter==="verbatims")rows=8;
+      const H=Math.max(420,180+Math.ceil(rows)*34+(comment?70:0));
+      canvas.width=W*2;canvas.height=H*2;
+      const c=canvas.getContext("2d");
+      c.scale(2,2);
+      // BG
+      c.fillStyle="#f4f3ef";c.fillRect(0,0,W,H);
+      // Header
+      c.fillStyle="#0e0f12";c.fillRect(0,0,W,50);
+      c.font="bold 15px Georgia,serif";c.fillStyle="#e63946";c.fillText("Hello",PAD,33);
+      const hw=c.measureText("Hello").width;
+      c.fillStyle="white";c.fillText("Scoring",PAD+hw,33);
+      c.font="10px sans-serif";c.fillStyle="rgba(255,255,255,.4)";
+      c.fillText("La mer en hiver · Shaga · "+(function(){var _c=CHAPS.filter(function(x){return x.id===chapter;})[0];return _c?_c.lbl:"";})(),PAD+hw+c.measureText("Scoring").width+14,33);
+      const now=new Date().toLocaleDateString("fr-FR",{day:"2-digit",month:"long",year:"numeric"});
+      c.textAlign="right";c.fillText(now,W-PAD,33);c.textAlign="left";
+      // Title
+      let y=50+PAD;
+      c.font="bold 20px Georgia,serif";c.fillStyle="#0e0f12";
+      c.fillText((function(){var _c=CHAPS.filter(function(x){return x.id===chapter;})[0];return _c?_c.lbl:"";})(),PAD,y);y+=6;
+      if(mode==="compare"&&cmpSel.length){
+        let bx=PAD;
+        cmpSel.forEach((v,i)=>{
+          const col=CMP_PAL[i%CMP_PAL.length];
+          c.font="bold 8px sans-serif";
+          const tw=c.measureText(v).width+14;
+          c.fillStyle=col;rr(c,bx,y,tw,16,8);
+          c.fillStyle="white";c.fillText(v,bx+7,y+11);bx+=tw+5;
+          c.font="bold 20px Georgia,serif";
+        });y+=26;
+      }else{y+=14;}
+      if(comment){
+        c.fillStyle="#0e0f12";rr(c,PAD,y,W-PAD*2,48,8);
+        c.font="10px sans-serif";c.fillStyle="white";
+        wt(c,"◆  "+comment,PAD+10,y+14,W-PAD*2-20,13);y+=60;
+      }
+      const BX=PAD+148,BW=W-PAD*2-148-55;
+      const dBar=(lbl,pct,col,yy,warn)=>{
+        c.font=(warn?"italic ":"")+"10px sans-serif";c.fillStyle=warn?"#c87030":"#555";
+        c.fillText((warn?"⚠ ":"")+lbl,PAD,yy+8);
+        c.fillStyle="#f0ede8";rr(c,BX,yy,BW,9,4);
+        if(pct>0){c.fillStyle=warn?"#f4a261":col;rr(c,BX,yy,BW*pct/100,9,4);}
+        c.font="bold 10px sans-serif";c.fillStyle="#0e0f12";
+        c.textAlign="right";c.fillText(pct+"%",W-PAD,yy+8);c.textAlign="left";
+        return yy+22;
+      };
+      const dGBar=(lbl,groups,yy)=>{
+        c.font="10px sans-serif";c.fillStyle="#444";c.fillText(lbl,PAD,yy+7);yy+=12;
+        groups.forEach(g=>{
+          c.fillStyle=g.col;c.beginPath();c.arc(BX-7,yy+4,3.5,0,Math.PI*2);c.fill();
+          c.fillStyle="#888";c.font="8px sans-serif";c.fillText(g.lbl,BX,yy+7);
+          const lw=c.measureText(g.lbl).width+7;
+          c.fillStyle="#f0ede8";rr(c,BX+lw,yy,BW-lw,7,3);
+          if(g.p>0){c.fillStyle=g.col;rr(c,BX+lw,yy,Math.max(0,(BW-lw)*g.p/100),7,3);}
+          c.font="bold 8px sans-serif";c.fillStyle="#0e0f12";
+          c.textAlign="right";c.fillText(g.p+"%",W-PAD,yy+7);c.textAlign="left";
+          yy+=11;
+        });return yy+3;
+      };
+      if(chapter==="notes"&&st){
+        const kpis=[{v:st.avgSc+"/10",l:"Note artistique",col:"#e63946"},{v:st.avgPt+"/10",l:"Potentiel",col:"#2d6a4f"},{v:st.pct6+"%",l:"Notes ≥ 6",col:"#c8880a"},{v:st.pctSh+"%",l:"Partageraient",col:"#457b9d"}];
+        const kw=(W-PAD*2)/4;
+        kpis.forEach(({v,l,col},i)=>{
+          const kx=PAD+i*kw;c.fillStyle="white";rr(c,kx+2,y,kw-6,50,8);
+          c.font="bold 22px Georgia,serif";c.fillStyle=col;c.fillText(v,kx+10,y+30);
+          c.font="8px sans-serif";c.fillStyle="#888";c.fillText(l.toUpperCase(),kx+10,y+44);
+        });y+=64;
+        c.font="bold 8px sans-serif";c.fillStyle="#888";c.fillText("DISTRIBUTION DES NOTES",PAD,y);y+=8;
+        var dist2=st.dist,mx=Math.max.apply(null,dist2.map(function(d){return d.c;}).concat([1])),bw=(W-PAD*2)/11,mh=44;
+        dist2.forEach(function(dd,idx){var i=dd.i,c=dd.c;
+          const d=cv!==undefined?cv:dist[idx].c;
+          const bx=PAD+idx*bw,bh=d?Math.max(3,d/mx*mh):2;
+          c.fillStyle=d?"#e63946":"#f0ede8";c.globalAlpha=d?0.6+d/mx*0.4:1;
+          c.fillRect(bx+2,y+mh-bh,bw-4,bh);c.globalAlpha=1;
+          c.font="7px sans-serif";c.fillStyle="#aaa";c.textAlign="center";c.fillText(i,bx+bw/2,y+mh+10);c.textAlign="left";
+          if(d){c.font="bold 7px sans-serif";c.fillStyle="#333";c.textAlign="center";c.fillText(d,bx+bw/2,y+mh-bh-2);c.textAlign="left";}
+        });y+=mh+18;
+      }
+      if(chapter==="emotions"){
+        if(mode==="explore"&&st){
+          st.emos.slice().sort(function(a,b){return b.p-a.p;}).forEach(({e,p})=>{y=dBar(e,p,"#e63946",y,false);});
+        }else if(!inverted){
+          EMOS.forEach(e=>{y=dGBar(e,valid.map(g=>({lbl:g.lbl,col:g.col,p:pctOf(g.rows.filter(r=>r.emo.includes(e)).length,g.rows.length)})),y);});
+        }else{
+          valid.forEach(g=>{c.font="bold 11px sans-serif";c.fillStyle=g.col;c.fillText("● "+g.lbl,PAD,y);y+=14;
+            [...EMOS.map(e=>({e,p:pctOf(g.rows.filter(r=>r.emo.includes(e)).length,g.rows.length)}))].sort((a,b)=>b.p-a.p).forEach(({e,p})=>{y=dBar(e,p,g.col,y,false);});y+=6;});
+        }
+      }
+      if(chapter==="actions"){
+        if(mode==="explore"&&st){
+          st.acts.slice().sort(function(a,b){return b.p-a.p;}).forEach(({lb,p})=>{y=dBar(lb,p,"#0e0f12",y,false);});
+        }else if(!inverted){
+          ACTS.forEach((a,idx)=>{y=dGBar(ACTS_LB[idx],valid.map(g=>({lbl:g.lbl,col:g.col,p:pctOf(g.rows.filter(r=>r.act.includes(a)).length,g.rows.length)})),y);});
+        }else{
+          valid.forEach(g=>{c.font="bold 11px sans-serif";c.fillStyle=g.col;c.fillText("● "+g.lbl,PAD,y);y+=14;
+            ACTS.forEach((a,idx)=>{const p=pctOf(g.rows.filter(r=>r.act.includes(a)).length,g.rows.length);y=dBar(ACTS_LB[idx],p,g.col,y,false);});y+=6;});
+        }
+      }
+      if(chapter==="verbatims"){
+        const vbs=mode==="explore"?getSortedVb().slice(0,6):(function(){var _res=[];valid.forEach(function(g){g.rows.slice(0,3).forEach(function(r){var _o=Object.assign({},r);_o._col=g.col;_res.push(_o);});});return _res;})();
+        vbs.forEach(r=>{
+          const fc=scCol(r.sc),bl=r._col||fc;
+          c.fillStyle="white";rr(c,PAD,y,W-PAD*2,40,6);c.fillStyle=bl;c.fillRect(PAD,y,3,40);
+          c.font="italic 9px sans-serif";c.fillStyle="#0e0f12";
+          wt(c,"« "+r.vb+" »",PAD+8,y+12,W-PAD*2-16,12,2);
+          c.fillStyle=scBg(r.sc);rr(c,PAD+8,y+26,34,10,5);
+          c.font="bold 7px sans-serif";c.fillStyle=fc;c.fillText("★ "+r.sc+"/10",PAD+11,y+33);
+          let tx=PAD+46;
+          [r.age,r.genre,r.rel].forEach(t=>{const tw=c.measureText(t).width+9;c.fillStyle="#eef2f6";rr(c,tx,y+26,tw,10,5);c.fillStyle="#457b9d";c.font="7px sans-serif";c.fillText(t,tx+4,y+33);tx+=tw+3;});
+          y+=48;
+        });
+      }
+      // Footer
+      c.fillStyle="#0e0f12";c.fillRect(0,H-26,W,26);
+      c.font="8px sans-serif";c.fillStyle="rgba(255,255,255,.4)";c.textAlign="center";
+      c.fillText("HelloScoring · La mer en hiver · Shaga · 50 répondants · "+now,W/2,H-9);c.textAlign="left";
+      const dataUrl=canvas.toDataURL("image/png");
+      document.getElementById("export-img-el").src=dataUrl;
+      document.getElementById("modal-dl-link").href=dataUrl;
+      document.getElementById("modal-dl-link").download="helloscore-"+(function(){var _c=CHAPS.filter(function(x){return x.id===chapter;})[0];return (_c?_c.lbl:chapter).replace(/[^a-z0-9]/gi,"-").toLowerCase();})()+ "-"+Date.now()+".png";
+      document.getElementById("modal").classList.add("open");
+    }catch(e){alert("Export impossible : "+e.message);}
+    btn.disabled=false;btn.textContent="📷 Exporter";
+  },50);
+}
+function closeModal(){document.getElementById("modal").classList.remove("open");}
+document.getElementById("modal").addEventListener("click",closeModal);
+
+function rr(c,x,y,w,h,r){
+  c.beginPath();c.moveTo(x+r,y);c.lineTo(x+w-r,y);c.quadraticCurveTo(x+w,y,x+w,y+r);
+  c.lineTo(x+w,y+h-r);c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  c.lineTo(x+r,y+h);c.quadraticCurveTo(x,y+h,x,y+h-r);
+  c.lineTo(x,y+r);c.quadraticCurveTo(x,y,x+r,y);c.closePath();c.fill();
+}
+function wt(c,text,x,y,maxW,lh,ml=3){
+  const words=text.split(" ");let line="",l=0;
+  for(let n=0;n<words.length;n++){
+    const test=line+(line?" ":"")+words[n];
+    if(c.measureText(test).width>maxW&&line){
+      c.fillText(line,x,y);y+=lh;line=words[n];l++;
+      if(l>=ml-1){line+=words.slice(n+1).join(" ");break;}
+    }else line=test;
+  }c.fillText(line,x,y);
+}
+
+// INIT
+render();
+</script>
+</body>
+</html>
