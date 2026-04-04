@@ -622,7 +622,13 @@ async function goToScoreComment() {
 }
 
 function buildScoreCommentPrompt() {
-  return `Tu es Écho, un agent d'évaluation musicale chaleureux et naturel. Tu tutoies toujours le répondant. Un répondant vient de donner la note ${personalScore}/10 au titre "${cfg.track}" de ${cfg.artist}. Génère UNE seule phrase de réaction courte et naturelle (20 mots max) adaptée à ce niveau de note, sans jugement, sans être condescendant. Puis enchaîne avec une courte phrase de transition vers les questions sur les émotions. Ton total : 2 phrases max. Tutoiement obligatoire.`;
+  const sigProfile = [sigData['sig-age'],sigData['sig-gender'],sigData['sig-relation']].filter(Boolean).join(', ');
+  return `Tu es Écho, un agent d'évaluation musicale chaleureux et naturel. Tu tutoies toujours le répondant.
+CONTEXTE DÉJÀ ÉTABLI — ne pas répéter, ne pas redemander :
+- L'entretien a déjà commencé : le répondant s'est présenté et a fourni ses informations de profil.
+- Profil : ${sigProfile || 'non renseigné'}
+- Le répondant vient de donner la note ${personalScore}/10 au titre "${cfg.track}" de ${cfg.artist}.
+CONSIGNE : Génère UNE seule phrase de réaction courte et naturelle (20 mots max) sur cette note spécifiquement. Pas de re-présentation, pas de "bienvenue", pas de rappel du parcours déjà fait. Puis UNE phrase de transition vers les émotions ressenties. 2 phrases max. Tutoiement obligatoire. Jamais d'avis personnel sur la qualité artistique du morceau.`;
 }
 
 function getScoreCommentFallback() {
@@ -653,7 +659,7 @@ function buildEmotions() {
 // ══════════════════════════════
 // ACTIONS
 // ══════════════════════════════
-const ACTIONS = ['Je le partagerais','Je l\'ajouterais en playlist','Je le mettrais en fond','J\'irais le voir en concert','Je ne ferais rien de particulier'];
+const ACTIONS = ['Je le partagerais','Je l\'ajouterais en playlist','Je l\'écouterais en me déplaçant','Je l\'écouterais en soirée ou entre amis','J\'irais le voir en concert','Je ne ferais rien de particulier'];
 function buildActions() {
   const c = document.getElementById('action-grid');
   ACTIONS.forEach(a => {
@@ -723,6 +729,7 @@ RÈGLES STRICTES :
 - Si le répondant digresse ou pose une question : "Je comprends, mais mon rôle est uniquement de recueillir ton avis sur ce morceau pour l'artiste." Reprendre aussitôt.
 - Si impatience détectée (réponses très courtes répétées, "j'sais pas", "next", "peu importe") : regrouper les questions restantes en une seule et conclure.
 - Ton chaleureux, naturel, jamais condescendant.
+- INTERDIT ABSOLU : ne jamais émettre d'avis personnel sur la qualité artistique du morceau (ex : "ce titre est vraiment beau", "j'adore cette mélodie", "c'est une belle réussite"). Écho peut commenter et rebondir sur l'avis du répondant, mais ne juge jamais le morceau lui-même.
 - Quand toutes les questions sont posées et répondues : répondre uniquement [FIN]`;
 }
 
@@ -822,9 +829,9 @@ async function goToPotentialComment() {
 function buildPotCommentPrompt(gap) {
   const gapDir = potentialScore > personalScore ? 'supérieure' : 'inférieure';
   if (gap >= 3) {
-    return `Tu es Écho. Tu tutoies le répondant. Un répondant vient de donner ${potentialScore}/10 de potentiel commercial au titre "${cfg.track}" (note artistique : ${personalScore}/10). L'écart est de ${gap} points (potentiel ${gapDir} à la note perso). En 2 phrases max : fais une courte réaction sur cet écart, puis pose UNE question ouverte directe pour comprendre pourquoi. Tutoiement obligatoire. Pas de liste.`;
+    return `Tu es Écho. Tu tutoies le répondant. RAPPEL : ne jamais émettre d'avis personnel sur la qualité artistique du morceau — commenter uniquement l'avis du répondant. Un répondant vient de donner ${potentialScore}/10 de potentiel commercial au titre "${cfg.track}" (note artistique : ${personalScore}/10). L'écart est de ${gap} points (potentiel ${gapDir} à la note perso). En 2 phrases max : fais une courte réaction sur cet écart, puis pose UNE question ouverte directe pour comprendre pourquoi. Tutoiement obligatoire. Pas de liste.`;
   }
-  return `Tu es Écho. Tu tutoies le répondant. Un répondant vient de donner ${potentialScore}/10 de potentiel commercial au titre "${cfg.track}" (note artistique : ${personalScore}/10). Génère UNE phrase de réaction naturelle sur cette note. Tutoiement obligatoire. Pas de liste.`;
+  return `Tu es Écho. Tu tutoies le répondant. RAPPEL : ne jamais émettre d'avis personnel sur la qualité artistique du morceau — commenter uniquement l'avis du répondant. Un répondant vient de donner ${potentialScore}/10 de potentiel commercial au titre "${cfg.track}" (note artistique : ${personalScore}/10). Génère UNE phrase de réaction naturelle sur cette note. Tutoiement obligatoire. Pas de liste.`;
 }
 
 function getPotCommentFallback(gap) {
@@ -972,7 +979,29 @@ function toggleCorrection() {
   if (f.style.display==='block') document.getElementById('correction-input').focus();
 }
 
+function applyCorrection() {
+  const correction = document.getElementById('correction-input').value.trim();
+  if (!correction) return;
+  const narEl = document.getElementById('syn-narrative');
+  const orig = narEl.getAttribute('data-original') || narEl.textContent;
+  if (!narEl.getAttribute('data-original')) narEl.setAttribute('data-original', orig);
+  // Afficher la synthèse originale + la correction sous forme de prévisualisation
+  narEl.textContent = orig + '\n\n[Correction ajoutée] ' + correction;
+  // Fermer le champ et afficher confirmation
+  document.getElementById('correction-field').style.display = 'none';
+  const btn = document.getElementById('btn-correction-toggle');
+  if (btn) btn.textContent = '✓ Correction prise en compte';
+}
+
 async function confirmSend() {
+  // Vérifier si une correction a été saisie mais pas encore appliquée
+  const corrInput = document.getElementById('correction-input');
+  const corrVal = corrInput ? corrInput.value.trim() : '';
+  if (corrVal && document.getElementById('correction-field').style.display !== 'none') {
+    applyCorrection();
+    // Laisser le répondant voir la synthèse corrigée avant d'envoyer
+    return;
+  }
   showScreen('screen-end');
   const correction = document.getElementById('correction-input')?.value.trim()||'';
   const record = {
