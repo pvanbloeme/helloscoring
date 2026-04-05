@@ -251,7 +251,7 @@
     <div class="dot-pulse"><span></span><span></span><span></span></div>
     Écho réfléchit…
   </div>
-  <button class="btn-primary" id="btn-score-next" onclick="showScreen('screen-emotions')" style="opacity:0.4;" disabled>Continuer →</button>
+  <button class="btn-primary" id="btn-score-next" style="opacity:0.4;" disabled>Continuer →</button>
 </div>
 
 <!-- EMOTIONS -->
@@ -350,11 +350,11 @@
     <div class="echo-avatar">É</div>
     <div class="echo-bubble">
       <div class="echo-name">Écho</div>
-      <div class="echo-text">Merci, c'est vraiment utile. Est-ce qu'on peut creuser encore deux points ?</div>
+      <div class="echo-text" id="echo-module-text">Merci beaucoup — ton avis est précieux pour l'artiste. Si tu as encore deux ou trois minutes, j'aimerais approfondir quelques points avec toi pour aller un peu plus loin.</div>
     </div>
   </div>
   <div class="module-box">
-    <p style="font-size:0.88rem;color:var(--muted2);font-weight:300;line-height:1.6;margin-bottom:1rem;">C'est totalement optionnel — quelques minutes supplémentaires pour donner à l'artiste des éléments encore plus précis.</p>
+    <p style="font-size:0.88rem;color:var(--muted2);font-weight:300;line-height:1.6;margin-bottom:1rem;">C'est totalement optionnel et ça ne prend que 2-3 minutes. Tu peux aussi passer directement à l'étape suivante.</p>
     <div class="btn-row">
       <button class="btn-yes" onclick="startDeepDive()">Oui, on continue</button>
       <button class="btn-no" onclick="goToEnrichissement()">Non merci</button>
@@ -397,10 +397,10 @@
     <div class="echo-avatar">É</div>
     <div class="echo-bubble">
       <div class="echo-name">Écho</div>
-      <div class="echo-text">Y a-t-il un dernier message ou conseil que tu aimerais transmettre directement à l'artiste ?</div>
+      <div class="echo-text">Avant de terminer — tu peux laisser un message direct à l'artiste si tu le souhaites. Une impression, un conseil, un encouragement… c'est totalement libre.</div>
     </div>
   </div>
-  <textarea id="final-message" rows="4" placeholder="Ton message… (optionnel)" style="width:100%;min-height:100px;resize:vertical;margin-bottom:1rem;font-family:'DM Sans',sans-serif;font-size:0.92rem;font-weight:300;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.7rem 1rem;outline:none;transition:border-color 0.2s;"></textarea>
+  <textarea id="final-message" rows="4" placeholder="Ton message à l'artiste… (optionnel)" style="width:100%;min-height:100px;resize:vertical;margin-bottom:1rem;font-family:'DM Sans',sans-serif;font-size:0.92rem;font-weight:300;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.7rem 1rem;outline:none;transition:border-color 0.2s;"></textarea>
   <button class="btn-primary" onclick="goToSynthesis()">Continuer →</button>
 </div>
 
@@ -433,7 +433,7 @@
   <div id="correction-field" style="display:none;margin-bottom:1rem;">
     <textarea id="correction-input" rows="3" placeholder="Quelque chose à préciser ou corriger…" style="width:100%;min-height:90px;resize:vertical;font-family:'DM Sans',sans-serif;font-size:0.92rem;font-weight:300;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.7rem 1rem;outline:none;transition:border-color 0.2s;"></textarea>
   </div>
-  <button class="btn-gold" onclick="confirmSend()">Confirmer et envoyer →</button>
+  <button class="btn-gold" id="btn-confirm-send" onclick="confirmSend()" disabled style="opacity:0.4;cursor:not-allowed;">Confirmer et envoyer →</button>
 </div>
 
 <!-- END -->
@@ -514,6 +514,11 @@ window.addEventListener('DOMContentLoaded', async () => {
   buildScoreGrid('pot-grid','pot-val',true);
   buildEmotions();
   buildActions();
+  // Binder btn-score-next → lancer l'interview
+  document.getElementById('btn-score-next').addEventListener('click', function() {
+    showScreen('screen-interview');
+    startInterview();
+  });
   showScreen('screen-intro');
   typeEchoText('echo-intro-text', `Bonjour ! Je m'appelle Écho. Ma mission est de recueillir ton avis sur "${cfg.track}" de ${cfg.artist} et de le transmettre directement à l'artiste. Il n'y a pas de bonne ou mauvaise réponse — ce qui compte, c'est ton ressenti honnête.`, () => {
     document.getElementById('btn-intro-next').disabled = false;
@@ -628,14 +633,18 @@ CONTEXTE DÉJÀ ÉTABLI — ne pas répéter, ne pas redemander :
 - L'entretien a déjà commencé : le répondant s'est présenté et a fourni ses informations de profil.
 - Profil : ${sigProfile || 'non renseigné'}
 - Le répondant vient de donner la note ${personalScore}/10 au titre "${cfg.track}" de ${cfg.artist}.
-CONSIGNE : Génère UNE seule phrase de réaction courte et naturelle (20 mots max) sur cette note spécifiquement. Pas de re-présentation, pas de "bienvenue", pas de rappel du parcours déjà fait. Puis UNE phrase de transition vers les émotions ressenties. 2 phrases max. Tutoiement obligatoire. Jamais d'avis personnel sur la qualité artistique du morceau.`;
+CONSIGNE : En 2-3 phrases max, dans l'ordre :
+1. Remercie chaleureusement d'avoir pris le temps d'écouter et de donner son avis (ton naturel, pas formel).
+2. Réagis à la note ${personalScore}/10 en reformulant ce que cette note signifie (ex : "un 7/10 ça veut dire que ça t'a bien accroché sans être un coup de cœur") — sans jamais exprimer ton propre avis sur le titre.
+3. Annonce qu'on va creuser ça ensemble avec quelques questions.
+Tutoiement obligatoire. RAPPEL IDENTITÉ : Écho n'a pas écouté ce titre et n'émet jamais de jugement personnel sur la musique ou l'artiste. Écho réagit uniquement à ce que dit le répondant.`;
 }
 
 function getScoreCommentFallback() {
-  if (personalScore >= 8) return `${personalScore}/10, c'est un beau signal ! Dis-moi ce que tu as ressenti en écoutant.`;
-  if (personalScore >= 6) return `${personalScore}/10 — intéressant. Voyons ce qui t'a touché ou moins convaincu.`;
-  if (personalScore >= 4) return `${personalScore}/10, c'est noté. Dis-moi ce qui a fonctionné ou non pour toi.`;
-  return `${personalScore}/10 — tu as été direct, c'est exactement ce qu'il faut. Dis-moi ce qui t'a bloqué.`;
+  if (personalScore >= 8) return `Merci d'avoir pris le temps d'écouter et de jouer le jeu ! Un ${personalScore}/10, ça dit que t'as vraiment aimé — on va creuser ça ensemble.`;
+  if (personalScore >= 6) return `Merci pour ton avis ! Un ${personalScore}/10, ça veut dire que ça t'a accroché sans être un coup de cœur — c'est exactement le genre de nuance qui intéresse l'artiste. On va voir ça ensemble.`;
+  if (personalScore >= 4) return `Merci d'avoir joué le jeu honnêtement ! Un ${personalScore}/10, ça dit que c'était mitigé — et c'est très utile à l'artiste de comprendre pourquoi. On va creuser ça.`;
+  return `Merci pour ton honnêteté, c'est exactement ce dont l'artiste a besoin. Un ${personalScore}/10, ça dit que ça n'a pas vraiment pris — on va voir ensemble ce qui s'est passé.`;
 }
 
 // ══════════════════════════════
@@ -711,13 +720,14 @@ ${lowScore ? `MODE NOTE FAIBLE (${personalScore}/10) :
 Objectif : comprendre ce qui n'a pas fonctionné et identifier 1-2 axes d'amélioration.
 Ne pas projeter un potentiel non perçu. Questions uniquement sur : éléments problématiques, émotions négatives, axes d'amélioration.
 Accepter les réponses courtes sans insister. Max 1 question par thème.` :
-`THÈMES EN ${MAX_Q} QUESTIONS MAX :
-1. Premières impressions globales
-2. Éléments musicaux marquants (mélodie, voix/flow, paroles, production)
-3. Mémorabilité (une phrase, un son, un moment qui reste)
-4. Références artistiques (univers évoqué, comparaisons)
-5. Correspondance avec l'image de l'artiste (si connu)
-6. Ce qui pourrait être amélioré`}
+`CONTEXTE DE DÉPART : le répondant a déjà sélectionné ses émotions (${emotions}). Ne pas redemander ses premières impressions générales — partir directement de ce qu'il a ressenti pour creuser.
+
+THÈMES EN ${MAX_Q} QUESTIONS MAX :
+1. Éléments musicaux marquants (mélodie, voix/flow, paroles, production) — en lien avec ses émotions
+2. Mémorabilité (une phrase, un son, un moment qui reste)
+3. Références artistiques (univers évoqué, comparaisons spontanées)
+4. Correspondance avec l'image de l'artiste (si connu)
+5. Ce qui pourrait être amélioré ou renforcé`}
 
 RÈGLES STRICTES :
 - Tutoiement obligatoire dans toutes les questions et relances.
@@ -729,7 +739,9 @@ RÈGLES STRICTES :
 - Si le répondant digresse ou pose une question : "Je comprends, mais mon rôle est uniquement de recueillir ton avis sur ce morceau pour l'artiste." Reprendre aussitôt.
 - Si impatience détectée (réponses très courtes répétées, "j'sais pas", "next", "peu importe") : regrouper les questions restantes en une seule et conclure.
 - Ton chaleureux, naturel, jamais condescendant.
-- INTERDIT ABSOLU : ne jamais émettre d'avis personnel sur la qualité artistique du morceau (ex : "ce titre est vraiment beau", "j'adore cette mélodie", "c'est une belle réussite"). Écho peut commenter et rebondir sur l'avis du répondant, mais ne juge jamais le morceau lui-même.
+- IDENTITÉ D'ÉCHO : Écho n'a pas écouté le titre. Écho ne connaît pas le morceau. Écho n'a donc aucun avis personnel sur la musique, l'artiste, les paroles, la prod, ou quoi que ce soit d'artistique.
+- INTERDIT ABSOLU : ne jamais formuler de jugement personnel sur le titre ou l'artiste (ex : "ce titre est beau", "j'adore cette mélodie", "c'est une belle réussite", "cet artiste a du talent"). Même sous forme atténuée ("ça semble", "on dirait que", "visiblement"). Zéro avis perso.
+- CE QU'ÉCHO PEUT FAIRE : reformuler ce que dit le répondant ("donc tu trouves que…"), commenter la réponse elle-même ("c'est intéressant que tu mentionnes ça"), demander de clarifier si c'est ambigu ("tu veux dire que…?"), rebondir sur l'avis du répondant sans jamais l'avaliser avec un jugement propre.
 - Quand toutes les questions sont posées et répondues : répondre uniquement [FIN]`;
 }
 
@@ -758,7 +770,7 @@ async function askNext(lastAnswer) {
     conversation.push({role:'assistant',content:reply});
     if (reply.includes('[FIN]')||qCount>=MAX_Q) {
       setThinking(false,'thinking','btn-send');
-      showScreen('screen-actions');
+      showScreen('screen-emotions');
       return;
     }
     qCount++;
@@ -817,10 +829,17 @@ async function goToPotentialComment() {
   // Affiche le texte complet (commentaire + question si écart) dans une seule bulle
   typeEchoText('echo-pot-text', fullText, () => {
     if (gap >= 3) {
-      // Affiche la zone de réponse après le texte
-      document.getElementById('pot-gap-zone').style.display = 'block';
-      document.getElementById('pot-gap-input').focus();
+      // Écart significatif : afficher la zone de réponse, pas de bouton Continuer
+      var gapZone = document.getElementById('pot-gap-zone');
+      gapZone.style.display = 'block';
+      var gapInput = document.getElementById('pot-gap-input');
+      gapInput.value = ''; // Toujours vide — jamais de valeur pré-remplie
+      gapInput.focus();
+      // Bouton Continuer masqué jusqu'à réponse
+      document.getElementById('btn-pot-next').style.display = 'none';
     } else {
+      // Pas d'écart : afficher directement le bouton Continuer
+      document.getElementById('pot-gap-zone').style.display = 'none';
       document.getElementById('btn-pot-next').style.display = 'block';
     }
   });
@@ -829,9 +848,9 @@ async function goToPotentialComment() {
 function buildPotCommentPrompt(gap) {
   const gapDir = potentialScore > personalScore ? 'supérieure' : 'inférieure';
   if (gap >= 3) {
-    return `Tu es Écho. Tu tutoies le répondant. RAPPEL : ne jamais émettre d'avis personnel sur la qualité artistique du morceau — commenter uniquement l'avis du répondant. Un répondant vient de donner ${potentialScore}/10 de potentiel commercial au titre "${cfg.track}" (note artistique : ${personalScore}/10). L'écart est de ${gap} points (potentiel ${gapDir} à la note perso). En 2 phrases max : fais une courte réaction sur cet écart, puis pose UNE question ouverte directe pour comprendre pourquoi. Tutoiement obligatoire. Pas de liste.`;
+    return `Tu es Écho. Tu tutoies le répondant. RAPPEL IDENTITÉ : Écho n'a pas écouté ce titre — zéro avis perso sur la musique. Réagir uniquement aux notes données par le répondant, pas au titre. Un répondant vient de donner ${potentialScore}/10 de potentiel commercial au titre "${cfg.track}" (note artistique : ${personalScore}/10). L'écart est de ${gap} points (potentiel ${gapDir} à la note perso). En 2 phrases max : fais une courte réaction sur cet écart, puis pose UNE question ouverte directe pour comprendre pourquoi. Tutoiement obligatoire. Pas de liste.`;
   }
-  return `Tu es Écho. Tu tutoies le répondant. RAPPEL : ne jamais émettre d'avis personnel sur la qualité artistique du morceau — commenter uniquement l'avis du répondant. Un répondant vient de donner ${potentialScore}/10 de potentiel commercial au titre "${cfg.track}" (note artistique : ${personalScore}/10). Génère UNE phrase de réaction naturelle sur cette note. Tutoiement obligatoire. Pas de liste.`;
+  return `Tu es Écho. Tu tutoies le répondant. RAPPEL IDENTITÉ : Écho n'a pas écouté ce titre — zéro avis perso sur la musique. Réagir uniquement aux notes données par le répondant, pas au titre. Un répondant vient de donner ${potentialScore}/10 de potentiel commercial au titre "${cfg.track}" (note artistique : ${personalScore}/10). Génère UNE phrase de réaction naturelle sur cette note. Tutoiement obligatoire. Pas de liste.`;
 }
 
 function getPotCommentFallback(gap) {
@@ -925,6 +944,8 @@ async function goToSynthesis() {
   } catch(e) {
     document.getElementById('syn-narrative').textContent = buildNarrativeFallback();
   }
+  var btnC = document.getElementById('btn-confirm-send');
+  if(btnC){btnC.disabled=false;btnC.style.opacity='1';btnC.style.cursor='pointer';}
 }
 
 function buildSynthesisPrompt() {
@@ -954,6 +975,7 @@ RÈGLES DE RÉDACTION :
 - Ne recopie JAMAIS les réponses mot pour mot. Réécris et reformule.
 - Utilise des guillemets uniquement pour les formulations vraiment marquantes et originales du répondant.
 - Ignore les réponses inutilisables ("déjà dit", "non", réponses trop courtes ou hors sujet).
+- Ne jamais insérer de jugement personnel d'Écho sur le titre — synthétiser uniquement ce qu'a dit le répondant.
 - Commence par la note et le sentiment global.
 - Intègre naturellement les émotions, les impressions, les éléments musicaux, les références, les points d'amélioration.
 - Termine par les intentions d'usage et le message à l'artiste si renseigné.
