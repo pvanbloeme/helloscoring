@@ -260,7 +260,7 @@
   <div class="step-title">Ce titre t'a<br>fait ressentir…</div>
   <div class="step-sub">Sélectionne une ou plusieurs émotions</div>
   <div class="pill-grid" id="emotion-grid"></div>
-  <button class="btn-primary" onclick="showScreen('screen-actions')">Continuer →</button>
+  <button class="btn-primary" onclick="resumeInterview()">Continuer →</button>
 </div>
 
 <!-- INTERVIEW -->
@@ -463,9 +463,9 @@ let selectedEmotions = [], selectedActions = [];
 let conversation = [], transcript = [], qCount = 0;
 let ddConversation = [], ddTranscript = [], ddCount = 0;
 let potGapAnswer = '';
+let interviewPaused = false;
 let sigData = {};
 const MAX_Q = 6;
-const MAX_MAIN_Q = 2; // Questions avant la QCM émotions
 const MAX_RESPONDENTS = 300;
 
 // ══════════════════════════════
@@ -722,6 +722,7 @@ Ne pas projeter un potentiel non perçu. Questions uniquement sur : éléments p
 Accepter les réponses courtes sans insister. Max 1 question par thème.` :
 `THÈMES EN ${MAX_Q} QUESTIONS MAX (dans cet ordre) :
 1. Premières impressions globales — c'est ta première question, toujours commencer par là
+Note : les émotions (${selectedEmotions.length > 0 ? selectedEmotions.join(', ') : 'pas encore recueillies'}) ont été collectées après la Q1 — les intégrer dans les questions suivantes sans les redemander.
 2. Éléments musicaux marquants (mélodie, voix/flow, paroles, production)
 3. Mémorabilité (une phrase, un son, un moment qui reste)
 4. Références artistiques (univers évoqué, comparaisons spontanées)
@@ -749,14 +750,19 @@ RÈGLES STRICTES :
 // ══════════════════════════════
 async function startInterview() { await askNext(null); }
 
+async function resumeInterview() {
+  interviewPaused = false;
+  showScreen('screen-interview');
+  // Reprendre l'interview avec les émotions maintenant disponibles
+  await askNext(null);
+}
+
 async function askNext(lastAnswer) {
   setThinking(true,'thinking','btn-send');
   if (lastAnswer!==null) conversation.push({role:'user',content:lastAnswer});
   const userMsg = qCount===0
     ? 'Commence l\'entretien. Ta première question porte sur les premières impressions globales.'
-    : qCount>=MAX_MAIN_Q-1
-      ? 'Voici la réponse. C\'est ta dernière question — pose-la maintenant, puis réponds uniquement [FIN].'
-      : `Voici la réponse. Pose la question suivante (${qCount+1}/${MAX_MAIN_Q}).`;
+    : `Voici la réponse. Pose la question suivante (${qCount+1}/${MAX_Q}). Si toutes les questions sont posées et répondues, réponds uniquement [FIN].`;
   const messages = [...conversation, {role:'user',content:userMsg}];
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages',{
@@ -769,14 +775,14 @@ async function askNext(lastAnswer) {
     const reply = (data.content?.[0]?.text||'').trim();
     if (!reply) { showApiError('Réponse vide. Réessaie.'); return; }
     conversation.push({role:'assistant',content:reply});
-    if (reply.includes('[FIN]')||qCount>=MAX_MAIN_Q) {
+    if (reply.includes('[FIN]')||qCount>=MAX_Q) {
       setThinking(false,'thinking','btn-send');
-      showScreen('screen-emotions');
+      showScreen('screen-actions');
       return;
     }
     qCount++;
     document.getElementById('q-num').textContent=qCount;
-    document.getElementById('iv-progress').style.width=(qCount/MAX_MAIN_Q*100)+'%';
+    document.getElementById('iv-progress').style.width=(qCount/MAX_Q*100)+'%';
     displayQ(reply,'q-text','answer-zone','answer-input','btn-send');
     setThinking(false,'thinking','btn-send');
   } catch(err) { showApiError(err.message); }
@@ -790,6 +796,13 @@ async function sendAnswer() {
   const lastQ = conversation.filter(m=>m.role==='assistant').slice(-1)[0]?.content||'';
   transcript.push({q:lastQ,a:answer});
   document.getElementById('btn-send').disabled=true;
+  // Après la Q1 (premières impressions), interrompre pour la QCM émotions
+  if (qCount===1 && !interviewPaused) {
+    interviewPaused = true;
+    conversation.push({role:'user',content:answer});
+    showScreen('screen-emotions');
+    return;
+  }
   document.getElementById('q-text').textContent='';
   await askNext(answer);
 }
