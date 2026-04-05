@@ -260,7 +260,7 @@
   <div class="step-title">Ce titre t'a<br>fait ressentir…</div>
   <div class="step-sub">Sélectionne une ou plusieurs émotions</div>
   <div class="pill-grid" id="emotion-grid"></div>
-  <button class="btn-primary" onclick="showScreen('screen-interview');startInterview();">Continuer →</button>
+  <button class="btn-primary" onclick="showScreen('screen-actions')">Continuer →</button>
 </div>
 
 <!-- INTERVIEW -->
@@ -465,6 +465,7 @@ let ddConversation = [], ddTranscript = [], ddCount = 0;
 let potGapAnswer = '';
 let sigData = {};
 const MAX_Q = 6;
+const MAX_MAIN_Q = 2; // Questions avant la QCM émotions
 const MAX_RESPONDENTS = 300;
 
 // ══════════════════════════════
@@ -713,21 +714,19 @@ ${cfg.context ? 'Contexte : ' + cfg.context : ''}
 
 DONNÉES COLLECTÉES EN AMONT — NE JAMAIS REDEMANDER :
 Note artistique : ${personalScore}/10
-Émotions ressenties : ${emotions}
 Profil : ${sigProfile}
 
 ${lowScore ? `MODE NOTE FAIBLE (${personalScore}/10) :
 Objectif : comprendre ce qui n'a pas fonctionné et identifier 1-2 axes d'amélioration.
 Ne pas projeter un potentiel non perçu. Questions uniquement sur : éléments problématiques, émotions négatives, axes d'amélioration.
 Accepter les réponses courtes sans insister. Max 1 question par thème.` :
-`CONTEXTE DE DÉPART : le répondant a déjà sélectionné ses émotions (${emotions}). Ne pas redemander ses premières impressions générales — partir directement de ce qu'il a ressenti pour creuser.
-
-THÈMES EN ${MAX_Q} QUESTIONS MAX :
-1. Éléments musicaux marquants (mélodie, voix/flow, paroles, production) — en lien avec ses émotions
-2. Mémorabilité (une phrase, un son, un moment qui reste)
-3. Références artistiques (univers évoqué, comparaisons spontanées)
-4. Correspondance avec l'image de l'artiste (si connu)
-5. Ce qui pourrait être amélioré ou renforcé`}
+`THÈMES EN ${MAX_Q} QUESTIONS MAX (dans cet ordre) :
+1. Premières impressions globales — c'est ta première question, toujours commencer par là
+2. Éléments musicaux marquants (mélodie, voix/flow, paroles, production)
+3. Mémorabilité (une phrase, un son, un moment qui reste)
+4. Références artistiques (univers évoqué, comparaisons spontanées)
+5. Correspondance avec l'image de l'artiste (si connu)
+6. Ce qui pourrait être amélioré ou renforcé`}
 
 RÈGLES STRICTES :
 - Tutoiement obligatoire dans toutes les questions et relances.
@@ -754,8 +753,10 @@ async function askNext(lastAnswer) {
   setThinking(true,'thinking','btn-send');
   if (lastAnswer!==null) conversation.push({role:'user',content:lastAnswer});
   const userMsg = qCount===0
-    ? 'Commence l\'entretien avec ta première question.'
-    : `Voici la réponse. Pose la question suivante (${qCount+1}/${MAX_Q}). Si toutes les questions sont posées et répondues, réponds uniquement [FIN].`;
+    ? 'Commence l\'entretien. Ta première question porte sur les premières impressions globales.'
+    : qCount>=MAX_MAIN_Q-1
+      ? 'Voici la réponse. C\'est ta dernière question — pose-la maintenant, puis réponds uniquement [FIN].'
+      : `Voici la réponse. Pose la question suivante (${qCount+1}/${MAX_MAIN_Q}).`;
   const messages = [...conversation, {role:'user',content:userMsg}];
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages',{
@@ -768,14 +769,14 @@ async function askNext(lastAnswer) {
     const reply = (data.content?.[0]?.text||'').trim();
     if (!reply) { showApiError('Réponse vide. Réessaie.'); return; }
     conversation.push({role:'assistant',content:reply});
-    if (reply.includes('[FIN]')||qCount>=MAX_Q) {
+    if (reply.includes('[FIN]')||qCount>=MAX_MAIN_Q) {
       setThinking(false,'thinking','btn-send');
       showScreen('screen-emotions');
       return;
     }
     qCount++;
     document.getElementById('q-num').textContent=qCount;
-    document.getElementById('iv-progress').style.width=(qCount/MAX_Q*100)+'%';
+    document.getElementById('iv-progress').style.width=(qCount/MAX_MAIN_Q*100)+'%';
     displayQ(reply,'q-text','answer-zone','answer-input','btn-send');
     setThinking(false,'thinking','btn-send');
   } catch(err) { showApiError(err.message); }
